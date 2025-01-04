@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/api" />
+            <option value="$PROJECT_DIR$/api/game-engine" />
+            <option value="$PROJECT_DIR$/api/lobby" />
+            <option value="$PROJECT_DIR$/api/shared" />
+            <option value="$PROJECT_DIR$/backend" />
+            <option value="$PROJECT_DIR$/backend/backend-api" />
+            <option value="$PROJECT_DIR$/backend/base" />
+            <option value="$PROJECT_DIR$/backend/bukkit-connector" />
+            <option value="$PROJECT_DIR$/backend/bukkit-startup-app" />
+            <option value="$PROJECT_DIR$/backend/impl-loader" />
+            <option value="$PROJECT_DIR$/backend/megamind" />
+            <option value="$PROJECT_DIR$/backend/megamind-api" />
+            <option value="$PROJECT_DIR$/backend/megamind-modules" />
+            <option value="$PROJECT_DIR$/backend/megamind-modules/discord-module" />
+            <option value="$PROJECT_DIR$/backend/megamind-modules/message-channel-module" />
+            <option value="$PROJECT_DIR$/backend/megamind-modules/rest-api-module" />
+            <option value="$PROJECT_DIR$/backend/megamind-modules/tcpshield-module" />
+            <option value="$PROJECT_DIR$/backend/megamind-modules/votifier-module" />
+            <option value="$PROJECT_DIR$/backend/minestom-connector" />
+            <option value="$PROJECT_DIR$/backend/node-app" />
+            <option value="$PROJECT_DIR$/backend/protocol" />
+            <option value="$PROJECT_DIR$/backend/protocol-api" />
+            <option value="$PROJECT_DIR$/backend/velocity-connector" />
+            <option value="$PROJECT_DIR$/lobby" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
