@@ -1,6 +1,9 @@
 package net.skykingdoms.backend.base.language;
 
 import lombok.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.skykingdoms.api.backend.adventure.Adventure;
 import net.skykingdoms.api.backend.language.ILanguage;
 import net.skykingdoms.api.protocol.logging.Logging;
 import net.skykingdoms.backend.base.language.loaders.GithubLanguageLoader;
@@ -17,6 +20,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static net.skykingdoms.api.backend.adventure.Adventure.MM;
 
 @Getter
 @RequiredArgsConstructor
@@ -94,7 +99,41 @@ public enum Language implements UserLocale, ILanguage {
             string = string.replace(key.toString(), value == null ? "null" : value.toString());
         }
 
-        return string;
+        return PlainTextComponentSerializer.plainText().serialize(MM.deserialize(string));
+    }
+
+    private static Component format(@NonNull Component component, Object... objects) {
+        if (objects == null) {
+            return component;
+        }
+
+        if (objects.length % 2 != 0) {
+            Logging.IMP.warn(PlainTextComponentSerializer.plainText().serialize(component) + "[" + objects.length + "]: " + Arrays.toString(objects));
+            return component;
+        }
+
+        for (int i = 0; i < objects.length; i = i + 2) {
+            Object key = objects[i];
+
+            if (key == null) {
+                throw new IllegalStateException("Key can't be null");
+            }
+
+            Object value = objects[i + 1];
+
+            Component replacementComponent;
+            if (value instanceof Component) {
+                replacementComponent = (Component) value;
+            } else {
+                replacementComponent = Component.text(value == null ? "null" : value.toString());
+            }
+
+            component = component.replaceText(builder -> builder
+                    .match(key.toString())
+                    .replacement(replacementComponent));
+        }
+
+        return component;
     }
 
     @Override
@@ -112,13 +151,28 @@ public enum Language implements UserLocale, ILanguage {
     }
 
     @Override
+    public Component getMessageComponent(@NonNull String key) {
+        return MM.deserialize(getMessage(key));
+    }
+
+    @Override
     public String getMessage(@NonNull String key, Object... objects) {
         return getMessage(false, key, true, objects);
     }
 
     @Override
+    public Component getMessageComponent(@NonNull String key, Object... objects) {
+        return getMessageComponent(false, key, true, objects);
+    }
+
+    @Override
     public String getMessage(boolean modern, @NonNull String key, Object... objects) {
         return getMessage(modern, key, true, objects);
+    }
+
+    @Override
+    public Component getMessageComponent(boolean modern, @NonNull String key, Object... objects) {
+        return getMessageComponent(modern, key, true, objects);
     }
 
     @Override
@@ -139,6 +193,27 @@ public enum Language implements UserLocale, ILanguage {
         }
 
         return message == null ? key : format(message, objects);
+    }
+
+    @Override
+    public Component getMessageComponent(boolean modern, @NonNull String key, boolean useDefault, Object... objects) {
+        Component messageComponent = null;
+
+        if (modern && messageTranslations.containsKey("pack_" + key.toLowerCase())) {
+            messageComponent = MM.deserialize(messageTranslations.get("pack_" + key.toLowerCase()));
+        }
+
+        if (messageComponent == null && messageTranslations.containsKey(key.toLowerCase())) {
+            messageComponent = MM.deserialize(messageTranslations.get(key.toLowerCase()));
+        }
+
+        if (messageComponent == null) {
+            if (useDefault) {
+                messageComponent = DEFAULT.getMessageComponent(modern, key, false, objects);
+            }
+        }
+
+        return messageComponent == null ? MM.deserialize(key) : format(messageComponent, objects);
     }
 
     public List<String> getMessageList(@NonNull String key, Object... objects) {

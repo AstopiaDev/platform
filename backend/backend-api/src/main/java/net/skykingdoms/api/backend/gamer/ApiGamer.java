@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.backend.language.ILanguage;
 import net.skykingdoms.api.backend.permission.IUserRank;
 import net.skykingdoms.api.backend.permission.UserRankContainer;
@@ -115,6 +116,11 @@ public abstract class ApiGamer implements IGamer {
     @Override
     public @NotNull String getNameAsString() {
         return name;
+    }
+
+    @Override
+    public @NotNull Component getNameAsComponent() {
+        return Component.text(getNameAsString());
     }
 
     @Override

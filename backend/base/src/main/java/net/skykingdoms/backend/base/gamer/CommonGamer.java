@@ -3,6 +3,7 @@ package net.skykingdoms.backend.base.gamer;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.backend.gamer.ApiGamer;
 import net.skykingdoms.api.backend.permission.Group;
 import net.skykingdoms.api.backend.setting.SettingType;
@@ -276,6 +277,11 @@ public abstract class CommonGamer extends ApiGamer implements IBaseGamer, Serial
         }
 
         return displayName;
+    }
+
+    @Override
+    public @NotNull Component getDisplayNameAsComponent() {
+        return Component.text(getDisplayNameAsString());
     }
 
     public String getColoredName() {
