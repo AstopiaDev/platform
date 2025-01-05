@@ -1,5 +1,7 @@
+import cmd.SpawnCommand
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
+import net.minestom.server.command.CommandManager
 import net.minestom.server.entity.Player
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.entity.EntityDamageEvent
@@ -16,6 +18,7 @@ object LobbyHandler {
         voidY = server.config.getInt("void_y")
 
         registerDefaultListeners(server.globalEventHandler)
+        registerCommands(server.commandManager)
     }
 
     // TODO: implement rank conditional statements
@@ -47,5 +50,9 @@ object LobbyHandler {
                     player.sendMessage(player.language.getMessageComponent("spawn_exit_attempt"))
                 }
             }
+    }
+
+    private fun registerCommands(commandManager: CommandManager) {
+        commandManager.register(SpawnCommand())
     }
 }

@@ -1,14 +1,16 @@
 package ui.sui
 
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.text.Component
-import net.minestom.server.entity.Player
 import net.skykingdoms.api.shared.ui.sui.SideUi
+import net.skykingdoms.api.shared.user.ServerUser
 
-class LobbySideUi(loader: Player) : SideUi(loader, Component.text("Lobby").font(Key.key("arbor", "hud"))) {
+class LobbySideUi(loader: ServerUser) : SideUi(loader, loader.language.getMessageComponent("main_lobby_sidebar_title")) {
     override fun draw() {
-        line(Component.text("Just Testing!").font(Key.key("arbor", "hud")), 2)
-        line(Component.empty(), 1)
-        line(Component.text("Hello player!").font(Key.key("arbor", "hud")), 0)
+        val lines = loader.language.getMessageComponentList("main_lobby_sidebar")
+
+        var index = 0;
+        for (line in lines.reversed()) {
+            line(line, index)
+            index++
+        }
     }
 }

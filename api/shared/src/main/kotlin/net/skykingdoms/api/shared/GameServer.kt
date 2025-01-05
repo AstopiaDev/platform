@@ -7,6 +7,7 @@ import net.skykingdoms.api.shared.chat.ServerChat
 import net.skykingdoms.api.shared.skin.PlayerSkinHandler
 import net.skykingdoms.api.shared.ui.gui.Gui
 import net.skykingdoms.api.shared.ui.sui.SideUi
+import net.skykingdoms.api.shared.user.ServerUser
 import net.skykingdoms.api.shared.user.ServerUserProvider
 import net.skykingdoms.backend.base.language.Language
 import net.skykingdoms.backend.minestom.event.ConnectionEstablishedEvent
@@ -49,7 +50,7 @@ abstract class GameServer : Server {
         onActive()
     }
 
-    open fun defaultSideUi(loader: Player): SideUi? {
+    open fun defaultSideUi(loader: ServerUser): SideUi? {
         return null
     }
 }

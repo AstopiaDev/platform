@@ -9,15 +9,17 @@ import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.minestom.server.scoreboard.Sidebar
 import net.skykingdoms.api.shared.GameServer
 import net.skykingdoms.api.shared.ui.UserInterface
+import net.skykingdoms.api.shared.user.ServerUser
+import java.util.concurrent.ConcurrentHashMap
 
-abstract class SideUi(loader: Player, title: Component) : Sidebar(title), UserInterface {
+abstract class SideUi(val loader: ServerUser, title: Component) : Sidebar(title), UserInterface {
     companion object {
-        private val sideUis: HashMap<Player, SideUi> = hashMapOf()
+        private val sideUis: ConcurrentHashMap<ServerUser, SideUi> = ConcurrentHashMap()
 
         fun init(gameServer: GameServer) {
             val sideBarNode = EventNode.type("sidebar", EventFilter.PLAYER)
                 .addListener(PlayerSkinInitEvent::class.java) { event ->
-                    gameServer.defaultSideUi(event.player)
+                    gameServer.defaultSideUi(event.player as ServerUser)
                 }
                 .addListener(PlayerDisconnectEvent::class.java) { event ->
                     remove(event.player)
