@@ -3,6 +3,7 @@ package net.skykingdoms.backend.minestom
 import net.lingala.zip4j.ZipFile
 import net.minestom.server.MinecraftServer
 import net.skykingdoms.api.backend.util.config.*
+import net.skykingdoms.api.protocol.platform.ConsoleLogger
 import net.skykingdoms.api.protocol.platform.Platform
 import net.skykingdoms.api.protocol.server.GameType
 import net.skykingdoms.api.protocol.server.ServerScaleType
@@ -27,6 +28,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+import java.util.logging.Logger
 
 object MinestomConnector {
     private const val CONFIG_FILE = "config.yml"
@@ -65,6 +67,8 @@ object MinestomConnector {
         connection = LocalClientConnection(
             InetSocketAddress(serverConfig.coordinatorIp, serverConfig.coordinatorPort), 2
         );
+
+        Platform.init(ConsoleLogger(), connection, MinecraftServer.LOGGER as Logger)
 
         HeartBeat.runSync {
             try {
