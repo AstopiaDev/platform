@@ -11,9 +11,9 @@ object MainLobbyServer : LobbyServer() {
 
         SideUi.init(this)
 
-        globalEventHandler.addListener(PlayerChunkLoadEvent::class.java) { event ->
+/*        globalEventHandler.addListener(PlayerChunkLoadEvent::class.java) { event ->
             ServerSelectGui(event.player)
-        }
+        }*/
     }
 
     override fun defaultSideUi(loader: Player): SideUi? {

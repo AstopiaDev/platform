@@ -1,7 +1,14 @@
 import net.minestom.server.coordinate.Pos
+import net.minestom.server.entity.GameMode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.instance.IChunkLoader
+import net.minestom.server.instance.InstanceContainer
+import net.minestom.server.instance.LightingChunk
 import net.minestom.server.instance.anvil.AnvilLoader
+import net.minestom.server.registry.DynamicRegistry
+import net.minestom.server.utils.NamespaceID
+import net.minestom.server.utils.chunk.ChunkSupplier
+import net.minestom.server.world.DimensionType
 import net.skykingdoms.api.backend.util.config.Configuration
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider
 import net.skykingdoms.api.protocol.logging.Logging
@@ -22,25 +29,15 @@ abstract class LobbyServer : GameServer() {
     lateinit var spawnPoint: Pos;
 
     override fun onStart() {
-        val instanceContainer = instanceManager.createInstanceContainer()
-        val file = File("world.slime")
-        val worldSource: WorldSource = FileWorldSource(file)
-        val slimeLoader: IChunkLoader = SlimeFormatLoader(instanceContainer, worldSource)
-
-        instanceContainer.chunkLoader = slimeLoader
-        /*instanceContainer.chunkLoader = AnvilLoader("world")*/
-
-        val loader: AnvilLoader
-
+        val instanceContainer = createInstanceContainer()
 
         config = ConfigurationProvider.YAML.load(File("config.yml"))
         spawnPoint = LocationUtil.strToPos(config.getString("spawn_point"))
 
-        /*SlimeFormatSerializer().createFile(instanceContainer, file)*/
-
         globalEventHandler.addListener(AsyncPlayerConfigurationEvent::class.java) { event ->
             event.spawningInstance = instanceContainer
             event.player.respawnPoint = spawnPoint
+            event.player.gameMode = GameMode.CREATIVE
         }
 
         ServerChat.init()
@@ -54,5 +51,23 @@ abstract class LobbyServer : GameServer() {
             name = response.lobbyName
             Logging.IMP.info("[Lobby] Successfully deployed this lobby instance. Name: {}", name)
         }
+    }
+
+    private fun createInstanceContainer(): InstanceContainer {
+        val fullBrightDimension = DimensionType.builder()
+            .ambientLight(2.0f)
+            .build();
+        dimensionTypeManager.register(NamespaceID.from("skykingdoms:full_bright"), fullBrightDimension)
+
+        val instanceContainer = instanceManager.createInstanceContainer(
+            dimensionTypeManager.getKey(fullBrightDimension) as DynamicRegistry.Key<DimensionType>
+        )
+
+        val file = File("world.slime")
+        val worldSource: WorldSource = FileWorldSource(file)
+        val slimeLoader: IChunkLoader = SlimeFormatLoader(instanceContainer, worldSource)
+
+        instanceContainer.chunkLoader = slimeLoader
+        return instanceContainer
     }
 }

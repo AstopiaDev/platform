@@ -119,7 +119,7 @@ class SlimeFormatSerializer {
 
         // File Header and Slime version
         outStream.write(SlimeFormatLoader.slimeHeader)
-        outStream.writeByte(SlimeFormatLoader.slimeVersion.toInt())
+        outStream.writeByte(SlimeFormatLoader.SLIME_VERSION.toInt())
 
         // World version
         //outStream.writeInt(instance.)

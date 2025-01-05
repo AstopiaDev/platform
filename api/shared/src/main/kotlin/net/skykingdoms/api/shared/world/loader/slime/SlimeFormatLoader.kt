@@ -18,20 +18,22 @@ class SlimeFormatLoader(
 
     companion object {
         val slimeHeader = byteArrayOf(-79, 11)
-        val slimeVersion: Byte = 12
+        const val SLIME_VERSION: Byte = 12
     }
 
     private val chunks: Long2ObjectMap<Chunk>;
 
     init {
         val dataStream = DataInputStream(slimeSource.load())
-        val deserializer: SlimeFormatDeserializer = SlimeFormatDeserializer(instance, dataStream)
+        val deserializer: SlimeFormatDeserializer = SlimeFormatDeserializer(instance)
 
-        // File Header and Slime version
-        val slimeHeader = dataStream.readNBytes(2)
-        val slimeVersion = dataStream.readByte()
+        // File Header and File Version
+        val fileHeader = ByteArray(slimeHeader.size)
+        dataStream.read(fileHeader)
 
-        Logging.IMP.info("${slimeVersion.toInt()} yuh!")
+        val fileVersion = dataStream.readByte()
+
+        Logging.IMP.info("${fileVersion.toInt()} yuh!")
         Logging.IMP.info("${dataStream.readInt()} world version")
 
         // Chunks
@@ -59,5 +61,9 @@ class SlimeFormatLoader(
 
         val serializer = SlimeFormatSerializer()
         serializer.serialize(dataOutputStream, instance)
+    }
+
+    override fun supportsParallelLoading(): Boolean {
+        return true
     }
 }

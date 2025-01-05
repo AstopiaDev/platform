@@ -4,32 +4,47 @@ import com.github.luben.zstd.Zstd
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
+import net.kyori.adventure.nbt.BinaryTag
 import net.kyori.adventure.nbt.BinaryTagIO
+import net.kyori.adventure.nbt.ByteArrayBinaryTag
+import net.kyori.adventure.nbt.ByteBinaryTag
 import net.kyori.adventure.nbt.CompoundBinaryTag
+import net.kyori.adventure.nbt.DoubleBinaryTag
+import net.kyori.adventure.nbt.FloatBinaryTag
+import net.kyori.adventure.nbt.IntArrayBinaryTag
+import net.kyori.adventure.nbt.IntBinaryTag
+import net.kyori.adventure.nbt.ListBinaryTag
+import net.kyori.adventure.nbt.LongArrayBinaryTag
+import net.kyori.adventure.nbt.LongBinaryTag
+import net.kyori.adventure.nbt.ShortBinaryTag
+import net.kyori.adventure.nbt.StringBinaryTag
 import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.DynamicChunk
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.Section
+import net.minestom.server.instance.block.Block
 import net.minestom.server.instance.palette.Palette
 import net.skykingdoms.api.protocol.logging.Logging
 import net.skykingdoms.api.shared.util.LocationUtil
 import java.io.DataInputStream
+import kotlin.math.max
+
+// TODO: FIX LIGHTING
 
 internal class SlimeFormatDeserializer(
-    private val instance: Instance,
-    private val dataStream: DataInputStream
+    private val instance: Instance
 ) {
     companion object {
         private const val ARRAY_SIZE = 16 * 16 * 16 / (8 / 4)
 
         private fun readCompressed(stream: DataInputStream): ByteArray {
-            val compressedLength = stream.readInt();
-            val decompressedLength = stream.readInt();
-            val compressedData = ByteArray(compressedLength);
-            val decompressedData = ByteArray(decompressedLength);
-            stream.read(compressedData);
-            Zstd.decompress(decompressedData, compressedData);
-            return decompressedData;
+            val compressedLength = stream.readInt()
+            val decompressedLength = stream.readInt()
+            val compressedData = ByteArray(compressedLength)
+            val decompressedData = ByteArray(decompressedLength)
+            stream.read(compressedData)
+            Zstd.decompress(decompressedData, compressedData)
+            return decompressedData
         }
 
         private fun read(stream: DataInputStream): ByteArray {
@@ -41,49 +56,73 @@ internal class SlimeFormatDeserializer(
 
         private fun readCompound(tagBytes: ByteArray): CompoundBinaryTag? {
             if (tagBytes.isEmpty()) {
-                return null;
+                return null
             }
 
-            val nbtStream = BinaryTagIO.reader().read(FastByteArrayInputStream(tagBytes), BinaryTagIO.Compression.NONE);
+            val nbtStream = BinaryTagIO.reader().read(FastByteArrayInputStream(tagBytes), BinaryTagIO.Compression.NONE)
             return nbtStream
         }
 
-        private fun deserializePalette(paletteData: ByteArray, palette: Palette) {
-            var index = 0
-            var byteIndex = 0
-            var bitIndex = 0
+        private fun loadTileEntities(chunk: Chunk, tileEntitiesCompound: CompoundBinaryTag?) {
+            //Logging.IMP.info(tileEntitiesCompound.toString())
+        }
 
-            while (byteIndex < paletteData.size) {
-                var value = 0
-                for (bit in 0 until palette.maxBitsPerEntry()) {
-                    val byteValue = paletteData[byteIndex].toInt() and 0xFF
-                    value = value or ((byteValue shr bitIndex) and 1 shl bit)
+        fun deserializeBlockPalette(blockStateTag: CompoundBinaryTag, palette: Palette, sectionY: Int) {
+            try {
+                val paletteList = blockStateTag.getList("palette")
+                val dataArray = blockStateTag.getLongArray("data")
 
-                    bitIndex++
+                val blockMapping = mutableMapOf<Int, Block>()
 
-                    if (bitIndex >= 8) {
-                        bitIndex = 0
-                        byteIndex++
+                for (i in 0 until paletteList.size()) {
+                    val blockCompound = paletteList.getCompound(i)
+                    val blockName = blockCompound.getString("Name")
+                    var block = Block.fromNamespaceId(blockName)
+
+                    if (block != null) {
+                        if (blockCompound.keySet().contains("Properties")) {
+                            val properties = blockCompound.getCompound("Properties")
+                            properties.forEach { (key, value) ->
+                                block = block?.withProperty(key, (value as StringBinaryTag).value())
+                            }
+                        }
+                        blockMapping[i] = block as Block
                     }
                 }
 
-                val x = index % palette.dimension()
-                val y = (index / palette.dimension()) % palette.dimension()
-                val z = index / (palette.dimension() * palette.dimension())
+                if (paletteList.size() == 0) {
+                    throw IllegalArgumentException("Palette list is empty")
+                }
 
-                palette.set(x, y, z, value)
+                val bitsPerEntry = max(4, kotlin.math.ceil(kotlin.math.log2(paletteList.size().toDouble())).toInt())
+                val entriesPerLong = 64 / bitsPerEntry
+                val maxValue = (1L shl bitsPerEntry) - 1L
 
-                index++
+                for (y in 0 until Chunk.CHUNK_SECTION_SIZE) {
+                    for (z in 0 until Chunk.CHUNK_SECTION_SIZE) {
+                        for (x in 0 until Chunk.CHUNK_SECTION_SIZE) {
+                            val blockIndex = y * Chunk.CHUNK_SECTION_SIZE * Chunk.CHUNK_SECTION_SIZE + z * Chunk.CHUNK_SECTION_SIZE + x
+                            val longIndex = blockIndex / entriesPerLong
+                            val bitOffset = (blockIndex % entriesPerLong) * bitsPerEntry
+
+                            if (longIndex >= dataArray.size) continue
+
+                            val paletteIndex = (dataArray[longIndex] shr bitOffset) and maxValue
+                            val block = blockMapping[paletteIndex.toInt()] ?: continue
+
+                            val absoluteY = (sectionY * Chunk.CHUNK_SECTION_SIZE) + y
+                            palette.set(x, absoluteY, z, block.stateId())
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
     fun deserializeWorld(dataStream: DataInputStream): ByteArray {
         val chunkBytes = readCompressed(dataStream)
-
-        // we don't really need extra tags, do we??
-/*        val extraTagBytes = readCompressed(dataStream)
-        val extraTag = readCompound(extraTagBytes)*/
 
         return chunkBytes
     }
@@ -98,77 +137,66 @@ internal class SlimeFormatDeserializer(
             val x = chunkData.readInt()
             val z = chunkData.readInt()
 
+            val chunk = instance.chunkSupplier.createChunk(instance, x, z)
+
             // Sections
-            val sectionAmount = -4 - 19 + 1
-            val chunkSections: Array<Section> = Array(sectionAmount) { throw IllegalStateException("Not initialized") }
             val sectionCount = chunkData.readInt()
 
             for (i in 0 until sectionCount) {
-                val section = Section()
+                val sectionY = i - 4
+
+                val section = chunk.getSection(sectionY)
 
                 // Block Light Nibble Array
-                val blockLight = section.blockLight()
+                val blockLightByteArray = ByteArray(ARRAY_SIZE)
                 if (chunkData.readBoolean()) {
-                    val blockLightByteArray = ByteArray(ARRAY_SIZE)
                     chunkData.read(blockLightByteArray)
-                    blockLight.set(blockLightByteArray)
+                    section.blockLight().set(blockLightByteArray)
                 }
 
                 // Sky Light Nibble Array
-                val skyLight = section.skyLight()
+                val skyLightByteArray = ByteArray(ARRAY_SIZE)
                 if (chunkData.readBoolean()) {
-                    val skyLightByteArray = ByteArray(ARRAY_SIZE)
                     chunkData.read(skyLightByteArray)
-                    skyLight.set(skyLightByteArray)
+                    section.skyLight().set(skyLightByteArray)
                 }
 
-                //  TAG_List("palette"): 1 entries of type TAG_Compound
-                //[13:15:06 INFO]:    {
-                //[13:15:06 INFO]:       TAG_Compound: 1 entries
-                //[13:15:06 INFO]:       {
-                //[13:15:06 INFO]:          TAG_String("Name"): minecraft:air
-                //[13:15:06 INFO]:       }
                 // Block Data
                 val blockStateData = ByteArray(chunkData.readInt())
-                val blocksPalette: Palette = section.blockPalette()
                 chunkData.read(blockStateData)
                 val blockStateTag = readCompound(blockStateData)
 
-                Logging.IMP.info(blockStateTag.toString())
-
-                //deserializePalette(blockPaletteData, blocksPalette)
+                if (blockStateTag != null) {
+                    deserializeBlockPalette(blockStateTag, section.blockPalette(), sectionY)
+                }
 
                 // Biome Data
-                val biomePaletteData: ByteArray = ByteArray(chunkData.readInt())
-                val biomePalette: Palette = section.biomePalette()
+                val biomeData: ByteArray = ByteArray(chunkData.readInt())
+                chunkData.read(biomeData)
+                val biomeTag = readCompound(biomeData)
 
-                chunkData.read(biomePaletteData)
-
-                deserializePalette(biomePaletteData, biomePalette)
-
-                chunkSections[i] = section
+                if (biomeTag != null) {
+                    //prettyPrintNBT(biomeTag as BinaryTag)
+                }
             }
 
-            val chunk = DynamicChunk(instance, x, z)
+            val heightMapData = ByteArray(chunkData.readInt())
+            chunkData.read(heightMapData)
+            val heightMaps = readCompound(heightMapData)
 
-            // Motion Blocking Height Map
-            val motionBlockingHeightMapSize = chunkData.readInt()
-            val motionBlockingHeightMap: LongArray = LongArray(motionBlockingHeightMapSize)
-
-            for (i in 0 until motionBlockingHeightMapSize) {
-                motionBlockingHeightMap[i] = chunkData.readLong()
+            if (heightMaps != null) {
+                chunk.loadHeightmapsFromNBT(heightMaps)
             }
 
-            chunk.motionBlockingHeightmap().loadFrom(motionBlockingHeightMap)
+            val tileEntities = read(chunkData)
+            val tileEntitiesCompound = readCompound(tileEntities)
+            loadTileEntities(chunk, tileEntitiesCompound)
 
-            val worldSurfaceHeightMapSize = chunkData.readInt()
-            val worldSurfaceHeightMap: LongArray = LongArray(worldSurfaceHeightMapSize)
+            val entities = read(chunkData)
+            val entitiesCompound = readCompound(entities)
 
-            for (i in 0 until worldSurfaceHeightMapSize) {
-                worldSurfaceHeightMap[i] = chunkData.readLong()
-            }
-
-            chunk.worldSurfaceHeightmap().loadFrom(worldSurfaceHeightMap)
+            val rawExtra = read(chunkData)
+            val extra = readCompound(rawExtra)
 
             chunkMap.put(LocationUtil.chunkPos(x, z), chunk)
         }

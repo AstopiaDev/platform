@@ -5,7 +5,6 @@ import net.minestom.server.entity.Player
 import net.skykingdoms.api.protocol.logging.Logging
 import net.skykingdoms.api.shared.ui.gui.Gui
 import net.skykingdoms.api.shared.ui.sui.SideUi
-import net.skykingdoms.backend.minestom.MinestomConnector
 import net.skykingdoms.backend.minestom.event.ConnectionEstablishedEvent
 
 abstract class GameServer : Server {
@@ -15,6 +14,7 @@ abstract class GameServer : Server {
     val commandManager = MinecraftServer.getCommandManager()
     val schedulerManager = MinecraftServer.getSchedulerManager()
     val globalEventHandler = MinecraftServer.getGlobalEventHandler()
+    val dimensionTypeManager = MinecraftServer.getDimensionTypeRegistry()
 
     fun start() {
         //MinestomConnector.init()

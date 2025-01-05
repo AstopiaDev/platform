@@ -16,5 +16,4 @@ object LocationUtil {
     fun chunkPos(x: Int, z: Int): Long {
         return (x.toLong() shl 32) or (z.toLong() and 0xFFFFFFFFL)
     }
-
 }
