@@ -40,7 +40,7 @@ abstract class LobbyServer : GameServer() {
             event.player.gameMode = GameMode.CREATIVE
         }
 
-        ServerChat.init()
+        ServerChat.init(globalEventHandler)
     }
 
     override fun onStop() {

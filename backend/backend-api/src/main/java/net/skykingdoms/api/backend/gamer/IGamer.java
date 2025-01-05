@@ -1,5 +1,6 @@
 package net.skykingdoms.api.backend.gamer;
 
+import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.backend.language.ILanguage;
 import net.skykingdoms.api.backend.permission.IUserRank;
 import net.skykingdoms.api.backend.permission.UserRankContainer;
@@ -25,10 +26,14 @@ public interface IGamer extends ICommandSender {
      */
     @NotNull String getNameAsString();
 
+    @NotNull Component getNameAsComponent();
+
     /**
      * @return player's display name (prefixed with rank)
      */
     @NotNull String getDisplayNameAsString();
+
+    @NotNull Component getDisplayNameAsComponent();
 
     /**
      * @return player's selected language

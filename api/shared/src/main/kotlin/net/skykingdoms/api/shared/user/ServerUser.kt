@@ -8,15 +8,25 @@ import net.skykingdoms.api.backend.gamer.IGamer
 import net.skykingdoms.api.backend.language.ILanguage
 import net.skykingdoms.api.backend.permission.IUserRank
 import net.skykingdoms.api.backend.permission.UserRankContainer
+import net.skykingdoms.api.shared.chat.Chat
+import net.skykingdoms.api.shared.chat.ServerChat
 import net.skykingdoms.backend.base.language.Language
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
 
-class ServerUser(val connection: PlayerConnection, gameProfile: GameProfile) : Player(connection, gameProfile), IGamer {
+class ServerUser(val connection: PlayerConnection,
+                 gameProfile: GameProfile,
+                 var chat: Chat = ServerChat.defaultChat,
+                 private var language: ILanguage = Language.DEFAULT
+) : Player(connection, gameProfile), IGamer {
     private val id: Int = -1
-    private var language: ILanguage = Language.DEFAULT
 
+    override fun UNSAFE_init(): CompletableFuture<Void?>? {
+        chat.participants().add(this)
+        return super.UNSAFE_init()
+    }
 
     override fun sendMessageAsString(message: String?) {
         if (message != null) {
@@ -44,8 +54,16 @@ class ServerUser(val connection: PlayerConnection, gameProfile: GameProfile) : P
         return username
     }
 
+    override fun getNameAsComponent(): Component {
+        return Component.text(nameAsString)
+    }
+
     override fun getDisplayNameAsString(): String {
         return username
+    }
+
+    override fun getDisplayNameAsComponent(): Component {
+        return Component.text(displayNameAsString)
     }
 
     override fun getLanguage(): ILanguage {
@@ -75,6 +93,4 @@ class ServerUser(val connection: PlayerConnection, gameProfile: GameProfile) : P
     override fun isLoggedIn(): Boolean {
         return false
     }
-
-
 }
