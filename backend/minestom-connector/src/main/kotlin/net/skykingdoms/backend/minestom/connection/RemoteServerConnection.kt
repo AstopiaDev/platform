@@ -2,7 +2,7 @@ package net.skykingdoms.backend.minestom.connection
 
 import io.netty.channel.socket.SocketChannel
 import net.minestom.server.MinecraftServer
-import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.protocol.platform.Platform
 import net.skykingdoms.api.protocol.type.RemoteConnectedType
 import net.skykingdoms.backend.minestom.HeartBeat
 import net.skykingdoms.backend.minestom.MinestomConnector
@@ -27,7 +27,7 @@ class RemoteServerConnection(local: AbstractClientChannel?, channel: SocketChann
     override fun onServerDisconnect() {
         HeartBeat.callEvent(InstanceInactiveEvent())
         MinestomConnector.reconnect = true
-        Logging.IMP.info("Disconnected")
+        Platform.logger.info("Disconnected")
     }
 
     override fun active() {
@@ -53,17 +53,17 @@ class RemoteServerConnection(local: AbstractClientChannel?, channel: SocketChann
 
     override fun process(packet: Handshake.Response?, ctx: ChannelProcessorContext?) {
         if (packet?.result == Handshake.Result.FAILED) {
-            Logging.IMP.error("[HANDSHAKE] Unable to connect to coordinator: {}", packet.message)
+            Platform.logger.error("[HANDSHAKE] Unable to connect to coordinator: {}", packet.message)
             return
         }
 
         upgradeConnection(PacketProtocol.PLAY)
 
-        Logging.IMP.info("[HANDSHAKE] Upgraded connection to PLAY")
+        Platform.logger.info("[HANDSHAKE] Upgraded connection to PLAY")
 
         Connection.awaitPacket(SecurityToken.Request())?.whenComplete { response, throwable ->
             if (throwable != null) {
-                Logging.IMP.stacktrace(throwable, "Exception raised on token request! Shutting down the server...");
+                Platform.logger.stacktrace(throwable, "Exception raised on token request! Shutting down the server...");
                 MinecraftServer.getServer().stop()
                 return@whenComplete
             }
@@ -85,6 +85,6 @@ class RemoteServerConnection(local: AbstractClientChannel?, channel: SocketChann
         currentData.nodeName = updatedData.nodeName
 
         HeartBeat.callEvent(InstanceDataUpdateEvent(updatedData))
-        Logging.IMP.info("Updated instance data: {} @ {}", currentData.serverName, currentData.nodeName)
+        Platform.logger.info("Updated instance data: {} @ {}", currentData.serverName, currentData.nodeName)
     }
 }

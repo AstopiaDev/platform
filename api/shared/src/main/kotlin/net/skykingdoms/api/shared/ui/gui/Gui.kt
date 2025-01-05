@@ -6,11 +6,9 @@ import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.inventory.InventoryPreClickEvent
-import net.minestom.server.event.trait.InventoryEvent
 import net.minestom.server.inventory.Inventory
 import net.minestom.server.inventory.InventoryType
 import net.minestom.server.item.ItemStack
-import net.skykingdoms.api.protocol.logging.Logging
 import net.skykingdoms.api.shared.ui.UserInterface
 
 abstract class Gui(

@@ -6,21 +6,18 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.AsyncExecution;
 import net.skykingdoms.backend.megamind.MegamindApp;
 import net.skykingdoms.backend.megamind.data.gamer.Gamer;
 import net.skykingdoms.backend.megamind.server.AbstractPlayerHolder;
 import net.skykingdoms.backend.megamind.server.impl.ProxyServer;
 import net.skykingdoms.backend.protocol.packet.Packet;
-import net.skykingdoms.backend.protocol.packet.play.S10RegisterCommands;
 import net.skykingdoms.backend.protocol.packet.play.ServerDeploy;
 import net.skykingdoms.backend.protocol.server.deploy.impl.ProxyDeployRequest;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -45,10 +42,10 @@ public final class ProxyManager {
      * in case of complete network reboot.
      */
     public void postBootstrap() {
-        Logging.IMP.info("[ProxyManager] Scheduled proxy bootstrap process");
-        Logging.IMP.info("[ProxyManager] If any proxy connects to coordinator in next 20 seconds");
-        Logging.IMP.info("[ProxyManager] The process aborts it's scheduling");
-        Logging.IMP.info("");
+        Platform.logger.info("[ProxyManager] Scheduled proxy bootstrap process");
+        Platform.logger.info("[ProxyManager] If any proxy connects to coordinator in next 20 seconds");
+        Platform.logger.info("[ProxyManager] The process aborts it's scheduling");
+        Platform.logger.info("");
 
         this.proxyCheckup();
         this.proxyRestartTask();
@@ -84,7 +81,7 @@ public final class ProxyManager {
         MegamindApp.INSTANCE.scheduler().schedule(() -> {
             if (!proxyServers.isEmpty()) return; // some proxy registered
 
-            Logging.IMP.info("[ProxyManager] No proxy server came online! Bootstrapping cluster of proxy servers ...");
+            Platform.logger.info("[ProxyManager] No proxy server came online! Bootstrapping cluster of proxy servers ...");
 
             DeploymentManager.INSTANCE.sendDeploymentRequest(new ProxyDeployRequest(), ServerDeploy.DeploymentTarget.PROXY, false, null, 0, $ -> {});
         }, 20, TimeUnit.SECONDS);
@@ -133,7 +130,7 @@ public final class ProxyManager {
             throw new IllegalArgumentException("Proxy with this name is already registered!");
         }
 
-        Logging.IMP.info("[Proxy] Registered proxy {}", proxyServer.getName());
+        Platform.logger.info("[Proxy] Registered proxy {}", proxyServer.getName());
 
         proxyServers.put(proxyServer.getName(), proxyServer);
 
@@ -149,7 +146,7 @@ public final class ProxyManager {
             return;
         }
 
-        Logging.IMP.info("[Proxy] Proxy {} went down at {} with {} players online",
+        Platform.logger.info("[Proxy] Proxy {} went down at {} with {} players online",
                 proxy.getName(),
                 proxy.getNode().getName(),
                 proxy.getPlayerIds().length);
@@ -163,13 +160,13 @@ public final class ProxyManager {
         // deploy new instance, so players would
         // have an ability to connect back 0_0
         if (proxyServers.isEmpty()) {
-            Logging.IMP.info("It looks like the latest proxy server got unregistered, and now no active proxies are running!");
-            Logging.IMP.info("If in next 10 seconds no proxy server comes online we deploy a new proxy instance...");
+            Platform.logger.info("It looks like the latest proxy server got unregistered, and now no active proxies are running!");
+            Platform.logger.info("If in next 10 seconds no proxy server comes online we deploy a new proxy instance...");
 
             MegamindApp.INSTANCE.scheduler().schedule(() -> {
                 if (!proxyServers.isEmpty()) return;
 
-                Logging.IMP.info("No proxy server came online! Bootstrapping new proxy instance ...");
+                Platform.logger.info("No proxy server came online! Bootstrapping new proxy instance ...");
 
                 //DeploymentManager.INSTANCE.sendDeploymentRequest(new ProxyDeployRequest(), ServerDeploy.DeploymentTarget.PROXY, false, null, 0, $ -> {});
             }, 10, TimeUnit.SECONDS);

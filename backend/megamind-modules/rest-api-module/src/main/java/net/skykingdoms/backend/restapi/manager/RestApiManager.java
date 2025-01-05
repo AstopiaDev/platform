@@ -1,7 +1,7 @@
 package net.skykingdoms.backend.restapi.manager;
 
 import lombok.SneakyThrows;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.restapi.endpoints.EndpointsManager;
 import spark.Filter;
 import spark.Request;
@@ -22,7 +22,7 @@ public final class RestApiManager {
         // adding endpoints
         EndpointsManager.INSTANCE.initialize();
 
-        Logging.IMP.info("[RestAPI] Listening on port {}", port);
+        Platform.logger.info("[RestAPI] Listening on port {}", port);
         enableCORS("*", "*", "*");
         awaitInitialization();
     }

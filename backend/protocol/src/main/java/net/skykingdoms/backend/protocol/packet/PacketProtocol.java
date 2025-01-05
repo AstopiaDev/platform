@@ -66,6 +66,7 @@ public enum PacketProtocol {
             toClient(38, S38UpdateDuelData.class, S38UpdateDuelData::new);
             toClient(39, S39UpdateAuth.class, S39UpdateAuth::new);
 
+            toServer(0, LogMessage.class, LogMessage::new);
             toServer(1, C0PlayerConnected.class, C0PlayerConnected::new);
             toServer(2, Tabcomplete.Request.class, Tabcomplete.Request::new);
             toServer(3, NodeSnapshot.Response.class, NodeSnapshot.Response::new);

@@ -58,7 +58,7 @@ public final class SetPropertyCommand {
 
         session.sendLocalizedMessage("command_setproperty_result",
                 "%key%", key,
-                "%player%", target.getDisplayNameAsString(),
+                "%player%", target.getDisplayName(),
                 "%value%", session.getArgument(2)
         );
     }

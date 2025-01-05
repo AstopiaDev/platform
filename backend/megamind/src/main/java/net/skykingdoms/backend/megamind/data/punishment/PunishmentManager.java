@@ -7,7 +7,7 @@ import net.skykingdoms.api.backend.punishment.PunishmentMeta;
 import net.skykingdoms.api.backend.punishment.PunishmentType;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
 import net.skykingdoms.api.megamind.event.impl.core.PunishmentLiftEvent;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.punishment.PunishmentSqlHandler;
 import net.skykingdoms.backend.base.dependency.Dependency;
 import net.skykingdoms.backend.base.gamer.CommonGamer;
@@ -60,7 +60,7 @@ public final class PunishmentManager {
             // adding only lifted punishments
             activePunishments.addAll(punishmentMetas.stream().filter(c -> !c.isLifted()).collect(Collectors.toSet()));
 
-            Logging.IMP.info("[PunishmentManager] Loaded {} active punishments ({} ms)",
+            Platform.logger.info("[PunishmentManager] Loaded {} active punishments ({} ms)",
                     activePunishments.size(), System.currentTimeMillis() - epoch);
         }).join();
 
@@ -126,7 +126,7 @@ public final class PunishmentManager {
         // removing shit
         activePunishments.remove(meta);
 
-        val executorString = remover < 1 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(remover, CommonGamer::loadGroupsAndName).getDisplayNameAsString();
+        val executorString = remover < 1 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(remover, CommonGamer::loadGroupsAndName).getDisplayName();
 
         val liftMeta = PunishmentSqlHandler.INSTANCE.createPunishmentLiftRecord(remover, reason);
 
@@ -145,12 +145,12 @@ public final class PunishmentManager {
 
             StaffChatManager.INSTANCE.sendMessage("staffchat_unmuted_message",
                     "%executor%", executorString,
-                    "%violator%", gamer.getDisplayNameAsString(),
+                    "%violator%", gamer.getDisplayName(),
                     "%reason%", reason);
         } else {
             StaffChatManager.INSTANCE.sendMessage("staffchat_unbanned_message",
                     "%executor%", executorString,
-                    "%violator%", gamer.getDisplayNameAsString(),
+                    "%violator%", gamer.getDisplayName(),
                     "%reason%", reason);
         }
 
@@ -191,7 +191,7 @@ public final class PunishmentManager {
             if (type == PunishmentType.BAN) {
                 gamer.disconnect(getPunishmentReasonFormatted(bakedPunishmentMeta, Language.DEFAULT));
             } else {
-                gamer.sendMessageAsString(getPunishmentReasonFormatted(bakedPunishmentMeta, (Language) gamer.getLanguage()));
+                gamer.sendMessage(getPunishmentReasonFormatted(bakedPunishmentMeta, (Language) gamer.getLanguage()));
             }
         }
 
@@ -204,26 +204,26 @@ public final class PunishmentManager {
                 .locale(DurationFormatter.EN_SHORT)
                 .min(DurationField.SEC)
                 .max(DurationField.DAY).build());
-        val executorString = executorId == 0 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(executorId, CommonGamer::loadGroupsAndName).getDisplayNameAsString();
+        val executorString = executorId == 0 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(executorId, CommonGamer::loadGroupsAndName).getDisplayName();
 
         // don't look at warnings, we know what we do :3
         if (type == PunishmentType.BAN && !bakedPunishmentMeta.isWatchCatBan()) {
             if (bakedPunishmentMeta.isPermanent()) {
                 StaffChatManager.INSTANCE.sendMessage("staffchat_permabanned_message",
                         "%executor%", executorString,
-                        "%violator%", gamer.getDisplayNameAsString(),
+                        "%violator%", gamer.getDisplayName(),
                         "%reason%", reason);
             } else {
                 StaffChatManager.INSTANCE.sendMessage("staffchat_tempbanned_message",
                         "%executor%", executorString,
-                        "%violator%", gamer.getDisplayNameAsString(),
+                        "%violator%", gamer.getDisplayName(),
                         "%reason%", reason,
                         "%duration%", durationString);
             }
         } else if (type == PunishmentType.MUTE) {
             StaffChatManager.INSTANCE.sendMessage("staffchat_muted_message",
                     "%executor%", executorString,
-                    "%violator%", gamer.getDisplayNameAsString(),
+                    "%violator%", gamer.getDisplayName(),
                     "%reason%", reason,
                     "%duration%", durationString);
         }
@@ -277,7 +277,7 @@ public final class PunishmentManager {
                 continue;
             }
 
-            Logging.IMP.info("[PunishmentManager] {} #{} expired",
+            Platform.logger.info("[PunishmentManager] {} #{} expired",
                     punishment.getPunishmentType(), punishment.getMetaId());
 
             pendingRemoval.add(punishment);

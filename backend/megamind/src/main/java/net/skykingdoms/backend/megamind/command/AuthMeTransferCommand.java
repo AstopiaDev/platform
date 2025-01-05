@@ -3,7 +3,7 @@ package net.skykingdoms.backend.megamind.command;
 import net.skykingdoms.api.backend.command.NamedCommand;
 import net.skykingdoms.api.backend.command.condition.WithCondition;
 import net.skykingdoms.api.backend.command.execution.Executor;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.auth.AuthSqlHandler;
 import net.skykingdoms.backend.base.data.network.NetworkSqlHandler;
 import net.skykingdoms.backend.base.language.Language;
@@ -72,7 +72,7 @@ public class AuthMeTransferCommand {
                 AuthSqlHandler.INSTANCE.insertAuthRecord(gamerId, premium, password, hashType);
             }
 
-            Logging.IMP.info("Done transferring all authme data");
+            Platform.logger.info("Done transferring all authme data");
         }).join();
     }
 }

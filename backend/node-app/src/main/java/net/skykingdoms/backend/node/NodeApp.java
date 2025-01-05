@@ -10,7 +10,7 @@ import lombok.val;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.type.NetworkType;
 import net.skykingdoms.backend.node.config.BaseNodeConfiguration;
@@ -61,19 +61,19 @@ public enum NodeApp {
         this.connect();
 
         this.bootElapsedEpoch = System.currentTimeMillis() - startDate;
-        Logging.IMP.info("[Bootstrap] Done node initialization process. {} ms elapsed", bootElapsedEpoch);
+        Platform.logger.info("[Bootstrap] Done node initialization process. {} ms elapsed", bootElapsedEpoch);
     }
 
     private void loadConfig() {
         reloadConfiguration();
         networkType = NetworkType.valueOf(System.getProperty("network.type", NetworkType.DEVELOPMENT.name()));
-        Logging.IMP.info("Network type for this coordinator instance is: {}", networkType.name());
+        Platform.logger.info("Network type for this coordinator instance is: {}", networkType.name());
     }
 
     private void initExecutors() {
         scheduler = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
         executor = Executors.newCachedThreadPool();
-        Logging.IMP.info("[Bootstrap] Executors instantiated");
+        Platform.logger.info("[Bootstrap] Executors instantiated");
     }
 
     private void bootManagers() {
@@ -90,10 +90,10 @@ public enum NodeApp {
 
         try {
             connection.connectSynchronized();
-            Logging.IMP.info("[Bootstrap] Synchronized connection invoked");
+            Platform.logger.info("[Bootstrap] Synchronized connection invoked");
         } catch (ConnectException e) {
             e.printStackTrace();
-            Logging.IMP.warn("[Bootstrap] Shutting down due to internal connection error");
+            Platform.logger.warn("[Bootstrap] Shutting down due to internal connection error");
             return;
         }
 
@@ -135,7 +135,7 @@ public enum NodeApp {
                             .map(ServerScaleType::valueOf).distinct().toArray(ServerScaleType[]::new)
             );
         } catch (IOException e) {
-            Logging.IMP.stacktrace(e, "Can't load configuration file");
+            Platform.logger.stacktrace(e, "Can't load configuration file");
         }
     }
 

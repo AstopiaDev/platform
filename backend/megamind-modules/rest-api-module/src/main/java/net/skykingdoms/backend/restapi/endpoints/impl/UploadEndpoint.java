@@ -1,8 +1,6 @@
 package net.skykingdoms.backend.restapi.endpoints.impl;
 
-import lombok.NonNull;
-import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 import net.skykingdoms.backend.restapi.endpoints.*;
 import spark.Request;
@@ -12,7 +10,6 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 @ApiMethod(RequestType.POST)
@@ -24,7 +21,7 @@ public final class UploadEndpoint implements IEndpoint {
 
     @Override
     public Object handle(Request request, Response response) {
-        Logging.IMP.info("Received upload request.");
+        Platform.logger.info("Received upload request.");
         try {
             if (!request.contentType().contains("multipart/form-data")) {
                 response.status(400);
@@ -61,7 +58,7 @@ public final class UploadEndpoint implements IEndpoint {
             return "File uploaded successfully.";
 
         } catch (Exception e) {
-            Logging.IMP.stacktrace(e, "Error during file upload.");
+            Platform.logger.stacktrace(e, "Error during file upload.");
             response.status(500);
             return "An error occurred while processing the upload.";
         }

@@ -1,7 +1,7 @@
 package net.skykingdoms.backend.megamind.api.command;
 
 import net.skykingdoms.api.backend.permission.UserRankContainer;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.language.Language;
 import net.skykingdoms.backend.base.permission.UserRank;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ public enum ConsoleCommandSender implements CommandSender {
     private final String name = "Console";
 
     @Override
-    public @NotNull String getNameAsString() {
+    public @NotNull String getName() {
         return name;
     }
 
@@ -22,18 +22,18 @@ public enum ConsoleCommandSender implements CommandSender {
     }
 
     @Override
-    public String getDisplayNameAsString() {
+    public String getDisplayName() {
         return name;
     }
 
     @Override
-    public void sendMessageAsString(String message) {
-        Logging.IMP.info(message);
+    public void sendMessage(String message) {
+        Platform.logger.info(message);
     }
 
     @Override
     public void sendRawMessage(String message) {
-        Logging.IMP.info(message);
+        Platform.logger.info(message);
     }
 
     @Override

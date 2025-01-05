@@ -3,7 +3,7 @@ package net.skykingdoms.backend.minestom
 import net.lingala.zip4j.ZipFile
 import net.minestom.server.MinecraftServer
 import net.skykingdoms.api.backend.util.config.*
-import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.protocol.platform.Platform
 import net.skykingdoms.api.protocol.server.GameType
 import net.skykingdoms.api.protocol.server.ServerScaleType
 import net.skykingdoms.api.protocol.type.GameMode
@@ -69,8 +69,8 @@ object MinestomConnector {
         HeartBeat.runSync {
             try {
                 connection.connectSynchronized()
-                Logging.IMP.info("[connection] Synchronized")
-                Logging.IMP.info("[boot] Executing core bootstrap [...]")
+                Platform.logger.info("[connection] Synchronized")
+                Platform.logger.info("[boot] Executing core bootstrap [...]")
                 Connection.connection(connection)
             } catch (e: ConnectException) {
                 e.printStackTrace()
@@ -143,36 +143,36 @@ object MinestomConnector {
                 ConfigurationProvider.getProvider(YamlConfiguration::class.java).load(file)
             } else null
         } catch (e: Exception) {
-            Logging.IMP.stacktrace(e, "Can't load the configuration file!")
+            Platform.logger.stacktrace(e, "Can't load the configuration file!")
             null
         }
     }
 
     private fun logInitialization() {
-        Logging.IMP.info("[boot] Dumped ENV: {}", System.getenv().entries.joinToString(", ") { "${it.key}=${it.value}" })
-        Logging.IMP.info("[boot] Agent args: {} @ {} @ {}",
+        Platform.logger.info("[boot] Dumped ENV: {}", System.getenv().entries.joinToString(", ") { "${it.key}=${it.value}" })
+        Platform.logger.info("[boot] Agent args: {} @ {} @ {}",
             instanceData.serverScaleType, instanceData.gameType, gameMode)
     }
 
     private fun downloadAssets() {
-        Logging.IMP.info("[boot] Downloading global assets [...]")
+        Platform.logger.info("[boot] Downloading global assets [...]")
         downloadAndExtractAssets(gameType = instanceData.gameType, outputPrefix = "stash")
-        Logging.IMP.info("[boot] Assets downloaded [ok]")
+        Platform.logger.info("[boot] Assets downloaded [ok]")
 
         if (isLobby()) {
-            Logging.IMP.info("[boot] Detected lobby configuration, downloading assets [...]")
+            Platform.logger.info("[boot] Detected lobby configuration, downloading assets [...]")
             downloadAndExtractAssets(gameType = instanceData.gameType, outputPrefix = "lobby", isLobby = true)
-            Logging.IMP.info("[boot] Lobby assets downloaded [ok]")
+            Platform.logger.info("[boot] Lobby assets downloaded [ok]")
         }
     }
 
     private fun processTestFlowIfNeeded() {
         if (isTestFlow()) {
-            Logging.IMP.info("[boot] Processing testflow data [...]")
+            Platform.logger.info("[boot] Processing testflow data [...]")
             getTestFlowName()?.let { testFlowName ->
                 downloadAndExtractAssets(outputPrefix = "testflow", name = testFlowName)
                 testFlowId = config?.getInt("testFlowId") ?: -1
-                Logging.IMP.info("[boot] TestFlow ID: {}", testFlowId)
+                Platform.logger.info("[boot] TestFlow ID: {}", testFlowId)
             }
         }
     }
@@ -190,7 +190,7 @@ object MinestomConnector {
         downloadFile(url, outputFile)
         unzip(outputFile, Paths.get("."))
 
-        Logging.IMP.info("[boot] Assets fetched in ${System.currentTimeMillis() - start}ms")
+        Platform.logger.info("[boot] Assets fetched in ${System.currentTimeMillis() - start}ms")
     }
 
     private fun buildAssetUrl(

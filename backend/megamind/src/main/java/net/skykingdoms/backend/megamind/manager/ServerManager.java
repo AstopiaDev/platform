@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameState;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
@@ -141,16 +141,16 @@ public final class ServerManager {
         val name = parent.getName() + ((char) ('A' + arenaId - 1));
         val gameServer = getGameServer(name);
         if (gameServer == null) {
-            Logging.IMP.warn("[ServerManager/D] No such server: {}", name);
+            Platform.logger.warn("[ServerManager/D] No such server: {}", name);
             return;
         }
 
         if (gameServer.getCurrentState() == state) {
-            Logging.IMP.warn("[ServerManager/D] {} already in {}-state", name, state.name());
+            Platform.logger.warn("[ServerManager/D] {} already in {}-state", name, state.name());
             return;
         }
 
-        Logging.IMP.warn("[ServerManager/D] {} updated to {}-state", name, state.name());
+        Platform.logger.warn("[ServerManager/D] {} updated to {}-state", name, state.name());
 
         gameServer.setCurrentState(state);
 
@@ -181,7 +181,7 @@ public final class ServerManager {
 
     public void flushGameBoot(final @NonNull Object identify) {
         pendingGameDeployments.remove(identify);
-        Logging.IMP.info("[ServerManager/D] Flushed deployment info of {}", identify);
+        Platform.logger.info("[ServerManager/D] Flushed deployment info of {}", identify);
     }
 
     public GameServer getGameServer(final @NonNull BukkitServer parent,
@@ -441,7 +441,7 @@ public final class ServerManager {
 
         // todo: route gamers
 
-        Logging.IMP.info("[GameServer] Removed {} game server with {} players on it",
+        Platform.logger.info("[GameServer] Removed {} game server with {} players on it",
                 gameServer.getName(), gameServer.getPlayerIds().length);
 
         ProxyManager.INSTANCE.sendToProxies(new S07UnregisterServer(gameServer.getName()));
@@ -452,7 +452,7 @@ public final class ServerManager {
     public void removePersistentServer(final @NonNull PersistentServer persistentServer) {
         persistentServers.remove(persistentServer);
 
-        Logging.IMP.info("[PersistentServer] Removed {} persistent server with {} players on it", persistentServer.getName(), persistentServer.getPlayerIds().length);
+        Platform.logger.info("[PersistentServer] Removed {} persistent server with {} players on it", persistentServer.getName(), persistentServer.getPlayerIds().length);
 
         LookupManager.INSTANCE.handleServerRemove(persistentServer);
     }
@@ -469,7 +469,7 @@ public final class ServerManager {
             return;
         }
 
-        Logging.IMP.info("[Bukkit] Removed {} instance", pending.getName());
+        Platform.logger.info("[Bukkit] Removed {} instance", pending.getName());
 
         // Removing shit from command mapper (we don't need it anymore)
         commandMapper.flushServerCommands(pending.getName());
@@ -495,14 +495,14 @@ public final class ServerManager {
                 .collect(Collectors.toList());
 
         if (minors_mmmmm.size() > 0) {
-            Logging.IMP.info("With this server we also remove {} servers:", minors_mmmmm.size());
+            Platform.logger.info("With this server we also remove {} servers:", minors_mmmmm.size());
             for (val m : minors_mmmmm) {
 
                 if (sendToProxies) {
                     ProxyManager.INSTANCE.sendToProxies(new S07UnregisterServer(m.getName()));
                 }
 
-                Logging.IMP.info("- " + m.getName());
+                Platform.logger.info("- " + m.getName());
 
                 if (m instanceof GameServer) {
                     removeGameServer((GameServer) m);

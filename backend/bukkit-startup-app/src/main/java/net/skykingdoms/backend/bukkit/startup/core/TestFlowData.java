@@ -2,7 +2,7 @@ package net.skykingdoms.backend.bukkit.startup.core;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public final class TestFlowData {
         fileName = fileName.replace("]", "");
         fileName = fileName.replace("[", "");
 
-        Logging.IMP.info("[boot/debug] added relocation: {} -> {}", fileName, target);
+        Platform.logger.info("[boot/debug] added relocation: {} -> {}", fileName, target);
         relocations.put(fileName, target);
     }
 

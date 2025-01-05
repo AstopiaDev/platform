@@ -20,18 +20,18 @@ public enum NetworkState {
      * Common server state that allows everyone to join
      */
     OPEN("motd", Consumer.empty(), gamer -> {
-        gamer.sendMessageAsString("§cYou might experience a lot of bugs, we have a new system that is still in development.\n §cPlease report any bugs to our staff team.");
+        gamer.sendMessage("§cYou might experience a lot of bugs, we have a new system that is still in development.\n §cPlease report any bugs to our staff team.");
     }),
 
     /**
      * Development server. Only STAFF is able to join
      */
     DEVELOPMENT("motd_devserver", gamer -> {
-        if (!gamer.getNameAsString().equals("TheJavaCat") && !gamer.isStaff()) {
+        if (!gamer.getName().equals("TheJavaCat") && !gamer.isStaff()) {
             gamer.localizedDisconnect("networkstate_development_disconnect_online");
         }
     }, gamer -> {
-        if (!gamer.getNameAsString().equals("TheJavaCat") && !gamer.isStaff()) {
+        if (!gamer.getName().equals("TheJavaCat") && !gamer.isStaff()) {
             gamer.localizedDisconnect("networkstate_development_disconnect");
         }
     }),
@@ -40,14 +40,14 @@ public enum NetworkState {
      * Maintenance state. Only staff can join
      */
     MAINTENANCE("motd_maintenance", gamer -> {
-        if (gamer.getNameAsString().equalsIgnoreCase("iliketesting123")) {
+        if (gamer.getName().equalsIgnoreCase("iliketesting123")) {
             return;
         }
         if (!gamer.isStaff()) {
             gamer.localizedDisconnect("networkstate_maintenance_disconnect_online");
         }
     }, gamer -> {
-        if (gamer.getNameAsString().equalsIgnoreCase("iliketesting123")) {
+        if (gamer.getName().equalsIgnoreCase("iliketesting123")) {
             return;
         }
         if (!gamer.isStaff()) {

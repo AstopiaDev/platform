@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.state.NetworkState;
 import net.skykingdoms.backend.base.language.Language;
 import net.skykingdoms.backend.protocol.type.reconnect.impl.FluentProxyDataImpl;
@@ -66,7 +66,7 @@ public enum VelocityConnector {
                 Integer.parseInt(System.getenv("PROXY_HOST").split(":")[1])
         );
 
-        Logging.IMP.info("External address: {}", this.proxyData.getHost());
+        Platform.logger.info("External address: {}", this.proxyData.getHost());
         Language.reloadLanguages();
 
 
@@ -101,7 +101,7 @@ public enum VelocityConnector {
 
             configuration = provider.load(configFile);
         } catch (IOException e) {
-            Logging.IMP.stacktrace(e, "Can't load configuration file");
+            Platform.logger.stacktrace(e, "Can't load configuration file");
         }
     }
 

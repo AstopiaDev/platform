@@ -4,7 +4,7 @@ import lombok.val;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.type.GameMode;
@@ -23,14 +23,14 @@ public final class BukkitAgentBootstrapper {
 
     // Entry-Point
     public static void main(final String @NotNull [] args) {
-        Logging.IMP.info("[entrypoint] Bootstrapping agent driver ...");
+        Platform.logger.info("[entrypoint] Bootstrapping agent driver ...");
 
         Configuration configuration = loadConfiguration();
 
         JavaVersion javaVersion = null;
 
         if (System.getProperty("java") != null) {
-            Logging.IMP.info("[entrypoint] Running in Java " + System.getProperty("java"));
+            Platform.logger.info("[entrypoint] Running in Java " + System.getProperty("java"));
             javaVersion = JavaVersion.valueOf(System.getProperty("java"));
         }
 
@@ -41,7 +41,7 @@ public final class BukkitAgentBootstrapper {
                     GameMode.valueOf(configuration == null ? System.getenv("GAME_MODE") : configuration.getString("GAME_MODE"), null), configuration, javaVersion
             );
         } catch (Throwable throwable) {
-            Logging.IMP.stacktrace(throwable, "Internal error occurred");
+            Platform.logger.stacktrace(throwable, "Internal error occurred");
         }
     }
 
@@ -54,7 +54,7 @@ public final class BukkitAgentBootstrapper {
             try {
                 configuration = provider.load(configFile);
             } catch (IOException e) {
-                Logging.IMP.stacktrace(e, "Can't load configuration file");
+                Platform.logger.stacktrace(e, "Can't load configuration file");
             }
         }
 

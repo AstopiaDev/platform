@@ -3,7 +3,7 @@ package net.skykingdoms.backend.megamind.matchmaking;
 import com.google.common.collect.Lists;
 import lombok.NonNull;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameState;
 import net.skykingdoms.backend.base.data.stat.StatisticPeriod;
 import net.skykingdoms.backend.base.util.optionals.Optional;
@@ -34,13 +34,13 @@ public final class MatchmakingManager {
 
     public void postBootstrap() {
         currentMonth = Integer.parseInt(MegamindApp.INSTANCE.getProperty("matchmaking.wipe", "" + Calendar.getInstance().get(Calendar.MONTH)));
-        Logging.IMP.info("[Matchmaking] Latest wipe month: {} (Current: {})",
+        Platform.logger.info("[Matchmaking] Latest wipe month: {} (Current: {})",
                 currentMonth, Calendar.getInstance().get(Calendar.MONTH));
 
         MegamindApp.INSTANCE.scheduler().scheduleAtFixedRate(() -> {
             val newMonth = Calendar.getInstance().get(Calendar.MONTH);
             if (currentMonth != newMonth) {
-                Logging.IMP.info("[Matchmaking] Caught the beginning of new month. C: {} @ N: {}",
+                Platform.logger.info("[Matchmaking] Caught the beginning of new month. C: {} @ N: {}",
                         currentMonth, newMonth);
 
                 // resetting rating to 0 for everyone
@@ -50,13 +50,13 @@ public final class MatchmakingManager {
                 currentMonth = newMonth;
                 MegamindApp.INSTANCE.setProperty("matchmaking.wipe", newMonth);
 
-                Logging.IMP.info("[Matchmaking] Rating and shit wiped! New month: {}",
+                Platform.logger.info("[Matchmaking] Rating and shit wiped! New month: {}",
                         newMonth);
             }
         }, 0, 1, TimeUnit.SECONDS);
 
         StatisticPeriod.MONTH.getDurationUntilEnd();
-        Logging.IMP.info("[Matchmaking] Started ranked season wipe thingy...");
+        Platform.logger.info("[Matchmaking] Started ranked season wipe thingy...");
     }
 
     /**
@@ -103,11 +103,11 @@ public final class MatchmakingManager {
         }
 
         if (ret == null) {
-            Logging.IMP.warn("[Matchmaking] Couldn't find a server for {} @ Rating: {}",
-                    gamer.getNameAsString(), rating);
+            Platform.logger.warn("[Matchmaking] Couldn't find a server for {} @ Rating: {}",
+                    gamer.getName(), rating);
         } else {
-            Logging.IMP.info("[Matchmaking] Found a server for {} @ Rating: {} @ Server: {}",
-                    gamer.getNameAsString(), rating, ret.getName());
+            Platform.logger.info("[Matchmaking] Found a server for {} @ Rating: {} @ Server: {}",
+                    gamer.getName(), rating, ret.getName());
         }
 
         // returning what we've got

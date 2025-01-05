@@ -48,7 +48,7 @@ public abstract class ExecutionSession implements IExecutionSession {
 
     @Override
     public void sendMessage(@Nullable String message) {
-        getSender().sendMessageAsString(message == null ? "null" : ChatColor.GRAY + message);
+        getSender().sendMessage(message == null ? "null" : ChatColor.GRAY + message);
     }
 
     public void sendPrefixedMessage(@Nullable String message) {
@@ -155,7 +155,7 @@ public abstract class ExecutionSession implements IExecutionSession {
     }
 
     public String getDisplayName() {
-        return isConsole() ? "§4Console" : getGamer().getDisplayNameAsString();
+        return isConsole() ? "§4Console" : getGamer().getDisplayName();
     }
 
     public abstract void sync(Runnable runnable);

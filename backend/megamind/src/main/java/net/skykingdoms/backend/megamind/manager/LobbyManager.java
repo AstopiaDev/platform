@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.backend.base.dependency.Dependency;
 import net.skykingdoms.backend.megamind.MegamindApp;
@@ -42,10 +42,10 @@ public final class LobbyManager {
      * Invoked once in coordinator bootstrap task
      */
     public void postBootstrap() {
-        Logging.IMP.info("Scheduled lobby cluster deployment process");
-        Logging.IMP.info("If all required lobbyservers come online in next 1 minute");
-        Logging.IMP.info("The process aborts it's scheduling");
-        Logging.IMP.info("");
+        Platform.logger.info("Scheduled lobby cluster deployment process");
+        Platform.logger.info("If all required lobbyservers come online in next 1 minute");
+        Platform.logger.info("The process aborts it's scheduling");
+        Platform.logger.info("");
 
         // min. amount of lobbyservers per each game type
         // will be loaded from config in a map <GameType> - <Min.Amount>
@@ -58,7 +58,7 @@ public final class LobbyManager {
                         .filter(_zvo -> _zvo.getParentServer().getGameType() == gametype)
                         .count();
                 if (amount < HARDCODED_RETARDED_NUMBER) {
-                    Logging.IMP.info("[LobbyManager] There are not enough lobbies loaded up for {} (current: {})",
+                    Platform.logger.info("[LobbyManager] There are not enough lobbies loaded up for {} (current: {})",
                             gametype.name(), amount);
 
                     DeploymentManager.INSTANCE.sendDeploymentRequest(new BukkitDeployRequest(gametype.bakeLobbyData()),
@@ -67,9 +67,9 @@ public final class LobbyManager {
                                 if (result == DeploymentResponse.DENIED_BY_NODE
                                         || result == DeploymentResponse.DEPLOYMENT_TIMEOUT
                                         || result == DeploymentResponse.TRANSACTION_FAILED) {
-                                    Logging.IMP.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
+                                    Platform.logger.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
                                 } else {
-                                    Logging.IMP.info("Queued deployment of lobby for {}!", gametype.getHumanName());
+                                    Platform.logger.info("Queued deployment of lobby for {}!", gametype.getHumanName());
                                 }
                             });
                 }
@@ -85,7 +85,7 @@ public final class LobbyManager {
             return; // dont do shit cuz its not even registered
         }
 
-        Logging.IMP.info("[LobbyManager] Removed lobby {} with {} players online",
+        Platform.logger.info("[LobbyManager] Removed lobby {} with {} players online",
                 lobbyServer.getName(), lobbyServer.getPlayerIds().length);
 
         for (val playerId : lobbyServer.getPlayerIds()) {
@@ -146,8 +146,8 @@ public final class LobbyManager {
         }
 
         if (registeredLobbyServers.size() == 0) {
-            Logging.IMP.info("[LobbyManager] Tried deploying a lobby, but no BukkitServer is up yet ... ");
-            Logging.IMP.info("[LobbyManager] Deploying required amount of instances ({})");
+            Platform.logger.info("[LobbyManager] Tried deploying a lobby, but no BukkitServer is up yet ... ");
+            Platform.logger.info("[LobbyManager] Deploying required amount of instances ({})");
         }
 
     }

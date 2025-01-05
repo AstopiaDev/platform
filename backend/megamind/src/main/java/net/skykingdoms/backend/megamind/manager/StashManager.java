@@ -3,7 +3,7 @@ package net.skykingdoms.backend.megamind.manager;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.backend.megamind.MegamindApp;
 
@@ -30,19 +30,19 @@ public final class StashManager {
         try (val fos = new FileOutputStream(tmp);
              val zos = new ZipOutputStream(fos)) {
 
-            Logging.IMP.info(data);
+            Platform.logger.info(data);
 
             Path sourcePath = Paths.get(MegamindApp.INSTANCE.directory()
                     .resolve("stash")
                     .resolve(data).toUri());
 
-            Logging.IMP.info(sourcePath.toFile().exists() + " S?");
+            Platform.logger.info(sourcePath.toFile().exists() + " S?");
 
             Path globalsPath = Paths.get(MegamindApp.INSTANCE.directory()
                     .resolve("stash/_GLOBAL")
                     .toUri());
 
-            Logging.IMP.info(globalsPath.toFile().exists() + " G?");
+            Platform.logger.info(globalsPath.toFile().exists() + " G?");
 
             if (Files.walk(sourcePath).filter(path -> !Files.isDirectory(path)).count() != 0) {
                 Files.walk(sourcePath)
@@ -73,7 +73,7 @@ public final class StashManager {
                     });
 
         } catch (Throwable throwable) {
-            Logging.IMP.stacktrace(throwable, "Shit happens :(");
+            Platform.logger.stacktrace(throwable, "Shit happens :(");
         }
 
         return tmp;
@@ -103,7 +103,7 @@ public final class StashManager {
                     });
 
         } catch (Throwable throwable) {
-            Logging.IMP.stacktrace(throwable, "Shit happens :(");
+            Platform.logger.stacktrace(throwable, "Shit happens :(");
         }
 
         return tmp;
@@ -133,7 +133,7 @@ public final class StashManager {
                         }
                     });
         } catch (Throwable throwable) {
-            Logging.IMP.stacktrace(throwable, "Shit happens :(");
+            Platform.logger.stacktrace(throwable, "Shit happens :(");
         }
 
         return tmp;

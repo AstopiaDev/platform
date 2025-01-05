@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.server.impl.ScalableDataImpl;
@@ -123,7 +123,7 @@ public final class TestFlowManager {
             // Close the zip output stream
             zos.close();
         } catch (Throwable throwable) {
-            Logging.IMP.stacktrace(throwable, "[TestFlow] Caught an exception while generating ZIP file for {}", data.getName());
+            Platform.logger.stacktrace(throwable, "[TestFlow] Caught an exception while generating ZIP file for {}", data.getName());
         }
 
         return tmp;
@@ -149,8 +149,8 @@ public final class TestFlowManager {
 
         val testFlowId = ID_COUNTER.incrementAndGet();
 
-        Logging.IMP.info("[TestFlow] Preparing test flow {} for {} @ Map: {} @ Instances: {} ID: {} ...",
-                name, executor.getNameAsString(), mapName == null ? "N/A" : mapName, amount, testFlowId);
+        Platform.logger.info("[TestFlow] Preparing test flow {} for {} @ Map: {} @ Instances: {} ID: {} ...",
+                name, executor.getName(), mapName == null ? "N/A" : mapName, amount, testFlowId);
 
         DeploymentManager.INSTANCE.sendDeploymentRequest(new BukkitDeployRequest(test.getServerData()),
                 ServerDeploy.DeploymentTarget.BUKKIT, true, name, testFlowId,
@@ -158,15 +158,15 @@ public final class TestFlowManager {
                     if (result == DeploymentResponse.DENIED_BY_NODE
                             || result == DeploymentResponse.DEPLOYMENT_TIMEOUT
                             || result == DeploymentResponse.TRANSACTION_FAILED) {
-                        Logging.IMP.info("[TestFlow/D] Response null, testflow failed");
+                        Platform.logger.info("[TestFlow/D] Response null, testflow failed");
                         if (responseConsumer != null) {
-                            Logging.IMP.info("[TestFlow/D] Testflow failed");
+                            Platform.logger.info("[TestFlow/D] Testflow failed");
                             responseConsumer.accept(TestFlowExecutionResponse.TESTFLOW_TRANSACTION_FAILED, null);
                         }
                     } else {
-                        Logging.IMP.info("[TestFlow/D] Response null, testflow success");
+                        Platform.logger.info("[TestFlow/D] Response null, testflow success");
                         if (responseConsumer != null) {
-                            Logging.IMP.info("[TestFlow/D] Adding pending testflow");
+                            Platform.logger.info("[TestFlow/D] Adding pending testflow");
                             testFlowCallbacks.add(new PendingTestflow(executor, result.transactionId(), testFlowId, test, responseConsumer, mapName, amount));
                         }
                     }
@@ -190,17 +190,17 @@ public final class TestFlowManager {
                 .orElse(null);
 
         if (testflow == null) {
-            Logging.IMP.info("[TestFlow/C] Null testflow ID:" + testFlowId);
+            Platform.logger.info("[TestFlow/C] Null testflow ID:" + testFlowId);
             return;
         }
 
-        Logging.IMP.info("[TestFlow/C] Got some shit checks");
+        Platform.logger.info("[TestFlow/C] Got some shit checks");
 
         val data = testflow.getData().getServerData();
 
         // we await lobby, but got some shit
         if (data.getServerScale() == ServerScaleType.LOBBY && !(pendingServer instanceof LobbyServer)) {
-            Logging.IMP.info("Not instance of lobby");
+            Platform.logger.info("Not instance of lobby");
             return;
         }
 
@@ -256,7 +256,7 @@ public final class TestFlowManager {
             val path = testFlowsDir.resolve(testFlowName);
             val configFile = provider.load(path.resolve("testflow.yml").toFile());
 
-            Logging.IMP.info("[TestFlow/D] N: {} @ C: {}", testFlowName, configFile.toString());
+            Platform.logger.info("[TestFlow/D] N: {} @ C: {}", testFlowName, configFile.toString());
 
             try {
                 loadedTests.add(new TestFlowData(
@@ -270,7 +270,7 @@ public final class TestFlowManager {
                         configFile.getInt("debug-port", 0)
                 ));
             } catch (Exception e) {
-                Logging.IMP.stacktrace(e, "[TestFlow] An exception raised on testflow config processing");
+                Platform.logger.stacktrace(e, "[TestFlow] An exception raised on testflow config processing");
             }
         }
     }

@@ -2,11 +2,11 @@ package net.skykingdoms.backend.minestom.logging
 
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import net.minestom.server.MinecraftServer
-import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.protocol.platform.Platform
 import net.skykingdoms.impl.Impl
 
-@Impl(Logging::class)
-class LoggingImpl : Logging() {
+@Impl(Platform::class)
+class LoggingImpl : Platform() {
 
     private val logger: ComponentLogger = MinecraftServer.LOGGER
     private val debug: Boolean = System.getProperty("core.debug").toBoolean()

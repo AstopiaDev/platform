@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import net.lingala.zip4j.ZipFile;
 import net.skykingdoms.api.backend.util.config.Configuration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.type.GameMode;
@@ -125,42 +125,42 @@ public final class BukkitAgent {
             this.javaVersion = javaVersion;
         }
 
-        Logging.IMP.info("[boot] Dumped ENV: {}", System.getenv().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(", ")));
-        Logging.IMP.info("[boot] Agent args: {} @ {} @ {}", serverScaleType, gameType, gameMode);
-        Logging.IMP.info("[boot] GS: {} @ L: {}", isGameServer(), isLobby());
-        Logging.IMP.info("[boot] Local: {} @ External: {}", getLocalHost() + ":" + getPort(), getExternalHost());
-        Logging.IMP.info("[boot] TestFlow: {}{}", isTestFlow(), isTestFlow() ? "-> " + getTestFlowName() : "");
+        Platform.logger.info("[boot] Dumped ENV: {}", System.getenv().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(", ")));
+        Platform.logger.info("[boot] Agent args: {} @ {} @ {}", serverScaleType, gameType, gameMode);
+        Platform.logger.info("[boot] GS: {} @ L: {}", isGameServer(), isLobby());
+        Platform.logger.info("[boot] Local: {} @ External: {}", getLocalHost() + ":" + getPort(), getExternalHost());
+        Platform.logger.info("[boot] TestFlow: {}{}", isTestFlow(), isTestFlow() ? "-> " + getTestFlowName() : "");
 
-        Logging.IMP.info("[boot] Downloading global assets [...]");
+        Platform.logger.info("[boot] Downloading global assets [...]");
 
         // Downloading all shit assets
         processDefaultDeployment(gameType);
 
-        Logging.IMP.info("[boot] Shit downloaded uf-af :3 [ok]");
+        Platform.logger.info("[boot] Shit downloaded uf-af :3 [ok]");
 
         if (isLobby()) {
-            Logging.IMP.info("[boot] Detected lobby configuration, downloading shit [...]");
+            Platform.logger.info("[boot] Detected lobby configuration, downloading shit [...]");
             downloadLobbyAssets(gameType);
-            Logging.IMP.info("[boot] Probably downloaded shit idk xd [ok (navernoe)]");
+            Platform.logger.info("[boot] Probably downloaded shit idk xd [ok (navernoe)]");
         }
 
         if (isTestFlow()) {
-            Logging.IMP.info("[boot] Processing testflow data [...]");
+            Platform.logger.info("[boot] Processing testflow data [...]");
             processTestflow(Objects.requireNonNull(getTestFlowName()));
             if (debugPort > 0) {
-                Logging.IMP.info("[boot] debugging on {}:{}", getExternalHost(), debugPort);
+                Platform.logger.info("[boot] debugging on {}:{}", getExternalHost(), debugPort);
             }
-            Logging.IMP.info("[boot] TestFlow ID: {}", testFlowId);
-            Logging.IMP.info("[boot] Done processing testflow data [ok]");
+            Platform.logger.info("[boot] TestFlow ID: {}", testFlowId);
+            Platform.logger.info("[boot] Done processing testflow data [ok]");
         }
 
-        Logging.IMP.info("[boot] Modifying server.properties [...]");
+        Platform.logger.info("[boot] Modifying server.properties [...]");
         modifyServerProperties();
-        Logging.IMP.info("[boot] Modified server.properties [ok]");
+        Platform.logger.info("[boot] Modified server.properties [ok]");
 
-        Logging.IMP.info("[boot] Executing core bootstrap [...]");
+        Platform.logger.info("[boot] Executing core bootstrap [...]");
         executeCore();
-        Logging.IMP.info("[boot] End of bukkit agent driver process! Byeeee! :3");
+        Platform.logger.info("[boot] End of bukkit agent driver process! Byeeee! :3");
 
         exec("read -p \"Press any key to resume ...\"");
     }
@@ -273,7 +273,7 @@ public final class BukkitAgent {
         try {
             return Runtime.getRuntime().exec(shell);
         } catch (final Exception e) {
-            Logging.IMP.stacktrace(e, "Runtime execution exception caught!");
+            Platform.logger.stacktrace(e, "Runtime execution exception caught!");
             return null;
         }
     }
@@ -282,12 +282,12 @@ public final class BukkitAgent {
     private void processDefaultDeployment(final @NonNull GameType gameType) {
         val epoch = System.currentTimeMillis();
 
-        Logging.IMP.info(gameType.name());
+        Platform.logger.info(gameType.name());
 
         downloadFile(API_BASE_URL + "/retrieve?token=cock&name=" + gameType.name(), "stash.zip");
         unzip("stash.zip", Paths.get("."));
 
-        Logging.IMP.info("[boot] Fetched stashed assets in " + (System.currentTimeMillis() - epoch));
+        Platform.logger.info("[boot] Fetched stashed assets in " + (System.currentTimeMillis() - epoch));
     }
 
     @SneakyThrows
@@ -297,7 +297,7 @@ public final class BukkitAgent {
         downloadFile(API_BASE_URL + "/retrieve?token=cock&name=" + gameType.name() + "&lobby=dadadaaaa", "lobby.zip");
         unzip("lobby.zip", Paths.get("."));
 
-        Logging.IMP.info("[boot] Fetched lobby assets in " + (System.currentTimeMillis() - epoch));
+        Platform.logger.info("[boot] Fetched lobby assets in " + (System.currentTimeMillis() - epoch));
     }
 
     @SneakyThrows
@@ -313,7 +313,7 @@ public final class BukkitAgent {
             Files.move(Path.of(relocation.getKey()), Path.of(relocation.getValue()), StandardCopyOption.REPLACE_EXISTING);
         }
 
-        Logging.IMP.info("[boot] Fetched testflow assets in " + (System.currentTimeMillis() - epoch));
+        Platform.logger.info("[boot] Fetched testflow assets in " + (System.currentTimeMillis() - epoch));
     }
 
     @SneakyThrows

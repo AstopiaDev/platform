@@ -2,7 +2,7 @@ package net.skykingdoms.api.megamind.event;
 
 import lombok.NonNull;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,7 +30,7 @@ public interface IEventBus {
                 } catch (IllegalArgumentException ex) {
                     throw new Error("Method rejected target/argument: " + event, ex);
                 } catch (InvocationTargetException ex) {
-                    Logging.IMP.stacktrace(ex.getCause(), "Error dispatching event {} to handler {}",
+                    Platform.logger.stacktrace(ex.getCause(), "Error dispatching event {} to handler {}",
                             event, method.getListener());
                 }
             }
@@ -49,7 +49,7 @@ public interface IEventBus {
                 Class<?>[] params = method.getParameterTypes();
 
                 if (params.length != 1) {
-                    Logging.IMP.error("Method {} in class {} annotated with {} does not have single argument",
+                    Platform.logger.error("Method {} in class {} annotated with {} does not have single argument",
                             method, listener.getClass(), annotation);
 
                     continue;

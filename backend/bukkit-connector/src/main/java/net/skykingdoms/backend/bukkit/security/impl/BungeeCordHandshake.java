@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.bukkit.security.BukkitSecurityManager;
 
 import java.lang.reflect.Type;
@@ -51,7 +51,7 @@ public class BungeeCordHandshake {
         try {
             return decodeAndVerify0(handshake);
         } catch (Exception e) {
-            Logging.IMP.stacktrace(e, "Failed to decode handshake!");
+            Platform.logger.stacktrace(e, "Failed to decode handshake!");
             return new Fail(Fail.Reason.INVALID_HANDSHAKE, encodeBase64(handshake));
         }
     }

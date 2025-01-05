@@ -1,12 +1,11 @@
 package net.skykingdoms.backend.node.connection;
 
-import com.mysql.cj.log.Log;
 import io.netty.channel.socket.SocketChannel;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.type.RemoteConnectedType;
 import net.skykingdoms.backend.node.NodeApp;
 import net.skykingdoms.backend.node.manager.DeploymentManager;
@@ -66,7 +65,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
     @Override
     public void process(final @NonNull ServerDestroy.Request packet,
                         final @NonNull ChannelProcessorContext ctx) {
-        Logging.IMP.info("[RSC/DEBUG] Received destruction packet: {} / graceful = {}",
+        Platform.logger.info("[RSC/DEBUG] Received destruction packet: {} / graceful = {}",
                 packet.getServerName(),
                 packet.isGraceful());
 
@@ -97,7 +96,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
                         final @NonNull ChannelProcessorContext ctx) {
         val pending = packet.getPendingServer();
 
-        Logging.IMP.info("[Deploy] Received {} deployment request. Transaction ID: #{} / Debug: {}",
+        Platform.logger.info("[Deploy] Received {} deployment request. Transaction ID: #{} / Debug: {}",
                 packet.getDeploymentTarget().name(), pending.getTransactionId(), packet.getDebugPort());
 
         ctx.setResponse(new ServerDeploy.Response(ServerDeploy.DeploymentResult.ACCEPTED, 90_000L));
@@ -122,11 +121,11 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
     public void process(final @NonNull Handshake.Response packet,
                         final @NonNull ChannelProcessorContext ctx) {
         if (packet.getResult() == Handshake.Result.FAILED) {
-            Logging.IMP.error("[HANDSHAKE] Unable to connect to coordinator: {}", packet.getMessage());
+            Platform.logger.error("[HANDSHAKE] Unable to connect to coordinator: {}", packet.getMessage());
             return;
         }
 
-        Logging.IMP.info("Successfully connected to coordinator");
+        Platform.logger.info("Successfully connected to coordinator");
 
         upgradeConnection(PacketProtocol.PLAY);
     }
@@ -135,6 +134,6 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
     public void process(final @NonNull S04UpdateRemoteData packet,
                         final @NonNull ChannelProcessorContext ctx) {
         NodeApp.INSTANCE.nodeData((FluentNodeDataImpl) packet.getServerDataUpdate());
-        Logging.IMP.info(packet.getServerDataUpdate().toString());
+        Platform.logger.info(packet.getServerDataUpdate().toString());
     }
 }

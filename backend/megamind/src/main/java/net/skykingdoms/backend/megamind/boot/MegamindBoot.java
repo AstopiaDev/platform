@@ -1,6 +1,6 @@
 package net.skykingdoms.backend.megamind.boot;
 
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 
 public class MegamindBoot {
@@ -11,7 +11,7 @@ public class MegamindBoot {
         try {
             MegamindApp.INSTANCE.init();
         } catch (Throwable t) {
-            Logging.IMP.stacktrace(t, "Internal error occurred");
+            Platform.logger.stacktrace(t, "Internal error occurred");
             System.exit(-1);
         }
     }

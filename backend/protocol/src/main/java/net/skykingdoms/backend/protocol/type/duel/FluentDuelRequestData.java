@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.packet.serialize.Serializable;
 import net.skykingdoms.api.protocol.type.GameMode;
 
@@ -24,7 +24,7 @@ public abstract class FluentDuelRequestData implements Serializable<FluentDuelRe
              requires a kit or not, etc.
          */
 
-        Logging.IMP.info("Deserializing data for mode: " + mode);
+        Platform.logger.info("Deserializing data for mode: " + mode);
 
         if (mode == GameMode.DUELS_SKYPVP_DUEL) {
             return (T) new KitFluentRequestData().deserialize(buf);

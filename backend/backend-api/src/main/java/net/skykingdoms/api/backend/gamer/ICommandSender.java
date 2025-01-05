@@ -6,15 +6,15 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ICommandSender {
 
-    @NotNull String getNameAsString();
+    @NotNull String getName();
 
-    void sendMessageAsString(final String message);
+    void sendMessage(final String message);
     void sendRawMessage(final String message);
 
-    String getDisplayNameAsString();
+    String getDisplayName();
 
     default void sendLocalizedMessage(boolean modern, @NonNull String key, Object... objects) {
-        sendMessageAsString(getLanguage().getMessage(!isConsole() && modern, key, objects));
+        sendMessage(getLanguage().getMessage(!isConsole() && modern, key, objects));
     }
 
     void dispatchCommand(String command);

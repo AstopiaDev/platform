@@ -3,7 +3,7 @@ package net.skykingdoms.backend.protocol.pipeline;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.RequiredArgsConstructor;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.protocol.packet.BossProcessor;
 import net.skykingdoms.backend.protocol.packet.ChannelProcessorContext;
 import net.skykingdoms.backend.protocol.packet.Packet;
@@ -39,7 +39,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet<?>> 
             try {
                 processor.callProcessor(context);
             } catch (Throwable t) {
-                Logging.IMP.stacktrace(t, "Error occurred whilst processing packet: " + packet);
+                Platform.logger.stacktrace(t, "Error occurred whilst processing packet: " + packet);
             } finally {
                 context.post();
             }
@@ -52,7 +52,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet<?>> 
             try {
                 processor.callProcessor(context);
             } catch (Throwable t) {
-                Logging.IMP.stacktrace(t, "Error occurred whilst processing packet: " + packet);
+                Platform.logger.stacktrace(t, "Error occurred whilst processing packet: " + packet);
             } finally {
                 context.post();
             }

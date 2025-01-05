@@ -9,7 +9,8 @@ import lombok.val;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.ConsoleLogger;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.type.GameMode;
@@ -65,7 +66,7 @@ public enum BukkitConnector {
         this.transactionId = configuration == null ? UUID.fromString(System.getenv("CORD_TID")) : UUID.fromString(configuration.getString("CORD_TID"));
         this.testFlowId = Integer.parseInt(System.getProperty("testFlowId", "-1"));
 
-        Logging.IMP.info("[TestFlow] -> {}", testFlowId);
+        Platform.logger.info("[TestFlow] -> {}", testFlowId);
 
         this.address = new InetSocketAddress(
                 plugin.getConfig().getString("megamind-ip"),
@@ -82,23 +83,24 @@ public enum BukkitConnector {
                 configuration = provider.load(configFile);
              //   secret = configuration.getString("secret");
             } catch (IOException e) {
-                Logging.IMP.stacktrace(e, "Can't load configuration file");
+                Platform.logger.stacktrace(e, "Can't load configuration file");
             }
         }
     }
 
     public void init() {
         this.connection = new BukkitLocalClientConnection(address, 2);
+        Platform.init(new ConsoleLogger(), this.connection);
 
         // we init this shit for handshake cocked stuff
-        Logging.IMP.info("S: {} | G: {} | EX: {} | P: {}", serverScaleType, gameType, System.getProperty("externalAddr"), bukkitAddress().getPort());
+        Platform.logger.info("S: {} | G: {} | EX: {} | P: {}", serverScaleType, gameType, System.getProperty("externalAddr"), bukkitAddress().getPort());
         this.fluentBukkitData = new FluentBukkitDataImpl(gameMode != null ? gameMode.name().toLowerCase() : "N/A", "N/A", serverScaleType, gameType,
                 System.getProperty("externalAddr"), bukkitAddress().getPort());
 
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             try {
                 this.connection.connectSynchronized();
-                Logging.IMP.info("Connection synchronized!");
+                Platform.logger.info("Connection synchronized!");
             } catch (ConnectException e) {
                 e.printStackTrace();
             }

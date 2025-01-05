@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.type.GameMode;
 import net.skykingdoms.backend.megamind.AsyncExecution;
@@ -50,13 +50,13 @@ public enum DuelManager {
 
                     if (sender != null && sender.isOnline()) {
                         if (target != null) {
-                            sender.sendMessageAsString("§cYour duel request to " + target.getDisplayNameAsString() + " has expired.");
+                            sender.sendMessage("§cYour duel request to " + target.getDisplayName() + " has expired.");
                         }
                     }
 
                     if (target != null && target.isOnline()) {
                         if (sender != null) {
-                            target.sendMessageAsString("§cDuel request from " + sender.getDisplayNameAsString() + " has expired.");
+                            target.sendMessage("§cDuel request from " + sender.getDisplayName() + " has expired.");
                         }
                     }
 
@@ -72,7 +72,7 @@ public enum DuelManager {
 
     public void removeRequest(int id) {
         requests.remove(id);
-        Logging.IMP.info("[DuelManager/R] " + id + " removed");
+        Platform.logger.info("[DuelManager/R] " + id + " removed");
     }
 
     public DuelRequest getRequest(int id) {
@@ -112,10 +112,10 @@ public enum DuelManager {
                             if (result == DeploymentResponse.DENIED_BY_NODE
                                     || result == DeploymentResponse.DEPLOYMENT_TIMEOUT
                                     || result == DeploymentResponse.TRANSACTION_FAILED) {
-                                Logging.IMP.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
+                                Platform.logger.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
                             } else {
                                 ServerManager.INSTANCE.queueGameInstanceBoot(result.transactionId(), new GameBootResponse[]{response});
-                                Logging.IMP.info("Queued deployment of game instances!");
+                                Platform.logger.info("Queued deployment of game instances!");
                             }
                         });
                 serverDeployed = true;

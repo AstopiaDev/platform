@@ -16,7 +16,7 @@ import net.skykingdoms.api.backend.util.config.YamlConfiguration;
 import net.skykingdoms.api.megamind.MegamindAPI;
 import net.skykingdoms.api.megamind.event.impl.gamer.CommandEvent;
 import net.skykingdoms.api.megamind.plugin.PluginDescription;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.type.GameMode;
 import net.skykingdoms.api.protocol.type.NetworkType;
 import net.skykingdoms.api.protocol.type.RemoteConnectedType;
@@ -96,13 +96,13 @@ public class MegamindApp extends MegamindAPI {
     @NonFinal String secret;
 
     public void init() {
-        Logging.IMP.info("[Megamind] Booting application ...");
+        Platform.logger.info("[Megamind] Booting application ...");
         Language.reloadLanguages();
-        Logging.IMP.info("[Megamind] Loaded languages");
+        Platform.logger.info("[Megamind] Loaded languages");
         this.reloadConfiguration();
-        Logging.IMP.info("[Megamind] Loaded configuration");
+        Platform.logger.info("[Megamind] Loaded configuration");
         networkState = NetworkState.valueOf(configuration.getString("state"));
-        Logging.IMP.info("[Megamind] Loaded network state: {}", networkState);
+        Platform.logger.info("[Megamind] Loaded network state: {}", networkState);
 
         commandManager.addCondition(CoreCommandConditions.class);
         registerCommandCompleters();
@@ -110,10 +110,10 @@ public class MegamindApp extends MegamindAPI {
 
         pluginManager = new PluginManager();
         this.enablePlugins();
-        Logging.IMP.info("[Megamind] Loaded plugins");
+        Platform.logger.info("[Megamind] Loaded plugins");
 
         this.registerListeners();
-        Logging.IMP.info("Listeners registered");
+        Platform.logger.info("Listeners registered");
 
         ServerManager.INSTANCE.postBootstrap();
         CoreSecurityManager.INSTANCE.postBootstrap();
@@ -126,7 +126,7 @@ public class MegamindApp extends MegamindAPI {
         StatsManager.INSTANCE.postBootstrap();
         DuelManager.INSTANCE.postBootstrap();
         AuthManager.INSTANCE.postBootstrap();
-        Logging.IMP.info("[Megamind] Finished loading managers!");
+        Platform.logger.info("[Megamind] Finished loading managers!");
 
         connection = new LocalServerConnection(
                 new InetSocketAddress(
@@ -135,15 +135,15 @@ public class MegamindApp extends MegamindAPI {
         try {
             connection.bindSynchronized();
         } catch (final BindException e) {
-            Logging.IMP.stacktrace(e, "Can't bind to the specified address");
+            Platform.logger.stacktrace(e, "Can't bind to the specified address");
             return;
         }
 
         running = true;
 
-        Logging.IMP.info("[Megamind] Connection opened at {}", connection.getChannel().localAddress());
-        Logging.IMP.info("[Megamind] Epoll: {}", coloredEpoll(connection.isEpoll()));
-        Logging.IMP.info("[Megamind] Megamind launched in {}ms",
+        Platform.logger.info("[Megamind] Connection opened at {}", connection.getChannel().localAddress());
+        Platform.logger.info("[Megamind] Epoll: {}", coloredEpoll(connection.isEpoll()));
+        Platform.logger.info("[Megamind] Megamind launched in {}ms",
                 coloredStartupTime(getUptime(TimeUnit.MILLISECONDS)));
 
         new MegamindConsole().start();
@@ -151,26 +151,26 @@ public class MegamindApp extends MegamindAPI {
 
     public void shutdown() {
         running = false;
-        Logging.IMP.info("Shutting down Megamind application ...");
+        Platform.logger.info("Shutting down Megamind application ...");
         connection.closeConnection();
 
         // Disable lookups to avoid sending to servers online etc.
-        Logging.IMP.info("Clearing lookups ...");
+        Platform.logger.info("Clearing lookups ...");
         LookupManager.INSTANCE.clearLookups();
 
         // kicking faggots
-        Logging.IMP.info("Kicking players ...");
+        Platform.logger.info("Kicking players ...");
         Gamer.kickAll();
 
-        Logging.IMP.info("Disabling plugins ...");
+        Platform.logger.info("Disabling plugins ...");
         for (val plugin : pluginManager.getPlugins()) {
             try {
                 plugin.onDisable();
             } catch (Exception ex) {
-                Logging.IMP.error("Unable to disable plugin {}", plugin.getDescription().getName(), ex);
+                Platform.logger.error("Unable to disable plugin {}", plugin.getDescription().getName(), ex);
             }
         }
-        Logging.IMP.info("Megamind application has been shut down");
+        Platform.logger.info("Megamind application has been shut down");
         System.exit(0);
     }
 
@@ -211,7 +211,7 @@ public class MegamindApp extends MegamindAPI {
             configuration = provider.load(configFile);
             secret = configuration.getString("secret");
         } catch (IOException e) {
-            Logging.IMP.stacktrace(e, "Can't load configuration file");
+            Platform.logger.stacktrace(e, "Can't load configuration file");
         }
     }
 
@@ -284,7 +284,7 @@ public class MegamindApp extends MegamindAPI {
             @Override
             public List<String> complete(final @NonNull ICommandSender sender,
                                          final @NonNull String label) {
-                return any(label, Gamer.getGamers().stream().map(CommonGamer::getNameAsString));
+                return any(label, Gamer.getGamers().stream().map(CommonGamer::getName));
             }
         });
 
@@ -499,7 +499,7 @@ public class MegamindApp extends MegamindAPI {
             properties.setProperty(property, value.toString());
             properties.store(outputStream, null);
         } catch (final IOException e) {
-            Logging.IMP.stacktrace(e, "Exception caught on data save");
+            Platform.logger.stacktrace(e, "Exception caught on data save");
         }
 
     }
@@ -512,7 +512,7 @@ public class MegamindApp extends MegamindAPI {
             properties.load(inputStream);
             return properties.getProperty(property) == null ? fallback : (T) properties.getProperty(property);
         } catch (final Exception e) {
-            Logging.IMP.stacktrace(e, "Exception caught on data read");
+            Platform.logger.stacktrace(e, "Exception caught on data read");
             return fallback;
         }
     }

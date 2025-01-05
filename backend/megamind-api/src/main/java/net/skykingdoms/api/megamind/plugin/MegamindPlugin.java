@@ -5,7 +5,7 @@ import lombok.NonNull;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,7 +94,7 @@ public abstract class MegamindPlugin {
         try {
             yaml.save(config, configFile);
         } catch (IOException ex) {
-            Logging.IMP.stacktrace(ex, "[{}] Error occurred whilst saving a configuration",
+            Platform.logger.stacktrace(ex, "[{}] Error occurred whilst saving a configuration",
                     getDescription().getName());
         }
     }

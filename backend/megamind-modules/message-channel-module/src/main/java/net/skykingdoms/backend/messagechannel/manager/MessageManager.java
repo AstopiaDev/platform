@@ -3,9 +3,12 @@ package net.skykingdoms.backend.messagechannel.manager;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 import net.skykingdoms.api.backend.setting.SettingType;
 import net.skykingdoms.api.backend.setting.enums.PmPrivacy;
+import net.skykingdoms.api.megamind.event.EventHandler;
 import net.skykingdoms.api.megamind.event.Listener;
+import net.skykingdoms.api.megamind.event.impl.gamer.GamerQuitEvent;
 import net.skykingdoms.backend.base.language.Language;
 import net.skykingdoms.backend.megamind.data.gamer.Gamer;
 
@@ -112,10 +115,10 @@ public final class MessageManager implements Listener {
         }
 
         from.sendRawMessage(getMessage((Language) from.getLanguage(),
-                to.getNameAsString(), "Me", to.getPrefixedName(), true, msg));
+                to.getName(), "Me", to.getPrefixedName(), true, msg));
 
         to.sendRawMessage(getMessage((Language) to.getLanguage(),
-                from.getNameAsString(), from.getPrefixedName(), "Me", false, msg));
+                from.getName(), from.getPrefixedName(), "Me", false, msg));
 
         for (Gamer gamer : Gamer.getGamers()) {
             if (gamer.getGamerId() == to.getGamerId() || gamer.getGamerId() == from.getGamerId()) {
@@ -127,7 +130,7 @@ public final class MessageManager implements Listener {
             }
 
             if (gamer.getPropertyOrDefault("social_spy_pm", 0) == 1) {
-                gamer.sendMessageAsString("§7[SocialSpy/PM] " + from.getNameAsString() + " §7-> " + to.getNameAsString() + " §7" + msg);
+                gamer.sendMessage("§7[SocialSpy/PM] " + from.getName() + " §7-> " + to.getName() + " §7" + msg);
             }
         }
     }

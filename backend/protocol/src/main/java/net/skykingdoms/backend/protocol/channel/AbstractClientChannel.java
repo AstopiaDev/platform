@@ -11,10 +11,14 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.Getter;
 import lombok.NonNull;
+import net.skykingdoms.api.protocol.platform.IClientChannel;
+import net.skykingdoms.api.protocol.platform.IDTO;
+import net.skykingdoms.api.protocol.platform.LogMessageDTO;
 import net.skykingdoms.backend.protocol.exception.ConnectException;
 import net.skykingdoms.backend.protocol.packet.BossProcessor;
 import net.skykingdoms.backend.protocol.packet.Packet;
 import net.skykingdoms.backend.protocol.packet.PacketDirection;
+import net.skykingdoms.backend.protocol.packet.play.LogMessage;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.SocketAddress;
@@ -24,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @Getter
-public abstract class AbstractClientChannel extends AbstractChannel {
+public abstract class AbstractClientChannel extends AbstractChannel implements IClientChannel {
 
     protected EventLoopGroup worker;
 
@@ -200,6 +204,16 @@ public abstract class AbstractClientChannel extends AbstractChannel {
     public void sendPacket(Packet<?> packet) {
         if (isConnected()) {
             channel.sendPacket(packet);
+        }
+    }
+
+    public void sendDTO(IDTO dto) {
+        if (isConnected()) {
+            if (dto instanceof LogMessageDTO) {
+                channel.sendPacket(LogMessage.fromDTO((LogMessageDTO) dto));
+            } else {
+                throw new IllegalArgumentException("Unsupported DTO type: " + dto.getClass().getName());
+            }
         }
     }
 

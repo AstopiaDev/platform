@@ -131,11 +131,11 @@ public final class FriendCommand {
                     String name1 = Gamer.getOfflineGamer(meta1.getFriendIdFor(gamer.getGamerId()), $g -> {
                         $g.loadGroups();
                         $g.loadPlayerName();
-                    }).getDisplayNameAsString();
+                    }).getDisplayName();
                     String name2 = Gamer.getOfflineGamer(meta2.getFriendIdFor(gamer.getGamerId()), $g -> {
                         $g.loadGroups();
                         $g.loadPlayerName();
-                    }).getDisplayNameAsString();
+                    }).getDisplayName();
                     return name1.compareToIgnoreCase(name2);
                 })
                 .collect(Collectors.toList());
@@ -149,11 +149,11 @@ public final class FriendCommand {
                     String name1 = Gamer.getOfflineGamer(meta1.getFriendIdFor(gamer.getGamerId()), $g -> {
                         $g.loadGroups();
                         $g.loadPlayerName();
-                    }).getDisplayNameAsString();
+                    }).getDisplayName();
                     String name2 = Gamer.getOfflineGamer(meta2.getFriendIdFor(gamer.getGamerId()), $g -> {
                         $g.loadGroups();
                         $g.loadPlayerName();
-                    }).getDisplayNameAsString();
+                    }).getDisplayName();
                     return name1.compareToIgnoreCase(name2);
                 })
                 .collect(Collectors.toList());

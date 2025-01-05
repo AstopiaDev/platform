@@ -8,7 +8,7 @@ import net.skykingdoms.api.backend.command.WithAlias;
 import net.skykingdoms.api.backend.command.condition.WithCondition;
 import net.skykingdoms.api.backend.command.execution.Executor;
 import net.skykingdoms.api.backend.permission.Group;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.permission.UserRank;
 import net.skykingdoms.backend.base.permission.UserRanks;
 import net.skykingdoms.backend.discord.DiscordBot;
@@ -33,12 +33,12 @@ public class LinkMinecraftCommand {
         String code = session.getArgument(0);
 
         if (gamer.getPropertyOrDefault("discord_id", (long) 0) != (long) 0) {
-            gamer.sendMessageAsString("§cYou are already linked to a Minecraft account.");
+            gamer.sendMessage("§cYou are already linked to a Minecraft account.");
             return;
         }
 
         if (PlayerController.INSTANCE.hasCode(code)) {
-            gamer.sendMessageAsString("§aYou have successfully linked your Minecraft account!");
+            gamer.sendMessage("§aYou have successfully linked your Minecraft account!");
 
             String discordId = PlayerController.INSTANCE.getDiscordId(code);
             Guild guild = DiscordBot.INSTANCE.guild();
@@ -47,7 +47,7 @@ public class LinkMinecraftCommand {
 
             guild.retrieveMemberById(discordId).queue(member -> {
                 if (member == null) {
-                    Logging.IMP.info("Invalid member");
+                    Platform.logger.info("Invalid member");
                     return;
                 }
 
@@ -98,7 +98,7 @@ public class LinkMinecraftCommand {
                     MinecraftGroup group = null;
 
                     for (MinecraftGroup minecraftGroup : MinecraftGroup.VALUES) {
-                        Logging.IMP.info(rank);
+                        Platform.logger.info(rank);
                         if (minecraftGroup.name().equalsIgnoreCase(rank)) {
                             group = minecraftGroup;
                         }

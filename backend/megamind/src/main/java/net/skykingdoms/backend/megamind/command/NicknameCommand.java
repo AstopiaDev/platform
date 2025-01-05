@@ -36,11 +36,11 @@ public class NicknameCommand {
         if (nickname.equalsIgnoreCase("reset")) {
             boolean hasNickname = gamer.getProperty("nickname") != null;
             if (!hasNickname) {
-                gamer.sendMessageAsString("§cYou do not have a nickname!");
+                gamer.sendMessage("§cYou do not have a nickname!");
                 return;
             }
             gamer.removeProperty("nickname");
-            gamer.sendMessageAsString("§eYour nickname has been reset!");
+            gamer.sendMessage("§eYour nickname has been reset!");
             return;
         }
 
@@ -48,35 +48,35 @@ public class NicknameCommand {
         int target = NetworkSqlHandler.INSTANCE.getPlayerId(strippedNickname);
 
         if (target != -1) {
-            gamer.sendMessageAsString("§cYou cannot be called by someone else's name!");
+            gamer.sendMessage("§cYou cannot be called by someone else's name!");
             return;
         }
 
         if (strippedNickname.length() < MIN_LENGTH || strippedNickname.length() > MAX_LENGTH) {
-            gamer.sendMessageAsString("§cNickname must be between " + MIN_LENGTH + " and " + MAX_LENGTH + " characters long!");
+            gamer.sendMessage("§cNickname must be between " + MIN_LENGTH + " and " + MAX_LENGTH + " characters long!");
             return;
         }
 
         if (!VALID_NICKNAME.matcher(nickname).matches()) {
-            gamer.sendMessageAsString("§cInvalid nickname format! Use only letters, underscores, and color codes (e.g., &a, &e, &c).");
+            gamer.sendMessage("§cInvalid nickname format! Use only letters, underscores, and color codes (e.g., &a, &e, &c).");
             return;
         }
 
         if (nickname.contains("&k")) {
-            gamer.sendMessageAsString("§cYou cannot use the &k color code in your nickname!");
+            gamer.sendMessage("§cYou cannot use the &k color code in your nickname!");
             return;
         }
 
         String lowercaseStripped = strippedNickname.toLowerCase();
         for (String word : PROHIBITED_WORDS) {
             if (lowercaseStripped.contains(word.toLowerCase())) {
-                gamer.sendMessageAsString("§cThis nickname contains inappropriate language!");
+                gamer.sendMessage("§cThis nickname contains inappropriate language!");
                 return;
             }
         }
 
         String coloredNickname = ChatColor.translateAlternateColorCodes('&', nickname);
         gamer.setProperty("nickname", coloredNickname);
-        gamer.sendMessageAsString("§ePeople are going to call you " + coloredNickname + " §enow!");
+        gamer.sendMessage("§ePeople are going to call you " + coloredNickname + " §enow!");
     }
 }

@@ -13,7 +13,7 @@ import net.skykingdoms.api.megamind.event.Listener;
 import net.skykingdoms.api.megamind.plugin.IPluginManager;
 import net.skykingdoms.api.megamind.plugin.MegamindPlugin;
 import net.skykingdoms.api.megamind.plugin.PluginDescription;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.plugin.event.EventBus;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -68,7 +68,7 @@ public final class PluginManager implements IPluginManager {
         for (val entry : toLoad.entrySet()) {
             PluginDescription plugin = entry.getValue();
             if (!enablePlugin(pluginStatuses, new Stack<>(), plugin)) {
-                Logging.IMP.error("Failed to enable {}", entry.getKey());
+                Platform.logger.error("Failed to enable {}", entry.getKey());
             }
         }
         toLoad.clear();
@@ -83,14 +83,14 @@ public final class PluginManager implements IPluginManager {
             try {
                 plugin.onEnable();
 
-                Logging.IMP.info(
+                Platform.logger.info(
                         "Enabled plugin {} version {} by {}",
                         description.getName(),
                         description.getVersion(),
                         description.getAuthor()
                 );
             } catch (Throwable t) {
-                Logging.IMP.stacktrace(t, "Exception encountered when loading plugin: {}",
+                Platform.logger.stacktrace(t, "Exception encountered when loading plugin: {}",
                         description.getName());
             }
         }
@@ -124,7 +124,7 @@ public final class PluginManager implements IPluginManager {
                     }
                     dependencyGraph.append(plugin.getName()).append(" -> ").append(dependName);
 
-                    Logging.IMP.warn("Circular dependency detected: {}", dependencyGraph);
+                    Platform.logger.warn("Circular dependency detected: {}", dependencyGraph);
 
                     status = false;
                 } else {
@@ -136,7 +136,7 @@ public final class PluginManager implements IPluginManager {
 
             if (dependStatus == Boolean.FALSE && plugin.getDepends().contains(dependName)) // only fail if this wasn't a soft dependency
             {
-                Logging.IMP.error("{} (required by {}) is unavailable", String.valueOf(dependName), plugin.getName());
+                Platform.logger.error("{} (required by {}) is unavailable", String.valueOf(dependName), plugin.getName());
 
                 status = false;
             }
@@ -157,9 +157,9 @@ public final class PluginManager implements IPluginManager {
                 plugins.put(plugin.getName(), clazz);
                 clazz.onLoad();
 
-                Logging.IMP.info("Loaded plugin {} version {} by {}", plugin.getName(), plugin.getVersion(), plugin.getAuthor());
+                Platform.logger.info("Loaded plugin {} version {} by {}", plugin.getName(), plugin.getVersion(), plugin.getAuthor());
             } catch (Throwable t) {
-                Logging.IMP.warn("Error enabling plugin {}", plugin.getName(), t);
+                Platform.logger.warn("Error enabling plugin {}", plugin.getName(), t);
                 t.printStackTrace();
             }
         }
@@ -172,7 +172,7 @@ public final class PluginManager implements IPluginManager {
     public void disablePlugin(final @NonNull String name) {
         Plugin plugin = plugins.get(name);
         if (plugin == null) {
-            Logging.IMP.warn("Plugin {} not found or already disabled.", name);
+            Platform.logger.warn("Plugin {} not found or already disabled.", name);
             return;
         }
 
@@ -185,12 +185,12 @@ public final class PluginManager implements IPluginManager {
 
             plugins.remove(name);
 
-            Logging.IMP.info("Disabled plugin {} version {} by {}",
+            Platform.logger.info("Disabled plugin {} version {} by {}",
                     description.getName(),
                     description.getVersion(),
                     description.getAuthor());
         } catch (Throwable t) {
-            Logging.IMP.stacktrace(t, "Exception encountered while disabling plugin: {}", name);
+            Platform.logger.stacktrace(t, "Exception encountered while disabling plugin: {}", name);
         }
     }
 
@@ -221,11 +221,11 @@ public final class PluginManager implements IPluginManager {
                                 toLoad.put(desc.getName(), desc);
                             }
                         } catch (Exception ex) {
-                            Logging.IMP.stacktrace(ex, "Unable to load plugin from file {}", path);
+                            Platform.logger.stacktrace(ex, "Unable to load plugin from file {}", path);
                         }
                     });
         } catch (IOException e) {
-            Logging.IMP.stacktrace(e, "Can't list files");
+            Platform.logger.stacktrace(e, "Can't list files");
         }
     }
 
@@ -240,7 +240,7 @@ public final class PluginManager implements IPluginManager {
         long elapsed = start - System.nanoTime();
 
         if (elapsed > 250000) {
-            Logging.IMP.warn("Event {} took more {} ns to process!", event, elapsed);
+            Platform.logger.warn("Event {} took more {} ns to process!", event, elapsed);
         }
 
         return event;
@@ -278,7 +278,7 @@ public final class PluginManager implements IPluginManager {
         for (String pluginName : new ArrayList<>(plugins.keySet())) {
             disablePlugin(pluginName);
         }
-        Logging.IMP.info("All plugins have been disabled.");
+        Platform.logger.info("All plugins have been disabled.");
     }
 
     @Override
@@ -298,7 +298,7 @@ public final class PluginManager implements IPluginManager {
         Plugin plugin = plugins.get(pluginName);
 
         if (plugin == null) {
-            Logging.IMP.warn("Plugin '{}' is not loaded and cannot be reloaded.", pluginName);
+            Platform.logger.warn("Plugin '{}' is not loaded and cannot be reloaded.", pluginName);
             return;
         }
 
@@ -311,7 +311,7 @@ public final class PluginManager implements IPluginManager {
 
             enablePlugin(new HashMap<>(), new Stack<>(), plugin.getDescription());
         } catch (Exception e) {
-            Logging.IMP.stacktrace(e, "Failed to reload plugin '{}'", pluginName);
+            Platform.logger.stacktrace(e, "Failed to reload plugin '{}'", pluginName);
         }
     }
 
