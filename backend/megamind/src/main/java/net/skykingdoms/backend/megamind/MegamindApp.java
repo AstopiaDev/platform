@@ -284,7 +284,7 @@ public class MegamindApp extends MegamindAPI {
             @Override
             public List<String> complete(final @NonNull ICommandSender sender,
                                          final @NonNull String label) {
-                return any(label, Gamer.getGamers().stream().map(CommonGamer::getName));
+                return any(label, Gamer.getGamers().stream().map(CommonGamer::getNameAsString));
             }
         });
 

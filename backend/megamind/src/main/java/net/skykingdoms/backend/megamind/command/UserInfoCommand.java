@@ -26,7 +26,7 @@ public final class UserInfoCommand {
     public static void execute(final @NonNull CoreExecutionSession session) throws CommandTranslationException {
         val gamer = session.getOfflineGamer(0, Gamer::load);
         session.sendLocalizedMessage("core_userinfo",
-                "%username%", gamer.getDisplayName(),
+                "%username%", gamer.getDisplayNameAsString(),
                 "%uuid%", gamer.getPlayerUniqueId(),
                 "%domain%", gamer.isOnline() ? gamer.getDomain() : ChatColor.RED + "offline",
                 "%address%", gamer.isOnline() ? gamer.getAddress().getHostAddress() : ChatColor.RED + "offline",

@@ -40,7 +40,7 @@ public final class LocationRawCommand {
             json.addProperty("map", gamer.getGameServer().getMap());
         }
 
-        gamer.sendMessage(json.toString());
+        gamer.sendMessageAsString(json.toString());
     }
 
 }

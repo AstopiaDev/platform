@@ -1,63 +1,96 @@
 package net.skykingdoms.api.shared.user
 
+import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
-import net.skykingdoms.api.backend.permission.Group
-import net.skykingdoms.api.backend.setting.Setting
-import net.skykingdoms.api.backend.setting.SettingType
-import net.skykingdoms.backend.base.gamer.CommonGamer
-import net.skykingdoms.backend.base.permission.UserRank
-import java.time.LocalDateTime
+import net.minestom.server.network.player.GameProfile
+import net.minestom.server.network.player.PlayerConnection
+import net.skykingdoms.api.backend.gamer.IGamer
+import net.skykingdoms.api.backend.language.ILanguage
+import net.skykingdoms.api.backend.permission.IUserRank
+import net.skykingdoms.api.backend.permission.UserRankContainer
+import net.skykingdoms.api.shared.chat.Chat
+import net.skykingdoms.api.shared.chat.ServerChat
+import net.skykingdoms.backend.base.language.Language
+import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
 
-class ServerUser(val player: Player, val uuid: UUID) : CommonGamer(uuid) {
-    override fun sendTitle(p0: String, p1: String, p2: Int, p3: Int, p4: Int) {
+class ServerUser(val connection: PlayerConnection,
+                 gameProfile: GameProfile,
+                 var chat: Chat = ServerChat.defaultChat,
+                 private var language: ILanguage = Language.DEFAULT
+) : Player(connection, gameProfile), IGamer {
+    private val id: Int = -1
+
+    override fun UNSAFE_init(): CompletableFuture<Void?>? {
+        chat.participants().add(this)
+        return super.UNSAFE_init()
+    }
+
+    override fun sendMessageAsString(message: String?) {
+        if (message != null) {
+            sendMessage(Component.text(message))
+        }
+    }
+
+    override fun dispatchCommand(command: String?) {
+
+    }
+
+    override fun isConsole(): Boolean {
+        return false
+    }
+
+    override fun getGamerId(): Int {
+        return id
+    }
+
+    override fun getPlayerUniqueId(): UUID {
+        return uuid
+    }
+
+    override fun getNameAsString(): String {
+        return username
+    }
+
+    override fun getNameAsComponent(): Component {
+        return Component.text(nameAsString)
+    }
+
+    override fun getDisplayNameAsString(): String {
+        return username
+    }
+
+    override fun getDisplayNameAsComponent(): Component {
+        return Component.text(displayNameAsString)
+    }
+
+    override fun getLanguage(): ILanguage {
+        return language
+    }
+
+    override fun getRanks(): UserRankContainer<out IUserRank?>? {
         TODO("Not yet implemented")
     }
 
-    override fun disconnect(p0: String) {
-        TODO("Not yet implemented")
+    override fun getAddress(): InetAddress? {
+        val remoteAddress = playerConnection.remoteAddress
+        if (remoteAddress is InetSocketAddress) {
+            return remoteAddress.address
+        }
+        return null
     }
 
-    override fun addRank(p0: Group, p1: LocalDateTime?) {
-        TODO("Not yet implemented")
+    override fun getProtocol(): Int {
+        return connection.protocolVersion
     }
 
-    override fun addRank(p0: UserRank) {
-        TODO("Not yet implemented")
+    override fun isPremium(): Boolean {
+        return true
     }
 
-    override fun setRank(p0: Group, p1: LocalDateTime?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setSetting(
-        p0: SettingType,
-        p1: Setting<*, *>
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun <T : Any?> setProperty(p0: String, p1: T?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeProperty(p0: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun dropProperty(p0: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun addProperty(p0: String, p1: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun sendMessage(p0: String?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun dispatchCommand(p0: String?) {
-        TODO("Not yet implemented")
+    override fun isLoggedIn(): Boolean {
+        return false
     }
 }

@@ -104,10 +104,10 @@ public final class MatchmakingManager {
 
         if (ret == null) {
             Logging.IMP.warn("[Matchmaking] Couldn't find a server for {} @ Rating: {}",
-                    gamer.getName(), rating);
+                    gamer.getNameAsString(), rating);
         } else {
             Logging.IMP.info("[Matchmaking] Found a server for {} @ Rating: {} @ Server: {}",
-                    gamer.getName(), rating, ret.getName());
+                    gamer.getNameAsString(), rating, ret.getName());
         }
 
         // returning what we've got

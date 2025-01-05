@@ -13,11 +13,11 @@ public class UnlinkMinecraftCommand {
         long discordId = gamer.getPropertyOrDefault("discord_id", (long) 0);
 
         if (discordId == (long) 0 || discordId == (long) -1) {
-            gamer.sendMessage("§cYou are not linked to a Minecraft account.");
+            gamer.sendMessageAsString("§cYou are not linked to a Minecraft account.");
             return;
         }
 
         gamer.setProperty("discord_id", (long) 0);
-        gamer.sendMessage("§aYou have successfully unlinked your Minecraft account!");
+        gamer.sendMessageAsString("§aYou have successfully unlinked your Minecraft account!");
     }
 }

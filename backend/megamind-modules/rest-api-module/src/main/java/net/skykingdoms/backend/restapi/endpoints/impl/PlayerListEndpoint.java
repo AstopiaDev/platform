@@ -23,7 +23,7 @@ public final class PlayerListEndpoint implements IEndpoint {
 
             val rank = gamer.getRanks().getPriorityRank();
 
-            playerObject.addProperty("name", gamer.getName());
+            playerObject.addProperty("name", gamer.getNameAsString());
             playerObject.addProperty("rank", rank.getDisplayName());
             playerObject.addProperty("color", rank.getGroup().getPrefixColor());
 

@@ -4,8 +4,8 @@ import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.minestom.server.scoreboard.Sidebar
 import net.skykingdoms.api.shared.GameServer
 import net.skykingdoms.api.shared.ui.UserInterface
@@ -16,7 +16,7 @@ abstract class SideUi(loader: Player, title: Component) : Sidebar(title), UserIn
 
         fun init(gameServer: GameServer) {
             val sideBarNode = EventNode.type("sidebar", EventFilter.PLAYER)
-                .addListener(AsyncPlayerConfigurationEvent::class.java) { event ->
+                .addListener(PlayerSkinInitEvent::class.java) { event ->
                     gameServer.defaultSideUi(event.player)
                 }
                 .addListener(PlayerDisconnectEvent::class.java) { event ->
@@ -34,6 +34,7 @@ abstract class SideUi(loader: Player, title: Component) : Sidebar(title), UserIn
     init {
         sideUis.put(loader, this)
         this.addViewer(loader)
+        draw()
     }
 
     fun line(content: Component, line: Int) {

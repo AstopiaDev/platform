@@ -4,7 +4,6 @@ import lombok.val;
 import net.skykingdoms.api.backend.command.NamedCommand;
 import net.skykingdoms.api.backend.command.condition.WithCondition;
 import net.skykingdoms.api.backend.command.execution.Executor;
-import net.skykingdoms.api.backend.command.tabcomplete.Tabcomplete;
 import net.skykingdoms.api.backend.permission.Group;
 import net.skykingdoms.backend.base.command.exception.CommandTranslationException;
 import net.skykingdoms.backend.base.gamer.CommonGamer;
@@ -28,19 +27,19 @@ public class InternalRankCommand {
         switch (operation.toLowerCase()) {
             case "add": {
                 session.sendMessage(ChatColor.GRAY + "Internally added {} " + ChatColor.GRAY + "to {}",
-                        rank.getDisplayName(), target.getName());
+                        rank.getDisplayName(), target.getNameAsString());
                 target.addRank(rank, null);
                 break;
             }
             case "remove": {
                 val cock = (UserRanks) target.getRanks();
                 if (!cock.canApply(rank)) {
-                    session.sendMessage("{}" + ChatColor.GRAY + " didn't have {} in their ranks!", target.getName(), rank.getDisplayName());
+                    session.sendMessage("{}" + ChatColor.GRAY + " didn't have {} in their ranks!", target.getNameAsString(), rank.getDisplayName());
                     return;
                 }
 
                 session.sendMessage(ChatColor.GRAY + "Internally removed {} " + ChatColor.GRAY + "from {}",
-                        rank.getDisplayName(), target.getName());
+                        rank.getDisplayName(), target.getNameAsString());
 
                 //noinspection DataFlowIssue
                 target.removeRank(cock.getAllRanks().stream().filter(r -> r.getGroup() == rank).findFirst().orElse(null));

@@ -30,11 +30,11 @@ public class FindCommand {
         }
 
         if (gamer.getCurrentServer() == null) {
-            session.sendMessage("§5Beep, boop, beep! ~~~\n§8" + gamer.getName() + " is currently nowhere to be found.");
+            session.sendMessage("§5Beep, boop, beep! ~~~\n§8" + gamer.getNameAsString() + " is currently nowhere to be found.");
             return;
         }
 
 
-        session.sendMessage("§5Beep, boop, beep! ~~~\n§8" + gamer.getName() + " is currently on server: " + gamer.getCurrentServer().getName());
+        session.sendMessage("§5Beep, boop, beep! ~~~\n§8" + gamer.getNameAsString() + " is currently on server: " + gamer.getCurrentServer().getName());
     }
 }

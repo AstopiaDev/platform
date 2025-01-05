@@ -126,7 +126,7 @@ public final class PunishmentManager {
         // removing shit
         activePunishments.remove(meta);
 
-        val executorString = remover < 1 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(remover, CommonGamer::loadGroupsAndName).getDisplayName();
+        val executorString = remover < 1 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(remover, CommonGamer::loadGroupsAndName).getDisplayNameAsString();
 
         val liftMeta = PunishmentSqlHandler.INSTANCE.createPunishmentLiftRecord(remover, reason);
 
@@ -145,12 +145,12 @@ public final class PunishmentManager {
 
             StaffChatManager.INSTANCE.sendMessage("staffchat_unmuted_message",
                     "%executor%", executorString,
-                    "%violator%", gamer.getDisplayName(),
+                    "%violator%", gamer.getDisplayNameAsString(),
                     "%reason%", reason);
         } else {
             StaffChatManager.INSTANCE.sendMessage("staffchat_unbanned_message",
                     "%executor%", executorString,
-                    "%violator%", gamer.getDisplayName(),
+                    "%violator%", gamer.getDisplayNameAsString(),
                     "%reason%", reason);
         }
 
@@ -191,7 +191,7 @@ public final class PunishmentManager {
             if (type == PunishmentType.BAN) {
                 gamer.disconnect(getPunishmentReasonFormatted(bakedPunishmentMeta, Language.DEFAULT));
             } else {
-                gamer.sendMessage(getPunishmentReasonFormatted(bakedPunishmentMeta, (Language) gamer.getLanguage()));
+                gamer.sendMessageAsString(getPunishmentReasonFormatted(bakedPunishmentMeta, (Language) gamer.getLanguage()));
             }
         }
 
@@ -204,26 +204,26 @@ public final class PunishmentManager {
                 .locale(DurationFormatter.EN_SHORT)
                 .min(DurationField.SEC)
                 .max(DurationField.DAY).build());
-        val executorString = executorId == 0 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(executorId, CommonGamer::loadGroupsAndName).getDisplayName();
+        val executorString = executorId == 0 ? ChatColor.WHITE + "CONSOLE" : Gamer.getOfflineGamer(executorId, CommonGamer::loadGroupsAndName).getDisplayNameAsString();
 
         // don't look at warnings, we know what we do :3
         if (type == PunishmentType.BAN && !bakedPunishmentMeta.isWatchCatBan()) {
             if (bakedPunishmentMeta.isPermanent()) {
                 StaffChatManager.INSTANCE.sendMessage("staffchat_permabanned_message",
                         "%executor%", executorString,
-                        "%violator%", gamer.getDisplayName(),
+                        "%violator%", gamer.getDisplayNameAsString(),
                         "%reason%", reason);
             } else {
                 StaffChatManager.INSTANCE.sendMessage("staffchat_tempbanned_message",
                         "%executor%", executorString,
-                        "%violator%", gamer.getDisplayName(),
+                        "%violator%", gamer.getDisplayNameAsString(),
                         "%reason%", reason,
                         "%duration%", durationString);
             }
         } else if (type == PunishmentType.MUTE) {
             StaffChatManager.INSTANCE.sendMessage("staffchat_muted_message",
                     "%executor%", executorString,
-                    "%violator%", gamer.getDisplayName(),
+                    "%violator%", gamer.getDisplayNameAsString(),
                     "%reason%", reason,
                     "%duration%", durationString);
         }

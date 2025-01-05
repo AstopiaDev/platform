@@ -35,7 +35,7 @@ public final class PlayerDataEndpoint implements IEndpoint {
 
     private JsonObject createJson(final @NonNull Gamer gamer) {
         val jsonObject = new JsonObject();
-        jsonObject.addProperty("playerName", gamer.getName());
+        jsonObject.addProperty("playerName", gamer.getNameAsString());
         jsonObject.addProperty("uuid", gamer.getPlayerUniqueId().toString());
 /*        jsonObject.addProperty("primaryRank", gamer.getRanks().getPriorityRank().getGroup().name());
         jsonObject.addProperty("secondaryRank", gamer.getRanks().getPriorityRank(PermissionType.DEFAULT).getGroup().name());*/

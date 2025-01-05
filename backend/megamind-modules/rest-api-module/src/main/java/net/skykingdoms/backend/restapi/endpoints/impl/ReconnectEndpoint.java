@@ -7,7 +7,6 @@ import net.skykingdoms.backend.base.util.color.ChatColor;
 import net.skykingdoms.backend.megamind.AsyncExecution;
 import net.skykingdoms.backend.megamind.data.gamer.Gamer;
 import net.skykingdoms.backend.megamind.manager.ServerManager;
-import net.skykingdoms.backend.megamind.server.impl.BukkitServer;
 import net.skykingdoms.backend.megamind.server.impl.PersistentServer;
 import net.skykingdoms.backend.restapi.endpoints.*;
 import spark.Request;
@@ -27,7 +26,7 @@ public class ReconnectEndpoint implements IEndpoint {
         AsyncExecution.INSTANCE.runTimer(() -> {
             reconnectingPlayers.cleanUp();
             reconnectingPlayers.asMap().forEach((gamer, serverName) -> {
-                gamer.sendMessage(ChatColor.GREEN + "Attempting to reconnect you to " + serverName + "...");
+                gamer.sendMessageAsString(ChatColor.GREEN + "Attempting to reconnect you to " + serverName + "...");
                 PersistentServer server = ServerManager.INSTANCE.getPersistentServer(serverName);
 
                 if (server == null) {
@@ -37,7 +36,7 @@ public class ReconnectEndpoint implements IEndpoint {
                 if (server.canJoin()) {
                     gamer.sendTo(server);
                     reconnectingPlayers.invalidate(gamer);
-                    gamer.sendMessage(ChatColor.GREEN + "Reconnected successfully!");
+                    gamer.sendMessageAsString(ChatColor.GREEN + "Reconnected successfully!");
                 }
             });
         }, 1, 1, TimeUnit.SECONDS);
@@ -76,7 +75,7 @@ public class ReconnectEndpoint implements IEndpoint {
             } else if (server.canJoin()) {
                 gamer.sendTo(server);
                 reconnectingPlayers.invalidate(gamer);
-                gamer.sendMessage(ChatColor.GREEN + "Reconnected successfully!");
+                gamer.sendMessageAsString(ChatColor.GREEN + "Reconnected successfully!");
             }
         }, 2, TimeUnit.SECONDS);
 

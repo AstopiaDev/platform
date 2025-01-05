@@ -3,8 +3,12 @@ package net.skykingdoms.api.shared
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.shared.chat.ServerChat
+import net.skykingdoms.api.shared.skin.PlayerSkinHandler
 import net.skykingdoms.api.shared.ui.gui.Gui
 import net.skykingdoms.api.shared.ui.sui.SideUi
+import net.skykingdoms.api.shared.user.ServerUserProvider
+import net.skykingdoms.backend.base.language.Language
 import net.skykingdoms.backend.minestom.event.ConnectionEstablishedEvent
 
 abstract class GameServer : Server {
@@ -17,9 +21,12 @@ abstract class GameServer : Server {
     val dimensionTypeManager = MinecraftServer.getDimensionTypeRegistry()
 
     fun start() {
-        //MinestomConnector.init()
-        Gui.init(globalEventHandler)
+        Language.reloadLanguages()
 
+        Gui.init(globalEventHandler)
+        PlayerSkinHandler.init(globalEventHandler)
+
+        connectionManager.setPlayerProvider(ServerUserProvider())
         minecraftServer.start("0.0.0.0", 25565) //MinestomConnector.instanceData.port)
         schedulerManager.buildShutdownTask {
             stop()

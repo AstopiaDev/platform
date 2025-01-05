@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import net.skykingdoms.api.backend.permission.Group;
 import net.skykingdoms.api.protocol.logging.Logging;
-import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.type.RemoteConnectedType;
 import net.skykingdoms.backend.base.data.network.NetworkSqlHandler;
 import net.skykingdoms.backend.base.data.state.NetworkState;
@@ -64,7 +63,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
 
         // null maybe
         if (gamer != null && gamer.isOnline()) {
-            Logging.IMP.info("Kicked {} for {}", gamer.getName(), packet.getReason());
+            Logging.IMP.info("Kicked {} for {}", gamer.getNameAsString(), packet.getReason());
             gamer.getPlayer().disconnect(Component.text(packet.getReason()));
         }
     }
@@ -127,7 +126,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
         for (val gamer : gamers) {
             val player = gamer.getPlayer();
 
-            val name = gamer.getName();
+            val name = gamer.getNameAsString();
             val uuid = gamer.getPlayerUniqueId();
             val address = player.getRemoteAddress().getAddress();
 
@@ -211,7 +210,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
 
         val name = gamer == null
                 ? NetworkSqlHandler.INSTANCE.getPlayerName(playerId)
-                : gamer.getName();
+                : gamer.getNameAsString();
 
         val player = VelocityConnector.INSTANCE.server().getPlayer(name).orElse(null);
 

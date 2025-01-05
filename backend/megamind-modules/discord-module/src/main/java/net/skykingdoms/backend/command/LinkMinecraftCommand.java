@@ -33,12 +33,12 @@ public class LinkMinecraftCommand {
         String code = session.getArgument(0);
 
         if (gamer.getPropertyOrDefault("discord_id", (long) 0) != (long) 0) {
-            gamer.sendMessage("§cYou are already linked to a Minecraft account.");
+            gamer.sendMessageAsString("§cYou are already linked to a Minecraft account.");
             return;
         }
 
         if (PlayerController.INSTANCE.hasCode(code)) {
-            gamer.sendMessage("§aYou have successfully linked your Minecraft account!");
+            gamer.sendMessageAsString("§aYou have successfully linked your Minecraft account!");
 
             String discordId = PlayerController.INSTANCE.getDiscordId(code);
             Guild guild = DiscordBot.INSTANCE.guild();

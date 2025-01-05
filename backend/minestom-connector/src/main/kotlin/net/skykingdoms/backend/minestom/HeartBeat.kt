@@ -60,12 +60,12 @@ object HeartBeat {
         }
     }
 
-/*    fun runLaterSync(runnable: Runnable, delay: Int): Task {
-        return scheduler.scheduleTask(
-            { runnable.run() },
+    fun runLaterSync(runnable: Runnable, delay: Int): Task {
+        return scheduler.scheduleTask({
+            runnable.run()
             TaskSchedule.tick(delay)
-        )
-    }*/
+        }, TaskSchedule.tick(delay))
+    }
 
     fun runTimerSync(runnable: Runnable, initial: Int, delay: Int): Task {
         return scheduler.scheduleTask(

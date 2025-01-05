@@ -40,7 +40,7 @@ public final class ServerUtil {
 
     public CompletableFuture<Optional<String>> getBestServer(final @NonNull Gamer gamer,
                                                              final @NonNull ScalableDataImpl scalableData) {
-        return Connection.awaitPacket(new C15GetBestServer( gamer.getName(), gamer.getAddress(), scalableData))
+        return Connection.awaitPacket(new C15GetBestServer( gamer.getNameAsString(), gamer.getAddress(), scalableData))
                 .thenApply(result -> Optional.ofNullable(result.getServer()))
                 .exceptionally(cause -> Optional.empty());
     }

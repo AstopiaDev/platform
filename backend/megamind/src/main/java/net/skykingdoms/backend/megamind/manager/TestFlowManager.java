@@ -150,7 +150,7 @@ public final class TestFlowManager {
         val testFlowId = ID_COUNTER.incrementAndGet();
 
         Logging.IMP.info("[TestFlow] Preparing test flow {} for {} @ Map: {} @ Instances: {} ID: {} ...",
-                name, executor.getName(), mapName == null ? "N/A" : mapName, amount, testFlowId);
+                name, executor.getNameAsString(), mapName == null ? "N/A" : mapName, amount, testFlowId);
 
         DeploymentManager.INSTANCE.sendDeploymentRequest(new BukkitDeployRequest(test.getServerData()),
                 ServerDeploy.DeploymentTarget.BUKKIT, true, name, testFlowId,

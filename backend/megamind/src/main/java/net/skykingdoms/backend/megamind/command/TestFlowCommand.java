@@ -78,7 +78,7 @@ public final class TestFlowCommand {
             val mapData = MapSqlHandler.INSTANCE.loadMap(cmd.getOptionValue("m")).join();
             if (mapData == null) {
                 val maps = MapSqlHandler.INSTANCE.getMaps(testFlow.getServerData().getGameMode());
-                sender.sendMessage("Unknown map! Try one of these: " + ChatColor.RED + maps.stream()
+                sender.sendMessageAsString("Unknown map! Try one of these: " + ChatColor.RED + maps.stream()
                         .map(Pair::getFirst)
                         .collect(Collectors.joining(ChatColor.WHITE + ", " + ChatColor.RED))
                 );
@@ -103,7 +103,7 @@ public final class TestFlowCommand {
                     session.sendMessage("Testflow with name {} not found", name);
                     break;
                 case TESTFLOW_EXECUTED:
-                    sender.sendMessage(ChatColor.GRAY + "Executing test flow " + name + "...");
+                    sender.sendMessageAsString(ChatColor.GRAY + "Executing test flow " + name + "...");
                     if (sender instanceof Gamer) {
                         val gamer = (Gamer) sender;
 
@@ -122,12 +122,12 @@ public final class TestFlowCommand {
                                     PartyManager.INSTANCE.warpTo(gamer);
                                 }*/
 
-                                sender.sendMessage(ChatColor.GRAY + "Done executing test flow " + name + "!");
+                                sender.sendMessageAsString(ChatColor.GRAY + "Done executing test flow " + name + "!");
 
                             }, 2500, TimeUnit.MILLISECONDS);
                         }
                     } else {
-                        sender.sendMessage(ChatColor.GRAY + "Done executing test flow " + name + "!");
+                        sender.sendMessageAsString(ChatColor.GRAY + "Done executing test flow " + name + "!");
                     }
 
                     break;

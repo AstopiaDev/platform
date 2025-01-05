@@ -287,7 +287,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             return;
         }
 
-        Logging.IMP.info("[{} -> {}] JJ: {}", gamer.getName(), server.getName(), oldJjFlag);
+        Logging.IMP.info("[{} -> {}] JJ: {}", gamer.getNameAsString(), server.getName(), oldJjFlag);
 
         gamer.updateServer((AbstractScalable) server);
         gamer.loadFriends();
@@ -333,7 +333,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             if (target == null) {
                 val finalMom = serverName;
                 serverName = ServerManager.INSTANCE.getFallbackServer().getName();
-                gamer.sendMessage("Couldn't connect you to " + finalMom + " so you were routed to fallback server (" + serverName + ")");
+                gamer.sendMessageAsString("Couldn't connect you to " + finalMom + " so you were routed to fallback server (" + serverName + ")");
                 return;
             } else {
                 serverName = target.getName();
@@ -430,7 +430,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                                 gamer.setOnline(true);
 
                                 gamer.updateServer((AbstractScalable) result);
-                                Logging.IMP.info("Reconnected {} -> {}", gamer.getName(), result.getName());
+                                Logging.IMP.info("Reconnected {} -> {}", gamer.getNameAsString(), result.getName());
 
                                 gamer.sendLocalizedMessage(gamer.isModern(), "core_reconnect_success_title");
                                 gamer.sendLocalizedMessage(gamer.isModern(), "core_reconnect_success_subtitle");
@@ -578,7 +578,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             gamer.quit();
         }
 
-        Logging.IMP.info("[{}] Disconnected {}", getDisplayName(), gamer == null ? "N/A" : gamer.getName());
+        Logging.IMP.info("[{}] Disconnected {}", getDisplayName(), gamer == null ? "N/A" : gamer.getNameAsString());
     }
 
     @Override
@@ -597,7 +597,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
 
             Logging.IMP.info("[{}] TestFlow #{} has the forced map -> {}", getDisplayName(), bukkitServer.getLinkedTestFlowId(), testflowMap);
             if (executor != null) {
-                executor.sendMessage(ChatColor.GREEN + "Instance " + miniName + " of " + GameType.getLinkedGameType(packet.getGameMode()).getHumanName() + " " + packet.getGameMode().getHumanName() + " game is locked at map " + testflowMap);
+                executor.sendMessageAsString(ChatColor.GREEN + "Instance " + miniName + " of " + GameType.getLinkedGameType(packet.getGameMode()).getHumanName() + " " + packet.getGameMode().getHumanName() + " game is locked at map " + testflowMap);
             }
 
             ctx.setResponse(new RequestMap.Response(testflowMap));

@@ -124,7 +124,7 @@ public final class FriendManager {
             targetGamer.sendRawMessage(
                     targetGamer.getLanguage().getMessage(targetGamer.isModern(), "friend_request_received",
                             "%playerDisplay%", senderGamer.getColoredName(),
-                            "%player%", senderGamer.getName()
+                            "%player%", senderGamer.getNameAsString()
                     )
             );
         }

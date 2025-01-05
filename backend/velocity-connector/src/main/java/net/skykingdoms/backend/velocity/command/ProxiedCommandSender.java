@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 public interface ProxiedCommandSender extends ICommandSender {
 
     @Override
-    default @NotNull String getName() {
+    default @NotNull String getNameAsString() {
         return getCommandSender() instanceof Player player ? player.getUsername() : "Console";
     }
 
     CommandSource getCommandSender();
 
     @Override
-    default void sendMessage(final String s) {
+    default void sendMessageAsString(final String s) {
         getCommandSender().sendMessage(Component.text(s));
     }
 

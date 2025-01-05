@@ -3,12 +3,12 @@ package net.skykingdoms.backend.base.gamer;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.backend.gamer.ApiGamer;
 import net.skykingdoms.api.backend.permission.Group;
 import net.skykingdoms.api.backend.setting.SettingType;
 import net.skykingdoms.api.protocol.logging.Logging;
 import net.skykingdoms.api.protocol.packet.serialize.Serializable;
-import net.skykingdoms.backend.base.data.auth.AuthSqlHandler;
 import net.skykingdoms.backend.base.data.friends.FriendsSqlHandler;
 import net.skykingdoms.backend.base.data.friends.FriendshipMeta;
 import net.skykingdoms.backend.base.data.network.NetworkSqlHandler;
@@ -269,7 +269,7 @@ public abstract class CommonGamer extends ApiGamer implements IBaseGamer, Serial
     // endregion
 
     @Override
-    public @NotNull String getDisplayName() {
+    public @NotNull String getDisplayNameAsString() {
         String displayName = ranks.getPriorityRank().getGroup().getPrefix() + name;
         String tag = getTag();
         if (tag != null) {
@@ -279,8 +279,13 @@ public abstract class CommonGamer extends ApiGamer implements IBaseGamer, Serial
         return displayName;
     }
 
+    @Override
+    public @NotNull Component getDisplayNameAsComponent() {
+        return Component.text(getDisplayNameAsString());
+    }
+
     public String getColoredName() {
-        return ranks.getPriorityRank().getGroup().getPrefixColor() + getName();
+        return ranks.getPriorityRank().getGroup().getPrefixColor() + this.getNameAsString();
     }
 
     /**

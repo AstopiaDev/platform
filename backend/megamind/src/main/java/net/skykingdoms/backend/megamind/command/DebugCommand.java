@@ -47,7 +47,7 @@ public final class DebugCommand {
     @WithCondition("group: admin")
     
     public static void dumpGamers(final CoreExecutionSession session) {
-        session.sendMessage(Gamer.getGamers().stream().map(g -> g.getName() + "/" + g.getGamerId()).collect(Collectors.joining(", ")));
+        session.sendMessage(Gamer.getGamers().stream().map(g -> g.getNameAsString() + "/" + g.getGamerId()).collect(Collectors.joining(", ")));
     }
 
     @SubcommandExecutor("unload")
@@ -56,7 +56,7 @@ public final class DebugCommand {
     public static void unload(final CoreExecutionSession session) throws CommandTranslationException {
         val gamer = session.getGamer(0);
         gamer.quit();
-        session.sendMessage("Unloaded " + gamer.getName());
+        session.sendMessage("Unloaded " + gamer.getNameAsString());
     }
 
     @WithCondition("disableConsole")

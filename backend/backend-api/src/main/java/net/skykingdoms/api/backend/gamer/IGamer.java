@@ -1,5 +1,6 @@
 package net.skykingdoms.api.backend.gamer;
 
+import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.backend.language.ILanguage;
 import net.skykingdoms.api.backend.permission.IUserRank;
 import net.skykingdoms.api.backend.permission.UserRankContainer;
@@ -23,12 +24,16 @@ public interface IGamer extends ICommandSender {
     /**
      * @return raw mojang's player name
      */
-    @NotNull String getName();
+    @NotNull String getNameAsString();
+
+    @NotNull Component getNameAsComponent();
 
     /**
      * @return player's display name (prefixed with rank)
      */
-    @NotNull String getDisplayName();
+    @NotNull String getDisplayNameAsString();
+
+    @NotNull Component getDisplayNameAsComponent();
 
     /**
      * @return player's selected language
@@ -61,11 +66,11 @@ public interface IGamer extends ICommandSender {
     boolean isLoggedIn();
 
     default void sendRawMessage(String message) {
-        sendMessage(message);
+        sendMessageAsString(message);
     }
 
     default @NotNull String getLowerName() {
-        return getName().toLowerCase();
+        return getNameAsString().toLowerCase();
     }
 
 }
