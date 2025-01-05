@@ -2,8 +2,9 @@ package net.skykingdoms.backend.base.language;
 
 import lombok.*;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.skykingdoms.api.backend.adventure.Adventure;
 import net.skykingdoms.api.backend.language.ILanguage;
 import net.skykingdoms.api.protocol.logging.Logging;
 import net.skykingdoms.backend.base.language.loaders.GithubLanguageLoader;
@@ -220,12 +221,28 @@ public enum Language implements UserLocale, ILanguage {
         return getMessageList(false, key, true, objects);
     }
 
+    @Override
+    public List<Component> getMessageComponentList(@NonNull String key, Object... objects) {
+        return getMessageComponentList(false, key, true, objects);
+    }
+
     public List<String> getMessageList(boolean modern, @NonNull String key, Object... objects) {
         return getMessageList(modern, key, true, objects);
     }
 
+    @Override
+    public List<Component> getMessageComponentList(boolean modern, @NonNull String key, Object... objects) {
+        return getMessageComponentList(modern, key, true, objects);
+    }
+
     public List<String> getMessageList(boolean modern, @NonNull String key, boolean useDefault, Object[] objects) {
         return Arrays.asList(getMessage(modern, key, useDefault, objects).split("\n"));
+    }
+
+    @Override
+    public List<Component> getMessageComponentList(boolean modern, @NonNull String key, boolean useDefault, Object[] objects) {
+        Component message = getMessageComponent(modern, key, useDefault, objects);
+        return message.children().stream().map(component -> component.replaceText(TextReplacementConfig.builder().match("\n").replacement("").build()).asComponent()).toList();
     }
 
     public boolean isMessageTranslated(@NonNull String key) {

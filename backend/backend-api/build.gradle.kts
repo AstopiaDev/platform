@@ -15,6 +15,7 @@ dependencies {
     api("net.kyori:adventure-text-minimessage:4.18.0")
     api("net.kyori:adventure-api:4.18.0")
     api("net.kyori:adventure-text-serializer-plain:4.18.0")
+    api("net.kyori:adventure-text-serializer-gson:4.18.0")
 
     api(project(":backend:impl-loader"))
     annotationProcessor(project(":backend:impl-loader"))
