@@ -3,24 +3,20 @@ import net.minestom.server.entity.GameMode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.instance.IChunkLoader
 import net.minestom.server.instance.InstanceContainer
-import net.minestom.server.instance.LightingChunk
-import net.minestom.server.instance.anvil.AnvilLoader
 import net.minestom.server.registry.DynamicRegistry
 import net.minestom.server.utils.NamespaceID
-import net.minestom.server.utils.chunk.ChunkSupplier
 import net.minestom.server.world.DimensionType
 import net.skykingdoms.api.backend.util.config.Configuration
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider
 import net.skykingdoms.api.protocol.logging.Logging
 import net.skykingdoms.api.shared.GameServer
 import net.skykingdoms.api.shared.chat.ServerChat
-import net.skykingdoms.backend.minestom.connection.Connection
-import net.skykingdoms.backend.protocol.packet.play.LobbyBoot
 import net.skykingdoms.api.shared.util.LocationUtil
-import net.skykingdoms.api.shared.world.loader.minestom.MinestomSlimeFormatLoader
 import net.skykingdoms.api.shared.world.loader.slime.SlimeFormatLoader
 import net.skykingdoms.api.shared.world.source.FileWorldSource
 import net.skykingdoms.api.shared.world.source.WorldSource
+import net.skykingdoms.backend.minestom.connection.Connection
+import net.skykingdoms.backend.protocol.packet.play.LobbyBoot
 import java.io.File
 
 abstract class LobbyServer : GameServer() {
@@ -36,10 +32,13 @@ abstract class LobbyServer : GameServer() {
 
         globalEventHandler.addListener(AsyncPlayerConfigurationEvent::class.java) { event ->
             event.spawningInstance = instanceContainer
+            event.isHardcore = true
+
             event.player.respawnPoint = spawnPoint
-            event.player.gameMode = GameMode.CREATIVE
+            event.player.gameMode = GameMode.ADVENTURE
         }
 
+        LobbyHandler.init(this)
         ServerChat.init(globalEventHandler)
     }
 
@@ -68,6 +67,7 @@ abstract class LobbyServer : GameServer() {
         val slimeLoader: IChunkLoader = SlimeFormatLoader(instanceContainer, worldSource)
 
         instanceContainer.chunkLoader = slimeLoader
+
         return instanceContainer
     }
 }
