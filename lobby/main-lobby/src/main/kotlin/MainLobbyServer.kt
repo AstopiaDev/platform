@@ -1,9 +1,6 @@
-import LobbyServer
 import net.minestom.server.entity.Player
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
-import net.minestom.server.event.player.PlayerChunkLoadEvent
 import net.skykingdoms.api.shared.ui.sui.SideUi
-import ui.gui.ServerSelectGui
+import ui.sui.LobbySideUi
 
 object MainLobbyServer : LobbyServer() {
     override fun onStart() {
@@ -17,7 +14,7 @@ object MainLobbyServer : LobbyServer() {
     }
 
     override fun defaultSideUi(loader: Player): SideUi? {
-        return super.defaultSideUi(loader)
+        return LobbySideUi(loader)
     }
 }
 

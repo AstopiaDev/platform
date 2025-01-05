@@ -8,6 +8,7 @@ import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.scoreboard.Sidebar
 import net.skykingdoms.api.shared.GameServer
+import net.skykingdoms.api.shared.event.PlayerJoinEvent
 import net.skykingdoms.api.shared.ui.UserInterface
 
 abstract class SideUi(loader: Player, title: Component) : Sidebar(title), UserInterface {
@@ -16,7 +17,7 @@ abstract class SideUi(loader: Player, title: Component) : Sidebar(title), UserIn
 
         fun init(gameServer: GameServer) {
             val sideBarNode = EventNode.type("sidebar", EventFilter.PLAYER)
-                .addListener(AsyncPlayerConfigurationEvent::class.java) { event ->
+                .addListener(PlayerJoinEvent::class.java) { event ->
                     gameServer.defaultSideUi(event.player)
                 }
                 .addListener(PlayerDisconnectEvent::class.java) { event ->
@@ -34,6 +35,7 @@ abstract class SideUi(loader: Player, title: Component) : Sidebar(title), UserIn
     init {
         sideUis.put(loader, this)
         this.addViewer(loader)
+        draw()
     }
 
     fun line(content: Component, line: Int) {

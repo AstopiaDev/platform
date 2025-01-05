@@ -3,6 +3,7 @@ package net.skykingdoms.api.shared
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.shared.event.PlayerJoinEvent
 import net.skykingdoms.api.shared.ui.gui.Gui
 import net.skykingdoms.api.shared.ui.sui.SideUi
 import net.skykingdoms.backend.minestom.event.ConnectionEstablishedEvent
@@ -18,6 +19,7 @@ abstract class GameServer : Server {
 
     fun start() {
         //MinestomConnector.init()
+        PlayerJoinEvent.init(this)
         Gui.init(globalEventHandler)
 
         minecraftServer.start("0.0.0.0", 25565) //MinestomConnector.instanceData.port)
