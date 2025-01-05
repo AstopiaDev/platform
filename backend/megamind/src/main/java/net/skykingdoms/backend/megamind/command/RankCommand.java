@@ -32,7 +32,7 @@ public class RankCommand {
         val rank = Group.fromLegacyGroup(session.getArgument(1));
 
         target.setRank(rank, null);
-        session.sendMessage("§aSet {}'s rank to {}", target.getName(), rank.getDisplayName());
+        session.sendMessage("§aSet {}'s rank to {}", target.getNameAsString(), rank.getDisplayName());
     }
 
     // rank add Vihara owner
@@ -46,7 +46,7 @@ public class RankCommand {
         val rank = Group.fromLegacyGroup(session.getArgument(1));
 
         target.addRank(rank, null);
-        session.sendMessage("§aAdded {} §arank to {}", rank.getDisplayName(), target.getName());
+        session.sendMessage("§aAdded {} §arank to {}", rank.getDisplayName(), target.getNameAsString());
     }
 
     // rank remove Vihara owner
@@ -62,11 +62,11 @@ public class RankCommand {
 
         val cock = (UserRanks) target.getRanks();
         if (!cock.canApply(rank)) {
-            session.sendMessage("{}" + ChatColor.GRAY + " didn't have {} in their ranks!", target.getName(), rank.getDisplayName());
+            session.sendMessage("{}" + ChatColor.GRAY + " didn't have {} in their ranks!", target.getNameAsString(), rank.getDisplayName());
             return;
         }
 
         target.removeRank(cock.getAllRanks().stream().filter(r -> r.getGroup() == rank).findFirst().orElse(null));
-        session.sendMessage("§aRemoved {} §arank from {}", rank.getDisplayName(), target.getName());
+        session.sendMessage("§aRemoved {} §arank from {}", rank.getDisplayName(), target.getNameAsString());
     }
 }

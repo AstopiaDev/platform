@@ -29,7 +29,7 @@ public final class KickCommand {
 
         target.disconnect(reason);
 
-        StaffChatManager.INSTANCE.sendMessage(session.getDisplayName() + ChatColor.WHITE + " kicked " + target.getDisplayName() + ChatColor.WHITE + " for " + ChatColor.ITALIC + reason);
+        StaffChatManager.INSTANCE.sendMessage(session.getDisplayName() + ChatColor.WHITE + " kicked " + target.getDisplayNameAsString() + ChatColor.WHITE + " for " + ChatColor.ITALIC + reason);
     }
 
 }

@@ -32,11 +32,11 @@ public class GameModeCommand extends DynamicCommand {
         val target = (AbstractPlayerHolder) ServerManager.INSTANCE.getPersistentServer(gamer, gameMode);
 
         if (target == null) {
-            gamer.sendMessage(ChatColor.RED + "Could not find you a server!");
+            gamer.sendMessageAsString(ChatColor.RED + "Could not find you a server!");
             return;
         }
 
-        gamer.sendMessage(ChatColor.GREEN + "Sending you to " + gameMode.getHumanName() + "!");
-        gamer.sendMessage(gamer.sendTo(target).name());
+        gamer.sendMessageAsString(ChatColor.GREEN + "Sending you to " + gameMode.getHumanName() + "!");
+        gamer.sendMessageAsString(gamer.sendTo(target).name());
     }
 }

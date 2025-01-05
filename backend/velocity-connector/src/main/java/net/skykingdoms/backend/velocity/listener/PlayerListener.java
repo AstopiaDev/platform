@@ -15,7 +15,6 @@ import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
-import com.velocitypowered.api.proxy.InboundConnection;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.util.GameProfile;
@@ -24,7 +23,6 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.protocol.logging.Logging;
@@ -268,7 +266,7 @@ public final class PlayerListener {
                     time = timings.remove(name);
                 }
 
-                Logging.IMP.info("[{}] log in time -> {} ms", gamer.getName(), System.currentTimeMillis() - time);
+                Logging.IMP.info("[{}] log in time -> {} ms", gamer.getNameAsString(), System.currentTimeMillis() - time);
 
                 gamer.setConnectedToCore(true);
                 continuation.resume();
@@ -379,7 +377,7 @@ public final class PlayerListener {
         }
 
         if (VelocityPunishmentManager.INSTANCE.isMuted(gamer.getGamerId())) {
-            gamer.sendMessage(VelocityPunishmentManager.INSTANCE.getMuteMessage(gamer));
+            gamer.sendMessageAsString(VelocityPunishmentManager.INSTANCE.getMuteMessage(gamer));
             event.setResult(PlayerChatEvent.ChatResult.denied());
             return;
         }

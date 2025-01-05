@@ -28,7 +28,7 @@ public final class ProxiedConsoleCommandSender implements ProxiedCommandSender {
     }
 
     @Override
-    public String getDisplayName() {
+    public String getDisplayNameAsString() {
         return "Console";
     }
 

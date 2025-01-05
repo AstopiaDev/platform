@@ -20,7 +20,7 @@ public final class AlertCommand {
     @Executor
     public static void execute(final @NonNull CoreExecutionSession session) {
         Gamer.getGamers().forEach(gamer -> {
-            gamer.sendMessage(
+            gamer.sendMessageAsString(
                     "\n" +
                     ChatColor.RED + ChatColor.BOLD + "Alert: " + ChatColor.WHITE + session.getArgumentString(0) +
                     "\n");

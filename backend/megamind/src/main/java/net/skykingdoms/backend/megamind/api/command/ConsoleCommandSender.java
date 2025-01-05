@@ -12,7 +12,7 @@ public enum ConsoleCommandSender implements CommandSender {
     private final String name = "Console";
 
     @Override
-    public @NotNull String getName() {
+    public @NotNull String getNameAsString() {
         return name;
     }
 
@@ -22,12 +22,12 @@ public enum ConsoleCommandSender implements CommandSender {
     }
 
     @Override
-    public String getDisplayName() {
+    public String getDisplayNameAsString() {
         return name;
     }
 
     @Override
-    public void sendMessage(String message) {
+    public void sendMessageAsString(String message) {
         Logging.IMP.info(message);
     }
 

@@ -34,7 +34,7 @@ public final class PlayerStatusEndpoint implements IEndpoint {
 
     private JsonObject createJson(final @NonNull Gamer gamer) {
         val jsonObject = new JsonObject();
-        jsonObject.addProperty("playerName", gamer.getName());
+        jsonObject.addProperty("playerName", gamer.getNameAsString());
         jsonObject.addProperty("uuid", gamer.getPlayerUniqueId().toString());
 
         val sessionObject = new JsonObject();

@@ -50,13 +50,13 @@ public enum DuelManager {
 
                     if (sender != null && sender.isOnline()) {
                         if (target != null) {
-                            sender.sendMessage("§cYour duel request to " + target.getDisplayName() + " has expired.");
+                            sender.sendMessageAsString("§cYour duel request to " + target.getDisplayNameAsString() + " has expired.");
                         }
                     }
 
                     if (target != null && target.isOnline()) {
                         if (sender != null) {
-                            target.sendMessage("§cDuel request from " + sender.getDisplayName() + " has expired.");
+                            target.sendMessageAsString("§cDuel request from " + sender.getDisplayNameAsString() + " has expired.");
                         }
                     }
 

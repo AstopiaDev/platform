@@ -57,7 +57,7 @@ public abstract class PunishmentCommand {
 
         if (punishmentType == PunishmentType.MUTE) {
             executor.sendLocalizedMessage(!executor.isConsole() && ((CommonGamer) executor).isModern(),"punishment_mute_executed",
-                    "%player%", target.getDisplayName(),
+                    "%player%", target.getDisplayNameAsString(),
                     "%duration%", Duration.durationWordsMs((Language) executor.getLanguage(), duration.toMillis()),
                     "%reason%", reason);
         }
@@ -71,11 +71,11 @@ public abstract class PunishmentCommand {
             //noinspection DataFlowIssue
             if (punishment.isPermanent()) {
                 executor.sendLocalizedMessage(!executor.isConsole() && ((CommonGamer) executor).isModern(), "punishment_permaban_executed",
-                        "%player%", target.getDisplayName(),
+                        "%player%", target.getDisplayNameAsString(),
                         "%reason%", reason);
             } else {
                 executor.sendLocalizedMessage(!executor.isConsole() && ((CommonGamer) executor).isModern(), "punishment_tempban_executed",
-                        "%player%", target.getDisplayName(),
+                        "%player%", target.getDisplayNameAsString(),
                         "%duration%", Duration.durationWordsMs((Language) executor.getLanguage(), duration.toMillis()),
                         "%reason%", reason);
             }

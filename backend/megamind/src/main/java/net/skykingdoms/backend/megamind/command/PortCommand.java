@@ -29,7 +29,7 @@ public final class PortCommand {
 
         target.sendTo(session.getGamer().getCurrentServer());
 
-        session.sendMessage("Ported " + target.getDisplayName());
+        session.sendMessage("Ported " + target.getDisplayNameAsString());
     }
 
 }

@@ -105,7 +105,7 @@ public class CommandWrapper implements ICommand {
     public void run(ICommandSender sender, IGamer gamer, String[] args, WrappedCommandExecutor executor) {
         try {
             if (executor == null) {
-                sender.sendMessage("No executor found");
+                sender.sendMessageAsString("No executor found");
                 return;
             }
 
@@ -131,7 +131,7 @@ public class CommandWrapper implements ICommand {
         } catch (Throwable t) {
             t.printStackTrace();
 
-            sender.sendMessage("§cInternal error occurred while performing this command.");
+            sender.sendMessageAsString("§cInternal error occurred while performing this command.");
         }
     }
 

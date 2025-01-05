@@ -34,6 +34,6 @@ open class ServerChat(val groups: HashSet<Group>?, val participants: HashSet<Ser
     }
 
     override fun sendMessage(user: ServerUser, message: String) {
-        sendMessage(user.language.getMessage("global_server_chat", "%display_name%", user.displayName, "%message%", message))
+        sendMessage(user.language.getMessage("global_server_chat", "%display_name%", user.displayNameAsString, "%message%", message))
     }
 }

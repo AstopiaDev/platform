@@ -73,7 +73,7 @@ public final class StatsEndpoint implements IEndpoint {
     private JsonObject createJson(final @NonNull Gamer gamer,
                                   final @NonNull Collection<GameMode> gameModes) {
         val jsonObject = new JsonObject();
-        jsonObject.addProperty("playerName", gamer.getName());
+        jsonObject.addProperty("playerName", gamer.getNameAsString());
         jsonObject.addProperty("uuid", gamer.getPlayerUniqueId().toString());
 
         val array = new JsonObject();

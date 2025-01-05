@@ -23,12 +23,12 @@ public interface IGamer extends ICommandSender {
     /**
      * @return raw mojang's player name
      */
-    @NotNull String getName();
+    @NotNull String getNameAsString();
 
     /**
      * @return player's display name (prefixed with rank)
      */
-    @NotNull String getDisplayName();
+    @NotNull String getDisplayNameAsString();
 
     /**
      * @return player's selected language
@@ -61,11 +61,11 @@ public interface IGamer extends ICommandSender {
     boolean isLoggedIn();
 
     default void sendRawMessage(String message) {
-        sendMessage(message);
+        sendMessageAsString(message);
     }
 
     default @NotNull String getLowerName() {
-        return getName().toLowerCase();
+        return getNameAsString().toLowerCase();
     }
 
 }

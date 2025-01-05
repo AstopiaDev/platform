@@ -4,8 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import net.skykingdoms.api.backend.gamer.IGamer;
 import net.skykingdoms.api.backend.permission.Group;
-import net.skykingdoms.api.backend.permission.IUserRank;
-import net.skykingdoms.api.backend.permission.UserRankContainer;
 import net.skykingdoms.api.backend.setting.Setting;
 import net.skykingdoms.api.backend.setting.SettingType;
 import net.skykingdoms.api.backend.type.property.PropertyType;
@@ -502,7 +500,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
     }
 
     @Override
-    public void sendMessage(@NonNull String message) {
+    public void sendMessageAsString(@NonNull String message) {
         sendToProxy(new B106Chat(gamerId, message, false));
     }
 
@@ -698,7 +696,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
 
     // relay
     public static void addGamer(final @NonNull Gamer gamer) {
-        Logging.IMP.info("[DEBUG] Added {}/{}", gamer.getName(), gamer.getGamerId());
+        Logging.IMP.info("[DEBUG] Added {}/{}", gamer.getNameAsString(), gamer.getGamerId());
         CommonGamer.addGamer(gamer);
         LookupManager.INSTANCE.handleGlobalOnlineChange(getTotalOnline());
     }
@@ -721,7 +719,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
         }
 
         LookupManager.INSTANCE.handleGlobalOnlineChange(getTotalOnline());
-        Logging.IMP.info("[DEBUG] Removed {}/{}", gamer.getName(), gamer.getGamerId());
+        Logging.IMP.info("[DEBUG] Removed {}/{}", gamer.getNameAsString(), gamer.getGamerId());
     }
 
     // relay

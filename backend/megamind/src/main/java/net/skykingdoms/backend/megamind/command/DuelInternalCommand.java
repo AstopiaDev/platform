@@ -27,12 +27,12 @@ public class DuelInternalCommand {
         var target = Gamer.getGamer(session.getArgument(0));
 
         if (DuelManager.INSTANCE.requestExists(gamer.getGamerId(), target.getGamerId())) {
-            gamer.sendMessage("§cYou already have a pending request with this player.");
+            gamer.sendMessageAsString("§cYou already have a pending request with this player.");
             return;
         }
 
         if (target == null || !target.isOnline()) {
-            gamer.sendMessage("§cPlayer not found.");
+            gamer.sendMessageAsString("§cPlayer not found.");
             return;
         }
 
@@ -43,7 +43,7 @@ public class DuelInternalCommand {
             var map = session.getArgument(2);
 
             if (!gamer.getRanks().canApply(Group.INFINITY)) {
-                gamer.sendMessage("§cOnly players with §5Infinity§c or higher can select maps.");
+                gamer.sendMessageAsString("§cOnly players with §5Infinity§c or higher can select maps.");
                 return;
             }
         } else if (session.getArgumentCount() == 4) {
@@ -67,11 +67,11 @@ public class DuelInternalCommand {
             val data = new KitFluentRequestData(map, kit);
             DuelManager.INSTANCE.addRequest(gamer.getGamerId(), target.getGamerId(), gameMode, data);
 
-            gamer.sendMessage("§aDuel request sent. Expires in 60 seconds.");
+            gamer.sendMessageAsString("§aDuel request sent. Expires in 60 seconds.");
             target.sendRawMessage(
                     target.getLanguage().getMessage(target.isModern(), "duel_invite_received",
-                            "%playerDisplay%", gamer.getDisplayName(),
-                            "%player%", gamer.getName(),
+                            "%playerDisplay%", gamer.getDisplayNameAsString(),
+                            "%player%", gamer.getNameAsString(),
                             "%mode%", gameMode.getHumanName(),
                             "%kit%", kit)
             );
@@ -104,10 +104,10 @@ public class DuelInternalCommand {
             return;
         }
 
-        sender.sendMessage("§a" + gamer.getDisplayName() + " §ahas accepted your duel request.");
-        sender.sendMessage("§7Searching for a server, please wait ...");
-        gamer.sendMessage("§aYou have accepted the duel invite from " + sender.getDisplayName());
-        gamer.sendMessage("§7Searching for a server, please wait ...");
+        sender.sendMessageAsString("§a" + gamer.getDisplayNameAsString() + " §ahas accepted your duel request.");
+        sender.sendMessageAsString("§7Searching for a server, please wait ...");
+        gamer.sendMessageAsString("§aYou have accepted the duel invite from " + sender.getDisplayNameAsString());
+        gamer.sendMessageAsString("§7Searching for a server, please wait ...");
 
 
         DuelManager.INSTANCE.removeRequest(sender.getGamerId());
@@ -115,8 +115,8 @@ public class DuelInternalCommand {
 
         AsyncExecution.INSTANCE.runLater(() -> {
             if (serverName == null) {
-                gamer.sendMessage("§cNo server available, try again later.");
-                sender.sendMessage("§cNo server available, try again later.");
+                gamer.sendMessageAsString("§cNo server available, try again later.");
+                sender.sendMessageAsString("§cNo server available, try again later.");
                 return;
             }
 
@@ -126,8 +126,8 @@ public class DuelInternalCommand {
                 gamer.sendTo(server);
                 sender.sendTo(server);
             } else {
-                gamer.sendMessage("§cNo server available, try again later.");
-                sender.sendMessage("§cNo server available, try again later.");
+                gamer.sendMessageAsString("§cNo server available, try again later.");
+                sender.sendMessageAsString("§cNo server available, try again later.");
             }
         }, 500, TimeUnit.MILLISECONDS);
     }

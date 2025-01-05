@@ -61,14 +61,14 @@ public abstract class PunishmentListCommand {
 
         // Header
         //noinspection StringConcatenationInsideStringBufferAppend
-        sb.append(ChatColor.YELLOW + "--- " + (StringUtil.capitalize(type.name().toLowerCase()) + "s") + " for ").append(gamer.getDisplayName()).append(ChatColor.YELLOW).append(" (Page ").append(page).append(" of ").append(punishmentMetas.getPages()).append(") ---\n");
+        sb.append(ChatColor.YELLOW + "--- " + (StringUtil.capitalize(type.name().toLowerCase()) + "s") + " for ").append(gamer.getDisplayNameAsString()).append(ChatColor.YELLOW).append(" (Page ").append(page).append(" of ").append(punishmentMetas.getPages()).append(") ---\n");
 
         // appending each mute meta
         for (val meta : punishmentMetas.size() == 0 ? Collections.<PunishmentMeta>emptySet() : punishmentMetas.getPage(page - 1)) {
             @SuppressWarnings("DataFlowIssue") // we know executor gamer exists
             val executorString = meta.getExecutorId() == 0
                     ? "CONSOLE"
-                    : Gamer.getOfflineGamer(meta.getExecutorId(), CommonGamer::loadGroupsAndName).getDisplayName();
+                    : Gamer.getOfflineGamer(meta.getExecutorId(), CommonGamer::loadGroupsAndName).getDisplayNameAsString();
 
             val executionString = TimeUtil.getDateTimeStringEu(meta.getExecutionDate());
             val durationString = Duration.format(meta.getExecutionDate(), meta.getExpirationTime(), null);
@@ -92,7 +92,7 @@ public abstract class PunishmentListCommand {
             if (removeMeta != null) {
                 val removerString = removeMeta.getRemoverId() < 1
                         ? "CONSOLE"
-                        : Gamer.getOfflineGamer(removeMeta.getRemoverId(), CommonGamer::loadGroupsAndName).getDisplayName();
+                        : Gamer.getOfflineGamer(removeMeta.getRemoverId(), CommonGamer::loadGroupsAndName).getDisplayNameAsString();
                 val removedString = TimeUtil.getDateTimeStringEu(removeMeta.getDate());
                 val actionString = type == PunishmentType.BAN ? "unbanned" : "unmuted";
 

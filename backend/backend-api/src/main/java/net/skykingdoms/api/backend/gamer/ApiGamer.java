@@ -113,7 +113,7 @@ public abstract class ApiGamer implements IGamer {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NotNull String getNameAsString() {
         return name;
     }
 

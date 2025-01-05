@@ -421,11 +421,11 @@ public final class Gamer extends CommonGamer implements IGamer, ProxiedCommandSe
 
     @Override
     public void sendLocalizedMessage(boolean modern, @NonNull String text, Object... o) {
-        sendMessage(getLanguage().getMessage(isModern(), text, o));
+        this.sendMessageAsString(getLanguage().getMessage(isModern(), text, o));
     }
 
     @Override
-    public void sendMessage(String text) {
+    public void sendMessageAsString(String text) {
         if (player != null) {
             player.sendMessage(Component.text(text));
         }
