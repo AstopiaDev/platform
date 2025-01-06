@@ -35,8 +35,9 @@ abstract class LobbyServer : GameServer() {
             event.spawningInstance = instanceContainer
             event.isHardcore = true
 
-            event.player.respawnPoint = spawnPoint
-            event.player.gameMode = GameMode.ADVENTURE
+            val player = event.player
+            player.respawnPoint = spawnPoint
+            player.gameMode = GameMode.ADVENTURE
         }
 
         LobbyHandler.init(this)

@@ -8,6 +8,9 @@ import net.minestom.server.event.entity.EntityDamageEvent
 import net.minestom.server.event.player.PlayerBlockBreakEvent
 import net.minestom.server.event.player.PlayerBlockPlaceEvent
 import net.minestom.server.event.player.PlayerMoveEvent
+import net.minestom.server.event.player.PlayerSkinInitEvent
+import net.minestom.server.potion.Potion
+import net.minestom.server.potion.PotionEffect
 import net.skykingdoms.api.shared.user.ServerUser
 import kotlin.properties.Delegates
 
@@ -24,6 +27,13 @@ object LobbyHandler {
     // TODO: implement rank conditional statements
     private fun registerDefaultListeners(globalEventHandler: GlobalEventHandler) {
         globalEventHandler
+            .addListener(PlayerSkinInitEvent::class.java) { event ->
+                event.player.addEffect(Potion(
+                    PotionEffect.fromNamespaceId("minecraft:hunger")!!,
+                    1,
+                    Potion.INFINITE_DURATION,
+                ))
+            }
             .addListener(PlayerBlockBreakEvent::class.java) { event ->
                 val player = event.player as ServerUser
                 event.isCancelled = true
