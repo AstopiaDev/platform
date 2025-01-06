@@ -60,7 +60,7 @@ abstract class HotBar(private val items: Array<Item>, private val invClickAction
     fun load(loader: ServerUser) {
         loader.inventory.clear()
         for ((index, item) in items.withIndex()) {
-            loader.inventory.itemStacks[index] = item.itemStack
+            loader.inventory.setItemStack(index, item.itemStack)
         }
         playerHotBars[loader] = this
     }
