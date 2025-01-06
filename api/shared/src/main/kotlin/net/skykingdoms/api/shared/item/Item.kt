@@ -1,4 +1,6 @@
 package net.skykingdoms.api.shared.item
 
-class Item {
+import net.minestom.server.item.ItemStack
+
+class Item(val itemStack: ItemStack) {
 }

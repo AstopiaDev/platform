@@ -1,3 +1,4 @@
+import hotbar.HotBar
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
@@ -39,6 +40,7 @@ abstract class LobbyServer : GameServer() {
         }
 
         LobbyHandler.init(this)
+        HotBar.init(globalEventHandler)
         ServerChat.init(globalEventHandler)
     }
 
