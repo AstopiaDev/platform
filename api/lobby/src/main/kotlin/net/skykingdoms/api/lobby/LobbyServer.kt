@@ -1,6 +1,5 @@
 package net.skykingdoms.api.lobby
 
-import hotbar.HotBar
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
@@ -11,6 +10,7 @@ import net.minestom.server.utils.NamespaceID
 import net.minestom.server.world.DimensionType
 import net.skykingdoms.api.backend.util.config.Configuration
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider
+import net.skykingdoms.api.lobby.hotbar.HotBar
 import net.skykingdoms.api.protocol.logging.Logging
 import net.skykingdoms.api.shared.SharedServer
 import net.skykingdoms.api.shared.chat.ServerChat

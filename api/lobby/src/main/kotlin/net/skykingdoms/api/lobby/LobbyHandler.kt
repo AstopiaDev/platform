@@ -1,6 +1,5 @@
 package net.skykingdoms.api.lobby
 
-import cmd.SpawnCommand
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.command.CommandManager
@@ -13,6 +12,7 @@ import net.minestom.server.event.player.PlayerMoveEvent
 import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
+import net.skykingdoms.api.lobby.cmd.SpawnCommand
 import net.skykingdoms.api.shared.user.ServerUser
 import kotlin.properties.Delegates
 

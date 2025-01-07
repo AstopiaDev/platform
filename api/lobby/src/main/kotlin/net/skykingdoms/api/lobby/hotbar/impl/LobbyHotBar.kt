@@ -1,8 +1,8 @@
 package net.skykingdoms.api.lobby.hotbar.impl
 
-import hotbar.HotBar
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import net.skykingdoms.api.lobby.hotbar.HotBar
 import net.skykingdoms.api.shared.item.Item
 import net.skykingdoms.api.shared.ui.gui.ClickAction
 
