@@ -2,9 +2,11 @@ package net.skykingdoms.api.shared
 
 import net.minestom.server.MinecraftServer
 import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.shared.dummy.Dummy
 import net.skykingdoms.api.shared.skin.PlayerSkinHandler
 import net.skykingdoms.api.shared.ui.gui.Gui
 import net.skykingdoms.api.shared.ui.sui.SideUi
+import net.skykingdoms.api.shared.ui.tui.TabUi
 import net.skykingdoms.api.shared.user.ServerUser
 import net.skykingdoms.api.shared.user.ServerUserProvider
 import net.skykingdoms.backend.base.language.Language
@@ -21,7 +23,9 @@ abstract class SharedServer : Server {
 
     fun start() {
         Language.reloadLanguages()
+        Dummy.init()
 
+        TabUi.init(globalEventHandler)
         Gui.init(globalEventHandler)
         PlayerSkinHandler.init(globalEventHandler)
 

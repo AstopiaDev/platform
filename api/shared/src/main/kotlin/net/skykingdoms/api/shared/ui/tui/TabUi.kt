@@ -3,11 +3,15 @@ package net.skykingdoms.api.shared.ui.tui
 import net.kyori.adventure.text.Component
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.skykingdoms.api.shared.dummy.Dummy.Companion.DMM
+import net.skykingdoms.api.shared.ui.UserInterface
 import net.skykingdoms.api.shared.user.ServerUser
 import net.skykingdoms.backend.minestom.HeartBeat
 import java.util.concurrent.ConcurrentHashMap
 
-open class TabUi(private val header: Component, private val footer: Component) {
+// TODO: implement player language support
+//  implement updating based on events
+open class TabUi(private val header: String, private val footer: String) : UserInterface {
     companion object {
         private val players: ConcurrentHashMap<ServerUser, TabUi> = ConcurrentHashMap()
 
@@ -22,7 +26,7 @@ open class TabUi(private val header: Component, private val footer: Component) {
                     val tabUi = players[player]
                     tabUi?.refresh(player)
                 }
-            }, 0, 20)
+            }, 1, 20)
         }
 
         private fun unload(player: ServerUser) {
@@ -35,8 +39,13 @@ open class TabUi(private val header: Component, private val footer: Component) {
         refresh(loader)
     }
 
-    // TODO: placeholder system for translating placeholders that are going to be in the tablist
     fun refresh(loader: ServerUser) {
-        loader.sendPlayerListHeaderAndFooter(header, footer)
+        val translatedHeader: Component = DMM.invoke(header, loader)
+        val translatedFooter: Component = DMM.invoke(footer, loader)
+        loader.sendPlayerListHeaderAndFooter(translatedHeader, translatedFooter)
+    }
+
+    override fun draw() {
+
     }
 }

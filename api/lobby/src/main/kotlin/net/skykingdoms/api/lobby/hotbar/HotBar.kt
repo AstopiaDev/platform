@@ -1,9 +1,9 @@
 package net.skykingdoms.api.lobby.hotbar
 
-import hotbar.impl.LobbyHotBar
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.skykingdoms.api.lobby.hotbar.impl.LobbyHotBar
 import net.skykingdoms.api.shared.item.Item
 import net.skykingdoms.api.shared.ui.gui.ClickAction
 import net.skykingdoms.api.shared.user.ServerUser
