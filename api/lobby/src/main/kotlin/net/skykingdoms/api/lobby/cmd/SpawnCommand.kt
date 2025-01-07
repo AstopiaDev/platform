@@ -1,4 +1,4 @@
-package cmd
+package net.skykingdoms.api.lobby.cmd
 
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound

@@ -18,7 +18,7 @@ dependencies {
 tasks {
     named<Jar>("jar") {
         manifest {
-            attributes["Main-Class"] = "MainLobbyServerKt"
+            attributes["Main-Class"] = "net.skykingdoms.lobby.mainlobby.MainLobbyServerKt"
         }
     }
 

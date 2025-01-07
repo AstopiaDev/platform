@@ -1,4 +1,4 @@
-package ui.sui
+package net.skykingdoms.lobby.mainlobby.ui.sui
 
 import net.skykingdoms.api.shared.ui.sui.SideUi
 import net.skykingdoms.api.shared.user.ServerUser

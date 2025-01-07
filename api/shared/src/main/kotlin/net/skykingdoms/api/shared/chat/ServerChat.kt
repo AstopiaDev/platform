@@ -1,13 +1,9 @@
 package net.skykingdoms.api.shared.chat
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.player.PlayerChatEvent
 import net.skykingdoms.api.backend.permission.Group
-import net.skykingdoms.api.shared.GameServer
 import net.skykingdoms.api.shared.chat.type.StaffChat
 import net.skykingdoms.api.shared.user.ServerUser
 

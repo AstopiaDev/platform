@@ -1,9 +1,10 @@
+package net.skykingdoms.lobby.mainlobby
+
 import hotbar.HotBar
-import net.minestom.server.event.player.PlayerRespawnEvent
 import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.skykingdoms.api.shared.ui.sui.SideUi
 import net.skykingdoms.api.shared.user.ServerUser
-import ui.sui.LobbySideUi
+import net.skykingdoms.lobby.mainlobby.ui.sui.LobbySideUi
 
 object MainLobbyServer : LobbyServer() {
     override fun onStart() {

@@ -1,4 +1,4 @@
-package ui.gui
+package net.skykingdoms.api.lobby.ui.gui
 
 import net.skykingdoms.api.shared.ui.gui.type.ChestGui
 import net.kyori.adventure.text.Component

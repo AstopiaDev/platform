@@ -1,3 +1,5 @@
+package net.skykingdoms.api.lobby
+
 import cmd.SpawnCommand
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound

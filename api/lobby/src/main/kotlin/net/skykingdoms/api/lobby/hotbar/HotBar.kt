@@ -1,4 +1,4 @@
-package hotbar
+package net.skykingdoms.api.lobby.hotbar
 
 import hotbar.impl.LobbyHotBar
 import net.minestom.server.event.GlobalEventHandler

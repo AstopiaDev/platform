@@ -1,4 +1,4 @@
-package hotbar.impl
+package net.skykingdoms.api.lobby.hotbar.impl
 
 import hotbar.HotBar
 import net.minestom.server.item.ItemStack
