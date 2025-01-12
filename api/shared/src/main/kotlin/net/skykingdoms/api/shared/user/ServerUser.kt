@@ -93,4 +93,9 @@ class ServerUser(val connection: PlayerConnection,
     override fun isLoggedIn(): Boolean {
         return false
     }
+
+    // TODO: modern conditioning
+    fun isModern(): Boolean {
+        return true
+    }
 }
