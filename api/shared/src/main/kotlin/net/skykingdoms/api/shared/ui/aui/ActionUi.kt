@@ -21,11 +21,25 @@ open class ActionUi(val content: String, val weight: Int) : UserInterface {
         init {
             HeartBeat.runTimerAsync({
                 for ((user, uis) in players) {
-                    for (ui in uis) {
-                        ui.load(user)
-                    }
+                    displayHighestWeightedContent(user, uis)
                 }
-            }, 0, 20)
+            }, 1, 20)
+        }
+
+        private fun displayHighestWeightedContent(user: ServerUser, uis: LinkedList<ActionUi>) {
+            if (uis.isEmpty()) return
+
+            val maxWeight = uis.maxOf { it.weight }
+            val highestWeightUis = uis.filter { it.weight == maxWeight }
+
+            if (highestWeightUis.size == 1) {
+                highestWeightUis.first().load(user)
+                return
+            }
+
+            val combinedContent = highestWeightUis.joinToString(" ") { it.content }
+            val combinedUI = ActionUi(combinedContent, maxWeight)
+            combinedUI.load(user)
         }
 
         fun display(target: ServerUser, ui: ActionUi) {
@@ -36,7 +50,21 @@ open class ActionUi(val content: String, val weight: Int) : UserInterface {
             }
 
             list.add(ui)
-            ui.load(target)
+
+            displayHighestWeightedContent(target, list)
+            players.put(target, list)
+        }
+
+        fun remove(target: ServerUser, ui: ActionUi) {
+            val list = players.get(target) ?: return
+            list.remove(ui)
+
+            if (list.isEmpty()) {
+                players.remove(target)
+                return
+            }
+
+            displayHighestWeightedContent(target, list)
             players.put(target, list)
         }
     }
@@ -47,7 +75,9 @@ open class ActionUi(val content: String, val weight: Int) : UserInterface {
                 EventSubbed.subscribe(event) {
                     for (player in cachedContent.keys()) {
                         cachedContent.put(player, DMM.invoke(content, player))
-                        load(player)
+
+                        val playerUis = players.get(player) ?: continue
+                        displayHighestWeightedContent(player, playerUis)
                     }
                 }
             }
@@ -63,6 +93,5 @@ open class ActionUi(val content: String, val weight: Int) : UserInterface {
     }
 
     override fun draw() {
-
     }
 }
