@@ -3,9 +3,10 @@ package net.skykingdoms.api.shared.ui.gui
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.inventory.InventoryType
+import net.skykingdoms.api.shared.user.ServerUser
 
 abstract class TexturedGui(
-    loader: Player,
+    loader: ServerUser,
     invType: InventoryType,
     header: Component,
     icon: Component,

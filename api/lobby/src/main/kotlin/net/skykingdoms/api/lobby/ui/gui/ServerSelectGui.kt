@@ -2,15 +2,19 @@ package net.skykingdoms.api.lobby.ui.gui
 
 import net.skykingdoms.api.shared.ui.gui.type.ChestGui
 import net.kyori.adventure.text.Component
-import net.minestom.server.entity.Player
 import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import net.skykingdoms.api.shared.ui.Modernized
 import net.skykingdoms.api.shared.ui.gui.ClickAction
+import net.skykingdoms.api.shared.ui.gui.Gui
+import net.skykingdoms.api.shared.user.ServerUser
 
-class ServerSelectGui(loader: Player) : ChestGui(loader, 6, Component.text("Server Selector"), false) {
+class ServerSelectGui(loader: ServerUser) : ChestGui(loader, 6, Component.text("Server Selector"), false), Modernized<Gui> {
     init {
-        draw()
+        if (!loader.isModern()) {
+            draw()
+        }
     }
 
     override fun draw() {
@@ -20,5 +24,24 @@ class ServerSelectGui(loader: Player) : ChestGui(loader, 6, Component.text("Serv
                 event.isCancelled = true
             }
         })
+    }
+
+    override fun modernize(): Gui {
+        return Modern(loader)
+    }
+
+    private class Modern(loader: ServerUser) : ChestGui(loader, 6, Component.text("Server Selector"), false) {
+        init {
+            draw()
+        }
+
+        override fun draw() {
+            item(1, ItemStack.of(Material.OAK_WOOD), object : ClickAction {
+                override fun execute(event: InventoryPreClickEvent) {
+                    loader.sendMessage("Hello, you clicked the oak wood!")
+                    event.isCancelled = true
+                }
+            })
+        }
     }
 }

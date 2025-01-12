@@ -1,11 +1,11 @@
 package net.skykingdoms.api.shared.ui.gui.type
 
 import net.kyori.adventure.text.Component
-import net.minestom.server.entity.Player
 import net.minestom.server.inventory.InventoryType
 import net.skykingdoms.api.shared.ui.gui.Gui
+import net.skykingdoms.api.shared.user.ServerUser
 
-abstract class ChestGui(loader: Player, private val rows: Int, title: Component, allowMove: Boolean) : Gui(
+abstract class ChestGui(loader: ServerUser, rows: Int, title: Component, allowMove: Boolean) : Gui(
     loader,
     rowMap[rows] ?: throw IllegalArgumentException("Invalid number of rows: $rows"),
     title,

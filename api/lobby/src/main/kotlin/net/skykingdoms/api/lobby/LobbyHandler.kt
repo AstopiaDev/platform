@@ -13,10 +13,14 @@ import net.minestom.server.event.player.PlayerSkinInitEvent
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 import net.skykingdoms.api.lobby.cmd.SpawnCommand
+import net.skykingdoms.api.lobby.ui.aui.StatsActionUi
+import net.skykingdoms.api.lobby.ui.gui.ServerSelectGui
+import net.skykingdoms.api.shared.ui.aui.ActionUi
 import net.skykingdoms.api.shared.user.ServerUser
 import kotlin.properties.Delegates
 
 object LobbyHandler {
+    private val statsActionUi: StatsActionUi = StatsActionUi()
     private var voidY by Delegates.notNull<Int>()
 
     fun init(server: LobbyServer) {
@@ -30,11 +34,13 @@ object LobbyHandler {
     private fun registerDefaultListeners(globalEventHandler: GlobalEventHandler) {
         globalEventHandler
             .addListener(PlayerSkinInitEvent::class.java) { event ->
+                ActionUi.display(event.player as ServerUser, statsActionUi)
                 event.player.addEffect(Potion(
                     PotionEffect.fromNamespaceId("minecraft:hunger")!!,
                     1,
                     Potion.INFINITE_DURATION,
                 ))
+                ServerSelectGui(event.player as ServerUser)
             }
             .addListener(PlayerBlockBreakEvent::class.java) { event ->
                 val player = event.player as ServerUser

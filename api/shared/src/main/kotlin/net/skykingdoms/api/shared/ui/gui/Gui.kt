@@ -6,15 +6,15 @@ import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.inventory.InventoryPreClickEvent
-import net.minestom.server.event.trait.InventoryEvent
 import net.minestom.server.inventory.Inventory
 import net.minestom.server.inventory.InventoryType
 import net.minestom.server.item.ItemStack
-import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.shared.ui.Modernized
 import net.skykingdoms.api.shared.ui.UserInterface
+import net.skykingdoms.api.shared.user.ServerUser
 
 abstract class Gui(
-    var loader: Player,
+    var loader: ServerUser,
     invType: InventoryType,
     title: Component,
     var clickActions: Array<ClickAction?>,
@@ -32,18 +32,17 @@ abstract class Gui(
 
                 if (inventory !is Gui) return@addListener
 
-                val gui = inventory
                 val slot = event.slot
 
-                if (slot < 0 || slot >= gui.clickActions.size) {
-                    if (!gui.allowMove) {
+                if (slot < 0 || slot >= inventory.clickActions.size) {
+                    if (!inventory.allowMove) {
                         event.isCancelled = true
                     }
                     return@addListener
                 }
 
-                val clickAction = gui.clickActions[slot]
-                if (clickAction == null && !gui.allowMove) {
+                val clickAction = inventory.clickActions[slot]
+                if (clickAction == null && !inventory.allowMove) {
                     event.isCancelled = true
                     return@addListener
                 }
@@ -56,15 +55,17 @@ abstract class Gui(
     }
 
     init {
-        loader.openInventory(this)
+        if (loader.isModern() && this is Modernized<*>) {
+            modernize()
+        } else {
+            loader.openInventory(this)
+        }
     }
 
-    fun item(slot: Int, item: ItemStack, clickAction: ClickAction?) {
-        clickActions[slot] = clickAction
-        this.setItemStack(slot, item)
-    }
-
-    fun item(slot: Int, item: ItemStack) {
-        item(slot, item, null)
+    fun item(slot: Int, item: ItemStack, clickAction: ClickAction? = null) {
+        if (slot >= 0 && slot < clickActions.size) {
+            clickActions[slot] = clickAction
+            setItemStack(slot, item)
+        }
     }
 }
