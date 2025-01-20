@@ -16,7 +16,7 @@ open class Dummy(val id: String) {
 
         fun add(dummy: Dummy) {
             val resolver = TagResolver.resolver(dummy.id) { args, context ->
-                Tag.inserting(when (dummy) {
+                Tag.selfClosingInserting(when (dummy) {
                     is PlayerDummyAction -> {
                         val player = context.targetAsType(ServerUser::class.java)
                         dummy.playerReplacement(player, args)
