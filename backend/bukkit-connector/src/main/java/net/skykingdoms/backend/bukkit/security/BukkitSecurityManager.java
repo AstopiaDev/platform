@@ -1,7 +1,7 @@
 package net.skykingdoms.backend.bukkit.security;
 
 import lombok.NonNull;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.security.AbstractHandshakeSecurityManager;
 import net.skykingdoms.backend.bukkit.BukkitConnector;
 import net.skykingdoms.backend.bukkit.security.impl.SecurityHandshakeListener;
@@ -30,7 +30,7 @@ public final class BukkitSecurityManager extends AbstractHandshakeSecurityManage
         super.updateToken(token);
 
         // todo: "blur" part of it to keep logs safe
-        Logging.IMP.info("[Security] Updated token to " + token);
+        Platform.logger.info("[Security] Updated token to " + token);
     }
 
 }

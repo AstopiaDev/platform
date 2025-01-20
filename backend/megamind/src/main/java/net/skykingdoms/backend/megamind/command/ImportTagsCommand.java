@@ -7,7 +7,7 @@ import net.skykingdoms.api.backend.command.execution.Executor;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.tags.SeasonObtained;
 import net.skykingdoms.backend.base.data.tags.TagsSqlHandler;
 import net.skykingdoms.backend.base.data.tags.YearObtained;
@@ -91,9 +91,9 @@ public class ImportTagsCommand {
 
                     if (!line.contains("Preview") && line.contains("Crate") || !line.contains("Preview") && line.contains("Parkour")) {
                         String newLine = ChatColor.stripColor(line);
-                        Logging.IMP.info(newLine.split(" ")[0].toUpperCase());
-                        Logging.IMP.info("Y" + newLine.split(" ")[1].toUpperCase());
-                        Logging.IMP.info(newLine);
+                        Platform.logger.info(newLine.split(" ")[0].toUpperCase());
+                        Platform.logger.info("Y" + newLine.split(" ")[1].toUpperCase());
+                        Platform.logger.info(newLine);
                         obtained = SeasonObtained.fromString(newLine.split(" ")[0].toUpperCase());
                         yearObtained = YearObtained.fromString("Y" + newLine.split(" ")[1].toUpperCase());
                         break;

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.security.AbstractHandshakeSecurityManager;
 import net.skykingdoms.backend.velocity.VelocityConnector;
 import net.skykingdoms.backend.velocity.security.impl.SpoofedLoginResult;
@@ -39,7 +39,7 @@ public final class BungeeSecurityManager extends AbstractHandshakeSecurityManage
     public void updatePlayersConnections() {
         for (val player : VelocityConnector.INSTANCE.server().getAllPlayers()) {
             SpoofedLoginResult.inject(player, BungeeSecurityManager.INSTANCE.getSecurityToken());
-            Logging.IMP.info("[Security] Injected data into {}'s connection", player.getUsername());
+            Platform.logger.info("[Security] Injected data into {}'s connection", player.getUsername());
         }
     }
 
@@ -52,7 +52,7 @@ public final class BungeeSecurityManager extends AbstractHandshakeSecurityManage
         super.updateToken(token);
 
         // todo: "blur" part of it to keep logs safe
-        Logging.IMP.info("[Security] Updated token to " + token);
+        Platform.logger.info("[Security] Updated token to " + token);
     }
 
 }

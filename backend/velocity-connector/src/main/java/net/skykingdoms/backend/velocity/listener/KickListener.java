@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.velocity.gamer.Gamer;
 import net.skykingdoms.backend.velocity.util.ServerUtil;
 
@@ -23,8 +23,8 @@ public final class KickListener {
         var gamer = Gamer.getGamer(player);
 
         if (gamer == null) {
-            Logging.IMP.info("Unlogged player {} was kicked from", player.getUsername());
-            Logging.IMP.info("> {}, v{}", event.getServer().getServerInfo().getName(), player.getProtocolVersion());
+            Platform.logger.info("Unlogged player {} was kicked from", player.getUsername());
+            Platform.logger.info("> {}, v{}", event.getServer().getServerInfo().getName(), player.getProtocolVersion());
 /*
             Logging.IMP.info("> {}", reason);
 */

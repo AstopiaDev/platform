@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.type.RemoteConnectedType;
 import net.skykingdoms.backend.base.language.Language;
 import net.skykingdoms.backend.bukkit.BukkitConnector;
@@ -46,7 +46,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel { 
         try {
             BukkitConnector.INSTANCE.plugin().getServer().getPluginManager().callEvent(new ServerActiveEvent(this));
         } catch (Throwable t) {
-            Logging.IMP.stacktrace(t, "Can't call active event");
+            Platform.logger.stacktrace(t, "Can't call active event");
         }
 
         EnumSet<Handshake.RequestFlag> flags = EnumSet.noneOf(Handshake.RequestFlag.class);
@@ -71,7 +71,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel { 
     public void process(final @NonNull Handshake.Response packet,
                         final @NonNull ChannelProcessorContext ctx) {
         if (packet.getResult() == Handshake.Result.FAILED) {
-            Logging.IMP.error("[HANDSHAKE] Unable to connect to coordinator: {}", packet.getMessage());
+            Platform.logger.error("[HANDSHAKE] Unable to connect to coordinator: {}", packet.getMessage());
             return;
         }
 
@@ -79,7 +79,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel { 
 
         Connection.awaitPacket(new SecurityToken.Request()).whenComplete((response, throwable) -> {
             if (throwable != null) {
-                Logging.IMP.stacktrace(throwable, "Exception raised on token request! Shutting down the proxy...");
+                Platform.logger.stacktrace(throwable, "Exception raised on token request! Shutting down the proxy...");
                 Bukkit.shutdown();
                 return;
             }
@@ -108,7 +108,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel { 
             BukkitConnector.INSTANCE.plugin().getServer().getPluginManager().callEvent(new ServerDataUpdateEvent(BukkitConnector.INSTANCE.fluentBukkitData()));
         });
 
-        Logging.IMP.info("Updated server data: {} @ {}", cockData.getServerName(), cockData.getNodeName());
+        Platform.logger.info("Updated server data: {} @ {}", cockData.getServerName(), cockData.getNodeName());
     }
 
     @Override

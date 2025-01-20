@@ -7,7 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.skykingdoms.api.backend.gamer.ApiGamer;
 import net.skykingdoms.api.backend.permission.Group;
 import net.skykingdoms.api.backend.setting.SettingType;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.packet.serialize.Serializable;
 import net.skykingdoms.backend.base.data.friends.FriendsSqlHandler;
 import net.skykingdoms.backend.base.data.friends.FriendshipMeta;
@@ -323,7 +323,7 @@ public abstract class CommonGamer extends ApiGamer implements IBaseGamer, Serial
         try {
             this.address = PacketUtils.readAddress(in);
         } catch (UnknownHostException e) {
-            Logging.IMP.error("Unknown host when deserializing a gamer: {}", e);
+            Platform.logger.error("Unknown host when deserializing a gamer: {}", e);
         }
         return this;
     }

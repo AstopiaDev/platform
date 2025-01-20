@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import net.skykingdoms.api.megamind.event.Event;
 import net.skykingdoms.api.megamind.event.IEventBus;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.manager.ServiceManager;
 import net.skykingdoms.backend.megamind.server.impl.ServiceServer;
 import net.skykingdoms.backend.protocol.packet.play.PostEventPacket;
@@ -29,7 +29,7 @@ public class EventBus implements IEventBus {
                 }
 
                 service.getChannel().sendPacket(new PostEventPacket(event.getClass(), event));
-                Logging.IMP.info("Sending a packet to service {}", serviceName);
+                Platform.logger.info("Sending a packet to service {}", serviceName);
             }
         }
     }

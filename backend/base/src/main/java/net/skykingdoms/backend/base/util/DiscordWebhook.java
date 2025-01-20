@@ -2,7 +2,7 @@ package net.skykingdoms.backend.base.util;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -194,7 +194,7 @@ public class DiscordWebhook {
             connection.getInputStream().close(); //I'm not sure why, but it doesn't work without getting the InputStream
             connection.disconnect();
         } catch (final @NonNull Exception e) {
-            Logging.IMP.stacktrace(e, "Exception raised on discord webhook send process");
+            Platform.logger.stacktrace(e, "Exception raised on discord webhook send process");
         }
     }
 

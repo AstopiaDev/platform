@@ -2,7 +2,7 @@ package net.skykingdoms.backend.base.language.loaders;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.language.Language;
 import net.skykingdoms.backend.base.language.parser.I18nParserController;
 
@@ -39,7 +39,7 @@ public final class StashLanguageLoader implements LanguageLoader {
                         try {
                             writeBuffer.write(Files.readAllBytes(Paths.get(f.toUri())));
                         } catch (IOException e) {
-                            Logging.IMP.error("Error reading bytes");
+                            Platform.logger.error("Error reading bytes");
                             throw new RuntimeException(e);
                         }
 

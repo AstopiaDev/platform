@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.IChunkLoader
 import net.minestom.server.instance.Instance
-import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.protocol.platform.Platform
 import net.skykingdoms.api.shared.util.LocationUtil
 import net.skykingdoms.api.shared.world.source.WorldSource
 import java.io.DataInputStream
@@ -33,8 +33,8 @@ class SlimeFormatLoader(
 
         val fileVersion = dataStream.readByte()
 
-        Logging.IMP.info("${fileVersion.toInt()} yuh!")
-        Logging.IMP.info("${dataStream.readInt()} world version")
+        Platform.logger.info("${fileVersion.toInt()} yuh!")
+        Platform.logger.info("${dataStream.readInt()} world version")
 
         // Chunks
         val chunkBytes: ByteArray = deserializer.deserializeWorld(dataStream)

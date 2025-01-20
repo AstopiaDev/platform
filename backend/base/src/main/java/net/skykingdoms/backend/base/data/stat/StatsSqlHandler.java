@@ -6,7 +6,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 import lombok.NonNull;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.type.GameMode;
 import net.skykingdoms.backend.base.mysql.BufferedQuery;
@@ -39,7 +39,7 @@ public class StatsSqlHandler {
             @NonNull StatsMode mode, int playerId, int fromDay) {
 
         return database.executeQuery(mode.getSelectQuery(), playerId, fromDay).thenApply(rows -> {
-            Logging.IMP.info("[DEBUG] loadPlayerStats for {}", playerId);
+            Platform.logger.info("[DEBUG] loadPlayerStats for {}", playerId);
             TIntObjectMap<TObjectDoubleMap<StatsField>> stats = new TIntObjectHashMap<>();
 
             for (BufferedRow row : rows) {
@@ -83,19 +83,19 @@ public class StatsSqlHandler {
      */
     CompletableFuture<Set<String>> loadTables() {
         return database.executeQuery("SHOW TABLES FROM `Stats`").thenApply(rows -> {
-            Logging.IMP.info("[StatsHandler] StatsSqlHandler:85 -> {}", Arrays.toString(rows.stream().map(AbstractMap::toString).toArray()));
+            Platform.logger.info("[StatsHandler] StatsSqlHandler:85 -> {}", Arrays.toString(rows.stream().map(AbstractMap::toString).toArray()));
             Set<String> tables = new HashSet<>();
 
             for (BufferedRow row : rows) {
                 val shit = row.values().stream().findFirst().orElse("NULL");
-                Logging.IMP.info("[StatsHandler]  loadTables: {}", shit);
+                Platform.logger.info("[StatsHandler]  loadTables: {}", shit);
                 String name = shit.toString();
 
                 val type = GameType.valueOf(name.toUpperCase(), null);
                 val mode = GameMode.valueOf(name.toUpperCase(), null);
 
                 if (mode == null && type == null) {
-                    Logging.IMP.warn("[StatsHandler] Tried loading mode {}, but enum is NULL!", name);
+                    Platform.logger.warn("[StatsHandler] Tried loading mode {}, but enum is NULL!", name);
                     continue;
                 }
 

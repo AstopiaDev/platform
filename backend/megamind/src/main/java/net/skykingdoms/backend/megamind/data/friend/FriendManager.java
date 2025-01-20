@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.friends.FriendsSqlHandler;
 import net.skykingdoms.backend.base.data.friends.FriendshipMeta;
 import net.skykingdoms.backend.base.gamer.CommonGamer;
@@ -37,7 +37,7 @@ public final class FriendManager {
      */
     public void postBootstrap() {
         /*friendshipMetas.addAll(FriendsSqlHandler.INSTANCE.getFriendships());*/
-        Logging.IMP.info("[FriendManager] Loaded {} friendship metas", friendshipMetas.size());
+        Platform.logger.info("[FriendManager] Loaded {} friendship metas", friendshipMetas.size());
     }
 
     /**
@@ -170,7 +170,7 @@ public final class FriendManager {
         });
 
         if (receiverGamer == null || senderGamer == null) {
-            Logging.IMP.error("[FriendManager/AFR] One of gamers is NULL! F: {} @ S: {}",
+            Platform.logger.error("[FriendManager/AFR] One of gamers is NULL! F: {} @ S: {}",
                     receiverGamer, senderGamer);
             return false;
         }
@@ -231,7 +231,7 @@ public final class FriendManager {
         });
 
         if (firstGamer == null || secondGamer == null) {
-            Logging.IMP.error("[FriendManager/RF] One of gamers is NULL! F: {} @ S: {}",
+            Platform.logger.error("[FriendManager/RF] One of gamers is NULL! F: {} @ S: {}",
                     firstGamer, secondGamer);
             return false;
         }
@@ -285,7 +285,7 @@ public final class FriendManager {
         });
 
         if (denierGamer == null || senderGamer == null) {
-            Logging.IMP.error("[FriendManager/DFR] One of gamers is NULL! F: {} @ S: {}",
+            Platform.logger.error("[FriendManager/DFR] One of gamers is NULL! F: {} @ S: {}",
                     denierGamer, senderGamer);
             return false;
         }

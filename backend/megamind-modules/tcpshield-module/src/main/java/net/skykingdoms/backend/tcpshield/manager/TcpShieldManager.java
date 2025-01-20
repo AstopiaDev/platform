@@ -3,7 +3,7 @@ package net.skykingdoms.backend.tcpshield.manager;
 import lombok.Getter;
 import lombok.NonNull;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.util.TextFormat;
 import net.skykingdoms.backend.megamind.AsyncExecution;
 import net.skykingdoms.backend.megamind.manager.ProxyManager;
@@ -44,12 +44,12 @@ public final class TcpShieldManager {
     public void reloadBackends() {
         loadedBackends.clear(); // cleaning up old shit
         client.getNetworks().forEach(network -> {
-            Logging.IMP.info(TextFormat.formatText("{}, {}, {}", network.getID(), network.getName(), network.getMitigationSettings().toString()));
+            Platform.logger.info(TextFormat.formatText("{}, {}, {}", network.getID(), network.getName(), network.getMitigationSettings().toString()));
         });
-        Logging.IMP.info("[TCPShield] Loading backend servers from remote ...");
+        Platform.logger.info("[TCPShield] Loading backend servers from remote ...");
         loadedBackends.addAll(this.client.getBackendSet(networkId, backendSetId).getBackends());
-        Logging.IMP.info("[TCPShield] Loaded in total {} backends", loadedBackends.size());
-        Logging.IMP.info("[TCPShield] Cleaning up backends in 10 seconds ...");
+        Platform.logger.info("[TCPShield] Loaded in total {} backends", loadedBackends.size());
+        Platform.logger.info("[TCPShield] Cleaning up backends in 10 seconds ...");
         AsyncExecution.INSTANCE.runLater(this::backendCleanup, 20L, TimeUnit.SECONDS);
     }
 
@@ -59,10 +59,10 @@ public final class TcpShieldManager {
             String ip = splitBackend[0];
             int port = Integer.parseInt(splitBackend[1]);
 
-            Logging.IMP.info("[TCPShield] Checking for {}", backend);
+            Platform.logger.info("[TCPShield] Checking for {}", backend);
 
             if (!ProxyManager.INSTANCE.isProxyRegistered(ip, port)) {
-                Logging.IMP.info("[TCPShield] Proxy is not registered {}", backend);
+                Platform.logger.info("[TCPShield] Proxy is not registered {}", backend);
                 removeBackend(ip, port);
             }
         });
@@ -76,7 +76,7 @@ public final class TcpShieldManager {
                     String backend = ip + ":" + port;
                     loadedBackends.add(backend);
                     client.patchBackendSet(networkId, backendSetId, backendSetName, loadedBackends.toArray(new String[0]));
-                    Logging.IMP.info("[TCPShield] Created a backend for {}:{}", ip, port);
+                    Platform.logger.info("[TCPShield] Created a backend for {}:{}", ip, port);
 
                     return backend;
                 });
@@ -92,7 +92,7 @@ public final class TcpShieldManager {
 
         loadedBackends.remove(backend);
         client.patchBackendSet(networkId, backendSetId, backendSetName, loadedBackends.toArray(new String[0]));
-        Logging.IMP.info("[TCPShield] Removed the backend {}:{}", ip, port);
+        Platform.logger.info("[TCPShield] Removed the backend {}:{}", ip, port);
     }
 
 }

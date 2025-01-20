@@ -1,7 +1,8 @@
 package net.skykingdoms.api.shared
 
 import net.minestom.server.MinecraftServer
-import net.skykingdoms.api.protocol.logging.Logging
+import net.skykingdoms.api.protocol.platform.ConsoleLogger
+import net.skykingdoms.api.protocol.platform.Platform
 import net.skykingdoms.api.shared.dummy.Dummy
 import net.skykingdoms.api.shared.skin.PlayerSkinHandler
 import net.skykingdoms.api.shared.ui.gui.Gui
@@ -10,6 +11,7 @@ import net.skykingdoms.api.shared.ui.tui.TabUi
 import net.skykingdoms.api.shared.user.ServerUser
 import net.skykingdoms.api.shared.user.ServerUserProvider
 import net.skykingdoms.backend.base.language.Language
+import net.skykingdoms.backend.minestom.MinestomConnector
 import net.skykingdoms.backend.minestom.event.ConnectionEstablishedEvent
 
 abstract class SharedServer : Server {
@@ -29,6 +31,8 @@ abstract class SharedServer : Server {
         Gui.init(globalEventHandler)
         PlayerSkinHandler.init(globalEventHandler)
 
+        MinestomConnector.init()
+
         connectionManager.setPlayerProvider(ServerUserProvider())
         minecraftServer.start("0.0.0.0", 25565) //MinestomConnector.instanceData.port)
         schedulerManager.buildShutdownTask {
@@ -36,7 +40,7 @@ abstract class SharedServer : Server {
         }
         globalEventHandler
             .addListener(ConnectionEstablishedEvent::class.java) {
-                Logging.IMP.info("[connection] Active")
+                Platform.logger.info("[connection] Active")
                 active()
             }
 

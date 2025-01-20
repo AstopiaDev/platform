@@ -6,7 +6,7 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skykingdoms.api.backend.language.ILanguage;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.language.loaders.GithubLanguageLoader;
 import net.skykingdoms.backend.base.language.loaders.LanguageLoader;
 import net.skykingdoms.backend.base.util.time.TimeUtil;
@@ -83,7 +83,7 @@ public enum Language implements UserLocale, ILanguage {
         }
 
         if (objects.length % 2 != 0) {
-            Logging.IMP.warn(string + "[" + objects.length + "]: " + Arrays.toString(objects));
+            Platform.logger.warn(string + "[" + objects.length + "]: " + Arrays.toString(objects));
 
             return string;
         }
@@ -109,7 +109,7 @@ public enum Language implements UserLocale, ILanguage {
         }
 
         if (objects.length % 2 != 0) {
-            Logging.IMP.warn(PlainTextComponentSerializer.plainText().serialize(component) + "[" + objects.length + "]: " + Arrays.toString(objects));
+            Platform.logger.warn(PlainTextComponentSerializer.plainText().serialize(component) + "[" + objects.length + "]: " + Arrays.toString(objects));
             return component;
         }
 
@@ -349,7 +349,7 @@ public enum Language implements UserLocale, ILanguage {
 
                 matcher = CURSOR_PATTERN.matcher(value = matcher.replaceFirst(result));
             } catch (Exception e) {
-                Logging.IMP.error("Localization loading fucked up on: {}", localizationKey);
+                Platform.logger.error("Localization loading fucked up on: {}", localizationKey);
             }
         }
 

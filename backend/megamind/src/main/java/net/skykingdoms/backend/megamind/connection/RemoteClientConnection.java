@@ -9,7 +9,7 @@ import net.skykingdoms.api.backend.setting.SettingType;
 import net.skykingdoms.api.backend.setting.impl.BooleanSetting;
 import net.skykingdoms.api.backend.setting.impl.EnumSetting;
 import net.skykingdoms.api.megamind.event.impl.gamer.*;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.type.GameMode;
@@ -108,13 +108,13 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             ServerManager.INSTANCE.removePersistentServer(ps);
         }
 
-        Logging.IMP.info("[RCC/DEBUG] Disconnected {}:{}:{}", getDisplayName(), host, port);
+        Platform.logger.info("[RCC/DEBUG] Disconnected {}:{}:{}", getDisplayName(), host, port);
     }
 
     @Override
     public void process(SecurityToken.Request packet, ChannelProcessorContext ctx) {
         if (!CoreSecurityManager.INSTANCE.isInitialized()) {
-            Logging.IMP.error("[{}] [Security] Requested token, but security manager was not initialized!");
+            Platform.logger.error("[{}] [Security] Requested token, but security manager was not initialized!");
             ctx.setResponse(new SecurityToken.Response("")); // sending blank. it will be rejected on endpoint
             return;
         }
@@ -248,7 +248,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
     @Override
     public void process(C17LookupGlobalOnline packet, ChannelProcessorContext ctx) {
         if (connectable == null) {
-            Logging.IMP.warn("[RCC] Tried registering online lookup, but remote client is null [{}]", packet);
+            Platform.logger.warn("[RCC] Tried registering online lookup, but remote client is null [{}]", packet);
             return;
         }
 
@@ -282,12 +282,12 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
         val server = (AbstractPlayerHolder) ServerManager.INSTANCE.getPlayableServer(packet.getServer());
         if (server == null) {
             // todo: fixme
-            Logging.IMP.warn("[{}] Kicking, due to moving to absent server {}", packet.getServer());
+            Platform.logger.warn("[{}] Kicking, due to moving to absent server {}", packet.getServer());
             gamer.disconnect("Internal server error");
             return;
         }
 
-        Logging.IMP.info("[{} -> {}] JJ: {}", gamer.getNameAsString(), server.getName(), oldJjFlag);
+        Platform.logger.info("[{} -> {}] JJ: {}", gamer.getNameAsString(), server.getName(), oldJjFlag);
 
         gamer.updateServer((AbstractScalable) server);
         gamer.loadFriends();
@@ -365,7 +365,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
     private void asyncReconnectPlayers(C10ReconnectPlayers packet) {
         val proxy = (ProxyServer) connectable;
 
-        Logging.IMP.info("Reconnecting " + packet.getGamers().size() + " gamers");
+        Platform.logger.info("Reconnecting " + packet.getGamers().size() + " gamers");
 
         Set<FailedReconnectGamer> gamers = new HashSet<>();
         Map<Gamer, CompletableFuture<AbstractPlayerHolder>> reconnecting = new HashMap<>();
@@ -430,7 +430,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                                 gamer.setOnline(true);
 
                                 gamer.updateServer((AbstractScalable) result);
-                                Logging.IMP.info("Reconnected {} -> {}", gamer.getNameAsString(), result.getName());
+                                Platform.logger.info("Reconnected {} -> {}", gamer.getNameAsString(), result.getName());
 
                                 gamer.sendLocalizedMessage(gamer.isModern(), "core_reconnect_success_title");
                                 gamer.sendLocalizedMessage(gamer.isModern(), "core_reconnect_success_subtitle");
@@ -468,14 +468,14 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                         final @NonNull ChannelProcessorContext ctx) {
         if (!packet.getSecret().equals(MegamindApp.INSTANCE.secret())) {
             ctx.setResponse(new Handshake.Response(Handshake.Result.FAILED, "Invalid secret token!"));
-            Logging.IMP.info("[HS/D] Aborted handshake request of {} due to invalid secret key ({}), should be ({})!",
+            Platform.logger.info("[HS/D] Aborted handshake request of {} due to invalid secret key ({}), should be ({})!",
                     getDisplayName(), packet.getSecret(), MegamindApp.INSTANCE.secret());
             close();
             return;
         }
 
         if(!DeploymentManager.INSTANCE.validateConnection(packet)) {
-            Logging.IMP.info("[HS/D] Rejected handshake of {}", getDisplayName());
+            Platform.logger.info("[HS/D] Rejected handshake of {}", getDisplayName());
             ctx.setResponse(new Handshake.Response(Handshake.Result.FAILED, "Invalid remote client connection"));
             close();
             return;
@@ -490,13 +490,13 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                 packet
         );
 
-        Logging.IMP.info("[HS/D] Accepted handshake of {}", getDisplayName());
+        Platform.logger.info("[HS/D] Accepted handshake of {}", getDisplayName());
     }
 
     @Override
     public void process(NetworkPlayerLoad.Request packet, ChannelProcessorContext ctx) {
         ctx.setResponse(new NetworkPlayerLoad.Response(getPlayers(packet.getPlayerIds())));
-        Logging.IMP.info("[{}] Requested network player load! IDs: {}",
+        Platform.logger.info("[{}] Requested network player load! IDs: {}",
                 getDisplayName(),
                 getPlayers(packet.getPlayerIds()).stream().map(holder -> holder.getPlayerId() + "/" + holder.getServer()).collect(Collectors.joining(", ")));
     }
@@ -530,7 +530,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
     @Override
     public void process(C16RegisterLookups packet, ChannelProcessorContext ctx) {
         if (connectable instanceof AbstractScalable) {
-            Logging.IMP.info("[LookupsManager] Registered {} lookups for {} -> {}", packet.getTargets().length,
+            Platform.logger.info("[LookupsManager] Registered {} lookups for {} -> {}", packet.getTargets().length,
                     connectable.getName(),
                     Arrays.stream(packet.getTargets())
                             .map(lookupTarget -> "\n- " + lookupTarget.getData().toString() + ": " + Arrays.stream(lookupTarget.getFlags())
@@ -560,7 +560,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
     public void process(LobbyBoot.Request packet, ChannelProcessorContext ctx) {
         if (!(connectable instanceof BukkitServer)
                 || ((BukkitServer) connectable).getScaleType() != ServerScaleType.LOBBY) {
-            Logging.IMP.error("Received lobby deploy packet from server with invalid scaling!");
+            Platform.logger.error("Received lobby deploy packet from server with invalid scaling!");
             return;
         }
 
@@ -578,24 +578,24 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             gamer.quit();
         }
 
-        Logging.IMP.info("[{}] Disconnected {}", getDisplayName(), gamer == null ? "N/A" : gamer.getNameAsString());
+        Platform.logger.info("[{}] Disconnected {}", getDisplayName(), gamer == null ? "N/A" : gamer.getNameAsString());
     }
 
     @Override
     public void process(RequestMap.Request packet, ChannelProcessorContext ctx) {
         val miniName = getConnectable().getName() + ((char) ('A' + packet.getArenaId() - 1));
-        Logging.IMP.info("[{}] Requested maps by {}", getDisplayName(), miniName);
+        Platform.logger.info("[{}] Requested maps by {}", getDisplayName(), miniName);
         val bukkitServer = (BukkitServer) getConnectable();
 
-        Logging.IMP.info("[{}] Requested testflow map for {}", getDisplayName(), miniName);
+        Platform.logger.info("[{}] Requested testflow map for {}", getDisplayName(), miniName);
 
         val testflowMap = TestFlowManager.INSTANCE.getTestflowMap((AbstractScalable) getConnectable());
 
-        Logging.IMP.info("[{}] TestFlow map for {} is supposedly loaded", getDisplayName(), miniName);
+        Platform.logger.info("[{}] TestFlow map for {} is supposedly loaded", getDisplayName(), miniName);
         if (testflowMap != null) {
             val executor = TestFlowManager.INSTANCE.getActiveTestFlow(bukkitServer.getLinkedTestFlowId()).getExecutor();
 
-            Logging.IMP.info("[{}] TestFlow #{} has the forced map -> {}", getDisplayName(), bukkitServer.getLinkedTestFlowId(), testflowMap);
+            Platform.logger.info("[{}] TestFlow #{} has the forced map -> {}", getDisplayName(), bukkitServer.getLinkedTestFlowId(), testflowMap);
             if (executor != null) {
                 executor.sendMessageAsString(ChatColor.GREEN + "Instance " + miniName + " of " + GameType.getLinkedGameType(packet.getGameMode()).getHumanName() + " " + packet.getGameMode().getHumanName() + " game is locked at map " + testflowMap);
             }
@@ -604,13 +604,13 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             return;
         }
 
-        Logging.IMP.info("[{}] Starting process for {}", getDisplayName(), miniName);
+        Platform.logger.info("[{}] Starting process for {}", getDisplayName(), miniName);
         val available = MapSqlHandler.INSTANCE.getMaps(packet.getGameMode());
-        Logging.IMP.info("[{}] Available {} for {}", getDisplayName(), available, miniName);
+        Platform.logger.info("[{}] Available {} for {}", getDisplayName(), available, miniName);
         val index = packet.getArenaId() % available.size();
-        Logging.IMP.info("[{}] Sending response for {}", getDisplayName(), miniName);
+        Platform.logger.info("[{}] Sending response for {}", getDisplayName(), miniName);
         ctx.setResponse(new RequestMap.Response(available.get(index).getFirst()));
-        Logging.IMP.info("[{}] Sent response for {}", getDisplayName(), miniName);
+        Platform.logger.info("[{}] Sent response for {}", getDisplayName(), miniName);
     }
 
     @Override
@@ -653,12 +653,12 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
 
     @Override
     public void process(GameBoot.Request packet, ChannelProcessorContext ctx) {
-        Logging.IMP.info("[{}] Requested game modes", getDisplayName());
+        Platform.logger.info("[{}] Requested game modes", getDisplayName());
 
         val tf = TestFlowManager.INSTANCE.getActiveTestFlow(((BukkitServer)connectable).getLinkedTestFlowId());
         if (tf != null) {
             val mode = tf.getData().getServerData().getGameMode();
-            Logging.IMP.info("[{}] Testflow linked to server (#{}), so we send {}/{}", getDisplayName(), tf.getTestFlowId(), mode, tf.getAmount());
+            Platform.logger.info("[{}] Testflow linked to server (#{}), so we send {}/{}", getDisplayName(), tf.getTestFlowId(), mode, tf.getAmount());
             ctx.setResponse(new GameBoot.Response(
                     new GameBootResponse[] {
                             new GameBootResponse(mode, tf.getAmount()),
@@ -669,7 +669,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
 
         if (ServerManager.INSTANCE.getPendingGameDeployments().containsKey(connectable.getName())) {
             val response = ServerManager.INSTANCE.getPendingGameDeployments().get(connectable.getName());
-            Logging.IMP.info("[{}] Pending game deployments are present for this instance: ", Arrays.stream(response).map(m -> m.getGameMode().getHumanName() + "=" + m.getAmount()).collect(Collectors.joining(", ")));
+            Platform.logger.info("[{}] Pending game deployments are present for this instance: ", Arrays.stream(response).map(m -> m.getGameMode().getHumanName() + "=" + m.getAmount()).collect(Collectors.joining(", ")));
             ctx.setResponse(new GameBoot.Response(response));
             ServerManager.INSTANCE.flushGameBoot(connectable.getName());
             return;
@@ -686,7 +686,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
         }
 */
 
-        Logging.IMP.info("[{}] Sent shit: {}", getDisplayName(), Arrays.stream(((GameBoot.Response) ctx.getResponse()).getDataArray()).map(s -> s.getGameMode().name() + "/" + s.getAmount()).collect(Collectors.joining(", ")));
+        Platform.logger.info("[{}] Sent shit: {}", getDisplayName(), Arrays.stream(((GameBoot.Response) ctx.getResponse()).getDataArray()).map(s -> s.getGameMode().name() + "/" + s.getAmount()).collect(Collectors.joining(", ")));
     }
 
     @Override
@@ -873,14 +873,14 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
             }
         } else {
             try {
-                Logging.IMP.error("Not implemented sending pattern commands (yet)");
+                Platform.logger.error("Not implemented sending pattern commands (yet)");
 //                S11ServerCommand broadcastPacket = new S11ServerCommand(line);
 //
 //                for (val server : serverManager.findServers(packet.getName())) {
 //                    server.sendPacket(broadcastPacket);
 //                }
             } catch (Exception e) {
-                Logging.IMP.error("Invalid pattern in {}", packet.toString());
+                Platform.logger.error("Invalid pattern in {}", packet.toString());
             }
         }
     }
@@ -895,7 +895,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
 
         val setting = SettingType.valueOf(packet.getSettingName(), null);
         if (setting == null) {
-            Logging.IMP.error("Received setting update packet with invalid setting: {}", packet.getSettingName());
+            Platform.logger.error("Received setting update packet with invalid setting: {}", packet.getSettingName());
             return;
         }
 
@@ -981,7 +981,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
         val duel = DuelManager.INSTANCE.getRequest(packet.getGamerId());
 
         if (duel != null) {
-            Logging.IMP.info("DuelData Response: " + duel.getMode().name());
+            Platform.logger.info("DuelData Response: " + duel.getMode().name());
             ctx.setResponse(new DuelData.Response(duel.getSenderId(), duel.getTargetId(), duel.getMode(), duel.getData()));
         }
     }
@@ -993,8 +993,8 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
         val server = ServerManager.INSTANCE.getBestGameServerByOnlineAndMap(Gamer.getGamer(packet.getName()), packet.getData(), packet.getMap(),true);
 
         if (server == null) {
-            Logging.IMP.info("No server found for {} with map {}", packet.getName(), packet.getMap());
-            Logging.IMP.info("Deploying new server for {} with map {}", packet.getName(), packet.getMap());
+            Platform.logger.info("No server found for {} with map {}", packet.getName(), packet.getMap());
+            Platform.logger.info("Deploying new server for {} with map {}", packet.getName(), packet.getMap());
 
             GameBootResponse response = new GameBootResponse(packet.getData().getGameMode(), 1);
 
@@ -1008,10 +1008,10 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                         if (result == DeploymentResponse.DENIED_BY_NODE
                                 || result == DeploymentResponse.DEPLOYMENT_TIMEOUT
                                 || result == DeploymentResponse.TRANSACTION_FAILED) {
-                            Logging.IMP.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
+                            Platform.logger.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
                         } else {
                             ServerManager.INSTANCE.queueGameInstanceBoot(result.transactionId(), new GameBootResponse[] {response});
-                            Logging.IMP.info("Queued deployment of game instances!");
+                            Platform.logger.info("Queued deployment of game instances!");
                         }
                     });
 
@@ -1031,16 +1031,16 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
 
         try {
             if (server == null) {
-                Logging.IMP.info("No server found for {} with map {}", packet.getName(), packet.getMap());
-                Logging.IMP.info("Deploying new server for {} with map {}", packet.getName(), packet.getMap());
+                Platform.logger.info("No server found for {} with map {}", packet.getName(), packet.getMap());
+                Platform.logger.info("Deploying new server for {} with map {}", packet.getName(), packet.getMap());
 
                 GameBootResponse response = new GameBootResponse(packet.getData().getGameMode(), 1);
 
-                Logging.IMP.info(packet.getData().getGameType().name());
+                Platform.logger.info(packet.getData().getGameType().name());
 
                 val duelServer = ServerManager.INSTANCE.getServerByType(GameType.DUELS, 60);
                 if (duelServer != null) {
-                    Logging.IMP.info("Found best server for duel: {}", duelServer.getName());
+                    Platform.logger.info("Found best server for duel: {}", duelServer.getName());
                     serverName = duelServer.getChannel().awaitPacket(new ArenaBoot.Request(packet.getData().getGameMode(), packet.getDuelData())).join().getName();
                 } else {
                     DeploymentManager.INSTANCE.sendDeploymentRequest(new BukkitDeployRequest(response.getGameMode().bakeData()),
@@ -1049,10 +1049,10 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                                 if (result == DeploymentResponse.DENIED_BY_NODE
                                         || result == DeploymentResponse.DEPLOYMENT_TIMEOUT
                                         || result == DeploymentResponse.TRANSACTION_FAILED) {
-                                    Logging.IMP.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
+                                    Platform.logger.error("Transaction failed! (" + result.name() + ") / (#" + result.transactionId() + ")");
                                 } else {
                                     ServerManager.INSTANCE.queueGameInstanceBoot(result.transactionId(), new GameBootResponse[]{response});
-                                    Logging.IMP.info("Queued deployment of game instances!");
+                                    Platform.logger.info("Queued deployment of game instances!");
                                 }
                             });
                 }
@@ -1060,7 +1060,7 @@ public final class RemoteClientConnection extends AbstractRemoteClientChannel {
                 serverName = server.getName();
             }
         } catch (Exception e) {
-            Logging.IMP.error("An error occurred while processing the packet: {}", e.getMessage());
+            Platform.logger.error("An error occurred while processing the packet: {}", e.getMessage());
         } finally {
             ctx.setResponse(new S37BestDuelServer(serverName));
             ctx.removeLatch();

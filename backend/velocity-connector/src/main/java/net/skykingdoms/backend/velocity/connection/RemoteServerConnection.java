@@ -11,7 +11,7 @@ import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import net.skykingdoms.api.backend.permission.Group;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.type.RemoteConnectedType;
 import net.skykingdoms.backend.base.data.network.NetworkSqlHandler;
 import net.skykingdoms.backend.base.data.state.NetworkState;
@@ -63,7 +63,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
 
         // null maybe
         if (gamer != null && gamer.isOnline()) {
-            Logging.IMP.info("Kicked {} for {}", gamer.getNameAsString(), packet.getReason());
+            Platform.logger.info("Kicked {} for {}", gamer.getNameAsString(), packet.getReason());
             gamer.getPlayer().disconnect(Component.text(packet.getReason()));
         }
     }
@@ -71,11 +71,11 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
     @Override
     public void process(Handshake.Response packet, ChannelProcessorContext ctx) {
         if (packet.getResult() != Handshake.Result.SUCCESS) {
-            Logging.IMP.warn("[HANDSHAKE] Unable to connect to coordinator: {}", packet.getMessage());
+            Platform.logger.warn("[HANDSHAKE] Unable to connect to coordinator: {}", packet.getMessage());
             return;
         }
 
-        Logging.IMP.info("[HANDSHAKE] Connected to coordinator successfully!");
+        Platform.logger.info("[HANDSHAKE] Connected to coordinator successfully!");
 
         upgradeConnection(PacketProtocol.PLAY);
 
@@ -83,7 +83,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
 
         Connection.awaitPacket(new SecurityToken.Request()).whenComplete((response, throwable) -> {
             if (throwable != null) {
-                Logging.IMP.stacktrace(throwable, "Exception raised on token request! Shutting down the proxy...");
+                Platform.logger.stacktrace(throwable, "Exception raised on token request! Shutting down the proxy...");
                 VelocityConnector.INSTANCE.server().shutdown();
                 return;
             }
@@ -119,7 +119,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
             return;
         }
 
-        Logging.IMP.info("[RECONNECT] Trying to reconnect {} players", gamers.size());
+        Platform.logger.info("[RECONNECT] Trying to reconnect {} players", gamers.size());
 
         val reconnectingGamers = new HashSet<ReconnectingGamer>();
 
@@ -171,7 +171,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
         }
 
         VelocityConnector.INSTANCE.server().unregisterServer(server.getServerInfo());
-        Logging.IMP.info("Server {} has been unregistered", name);
+        Platform.logger.info("Server {} has been unregistered", name);
     }
 
     @Override
@@ -184,7 +184,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
 
             val port = info.getServerPort();
 
-            Logging.IMP.info("Server {} has been registered. S: {} @ T: {} @ A: {}",
+            Platform.logger.info("Server {} has been registered. S: {} @ T: {} @ A: {}",
                     name, scale, type, ip + ":" + port);
 
             InetSocketAddress address = new InetSocketAddress(ip, port);
@@ -234,7 +234,7 @@ public final class RemoteServerConnection extends AbstractRemoteServerChannel {
         VelocityConnector.INSTANCE.proxyData().setProxyName(updated.getProxyName());
         VelocityConnector.INSTANCE.proxyData().setNodeName(updated.getNodeName());
 
-        Logging.IMP.info("Updated proxy data: {} @ {}",
+        Platform.logger.info("Updated proxy data: {} @ {}",
                 VelocityConnector.INSTANCE.proxyData().getProxyName(),
                 VelocityConnector.INSTANCE.proxyData().getNodeName());
     }

@@ -4,7 +4,7 @@ import com.google.common.collect.Streams;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameState;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
@@ -84,7 +84,7 @@ public final class DeploymentManager {
                 //Logging.IMP.info("[Deploy] Deployment request #{}, result: {}", request.getTransactionId().toString(), result.name());
 
                 if (result == ServerDeploy.DeploymentResult.ACCEPTED) {
-                    Logging.IMP.info("Deployment accepted!");
+                    Platform.logger.info("Deployment accepted!");
                     if (resultConsumer != null) {
                         resultConsumer.accept(DeploymentResponse.successful(request.getTransactionId()));
                     }
@@ -110,7 +110,7 @@ public final class DeploymentManager {
     }
 
     public void addPendingDeployment(PersistentServerMeta meta, NodeServer nodeServer) {
-        Logging.IMP.info(meta.getTransactionId().toString());
+        Platform.logger.info(meta.getTransactionId().toString());
         pendingDeployments.add(new DeploymentManager.PendingDeploymentRequest(
                 new BukkitDeployRequest(meta.getTransactionId(), meta.getGameMode().bakeData()),
                 -1,
@@ -208,7 +208,7 @@ public final class DeploymentManager {
 
         // Checks if NODE server that deployed this server also came online.
         if (handshake.isReconnect()) {
-            Logging.IMP.info("it is reconnect");
+            Platform.logger.info("it is reconnect");
             if (handshake.getType() == RemoteConnectedType.PROXY
                     && !NodeManager.INSTANCE.isNodeRegistered(((FluentProxyDataImpl) handshake.getFluentData()).getNodeName())) {
                 /*Logging.IMP.info("[Deploy] Denied: RCON: "
@@ -226,7 +226,7 @@ public final class DeploymentManager {
                 && type != RemoteConnectedType.NODE
                 && type != RemoteConnectedType.SERVICE
                 && !handshake.isReconnect()) {
-            Logging.IMP.info("[Deploy] Declined invalid transaction #{} @ {} @ {}", transaction.toString(), type.name(), isTransactionExists(transaction));
+            Platform.logger.info("[Deploy] Declined invalid transaction #{} @ {} @ {}", transaction.toString(), type.name(), isTransactionExists(transaction));
             return false;
         } else {
             return true;
@@ -268,7 +268,7 @@ public final class DeploymentManager {
                 // it's required by NeoProtect module
                 MegamindApp.INSTANCE.pluginManager().callEvent(new ProxyDeployEvent((ProxyServer) rcc.getConnectable(), true));
 
-                Logging.IMP.info("[Deploy] Reconnected proxy {}", proxyName);
+                Platform.logger.info("[Deploy] Reconnected proxy {}", proxyName);
                 break;
             }
             case SERVER: {
@@ -288,7 +288,7 @@ public final class DeploymentManager {
                 }
 
                 if (node == null) {
-                    Logging.IMP.info("Server {} tried reconnecting to node {}, but its not loaded!",
+                    Platform.logger.info("Server {} tried reconnecting to node {}, but its not loaded!",
                             bukkitName, ((FluentBukkitDataImpl) data).getNodeName());
                     return;
                 }
@@ -302,7 +302,7 @@ public final class DeploymentManager {
                         InetSocketAddress.createUnresolved(bukkitFluentData.getHost(), bukkitFluentData.getPort())
                 )));
 
-                Logging.IMP.info("[Deploy] Reconnected bukkit instance {}", bukkitName);
+                Platform.logger.info("[Deploy] Reconnected bukkit instance {}", bukkitName);
             }
         }
     }
@@ -335,7 +335,7 @@ public final class DeploymentManager {
         gameServer.setJoinable(true);
         gameServer.setSlots(slots);
 
-        Logging.IMP.info("[Deploy] Deployed game instance {} at {} with {} slots. Map: {}",
+        Platform.logger.info("[Deploy] Deployed game instance {} at {} with {} slots. Map: {}",
                 gameName, bukkitServer.getName(), slots, map);
 
         // handling shit for testflow
@@ -409,7 +409,7 @@ public final class DeploymentManager {
         persistentServer.setJoinable(true);
         persistentServer.setSlots(slots);
 
-        Logging.IMP.info("[Deploy] Deployed persistent instance {} at {} with {} slots. GameMode: {}",
+        Platform.logger.info("[Deploy] Deployed persistent instance {} at {} with {} slots. GameMode: {}",
                 gameName, bukkitServer.getName(), slots, data.getGameMode().name());
     }
 
@@ -428,7 +428,7 @@ public final class DeploymentManager {
         lobbyServer.setJoinable(true);
         lobbyServer.setSlots(120); // hardcoded. todo: dynamic slots amount
 
-        Logging.IMP.info("[Deploy] Deployed lobby server {} at {} with {} slots",
+        Platform.logger.info("[Deploy] Deployed lobby server {} at {} with {} slots",
                 lobbyName, bukkitServer.getName(), request.getSlots());
 
         ctx.setResponse(new LobbyBoot.Response(lobbyName));
@@ -466,7 +466,7 @@ public final class DeploymentManager {
         if (request != null && request.getRequest() instanceof ProxyDeployRequest) {
             name = bakeProxyName();
             if (!handshake.hasData()) {
-                Logging.IMP.error("!!! NO FLUENT DATA FROM PROXY SERVER #{} !!!", request.getRequest().getTransactionId());
+                Platform.logger.error("!!! NO FLUENT DATA FROM PROXY SERVER #{} !!!", request.getRequest().getTransactionId());
                 return;
             }
 
@@ -526,7 +526,7 @@ public final class DeploymentManager {
             // it's required by NeoProtect module
             MegamindApp.INSTANCE.pluginManager().callEvent(new ProxyDeployEvent((ProxyServer) rcc.getConnectable(), false));
 
-            Logging.IMP.info("[Deploy] Registered new proxy server instance {} @ {}",
+            Platform.logger.info("[Deploy] Registered new proxy server instance {} @ {}",
                     data.getProxyName(),
                     request.getTargetNode().getName());
         }
@@ -534,7 +534,7 @@ public final class DeploymentManager {
         if (request != null && request.getRequest() instanceof BukkitDeployRequest) {
             val bukkitDeployRequest = (BukkitDeployRequest) request.getRequest();
             if (!handshake.hasData()) {
-                Logging.IMP.error("!!! NO FLUENT DATA FROM BUKKIT SERVER #{} !!!", bukkitDeployRequest.getTransactionId());
+                Platform.logger.error("!!! NO FLUENT DATA FROM BUKKIT SERVER #{} !!!", bukkitDeployRequest.getTransactionId());
                 return;
             }
 
@@ -568,9 +568,9 @@ public final class DeploymentManager {
             TestFlowManager.INSTANCE.handleServerAction(TestFlowManager.ServerAction.ADD_BUKKIT,
                     handshake.getTestFlowId(), bukkitServer);
 
-            Logging.IMP.info("[TestFlow/Id] Testflow " + handshake.getTestFlowId());
+            Platform.logger.info("[TestFlow/Id] Testflow " + handshake.getTestFlowId());
 
-            Logging.IMP.info("[Deploy] Registered new bukkit server instance {} @ {} @ {} @ {}",
+            Platform.logger.info("[Deploy] Registered new bukkit server instance {} @ {} @ {} @ {}",
                     name,
                     request.getTargetNode().getName(),
                     bukkitDeployRequest.getData().getServerScale().name(),
@@ -580,7 +580,7 @@ public final class DeploymentManager {
         if (request != null && request.getRequest() instanceof PersistentBukkitDeployRequest) {
             val persistentBukkitDeployRequest = (PersistentBukkitDeployRequest) request.getRequest();
             if (!handshake.hasData()) {
-                Logging.IMP.error("!!! NO FLUENT DATA FROM BUKKIT SERVER #{} !!!", persistentBukkitDeployRequest.getTransactionId());
+                Platform.logger.error("!!! NO FLUENT DATA FROM BUKKIT SERVER #{} !!!", persistentBukkitDeployRequest.getTransactionId());
                 return;
             }
 
@@ -624,7 +624,7 @@ public final class DeploymentManager {
             TestFlowManager.INSTANCE.handleServerAction(TestFlowManager.ServerAction.ADD_BUKKIT,
                     handshake.getTestFlowId(), bukkitServer);
 
-            Logging.IMP.info("[Deploy] Registered new persistent bukkit server instance {} @ {} @ {} @ {}",
+            Platform.logger.info("[Deploy] Registered new persistent bukkit server instance {} @ {} @ {} @ {}",
                     name,
                     fluentData.getNodeName(),
                     persistentBukkitDeployRequest.getData().getServerScale().name(),
@@ -654,7 +654,7 @@ public final class DeploymentManager {
             TestFlowManager.INSTANCE.handleServerAction(TestFlowManager.ServerAction.ADD_BUKKIT,
                     handshake.getTestFlowId(), bukkitServer);
 
-            Logging.IMP.info("[Deploy] Registered new bukkit server instance {} @ {} @ {} @ {}",
+            Platform.logger.info("[Deploy] Registered new bukkit server instance {} @ {} @ {} @ {}",
                     name,
                     "none",
                     fluentData.getServerScaleType().name(),
@@ -665,7 +665,7 @@ public final class DeploymentManager {
         pendingDeployments.removeIf(pd -> pd.getRequest().getTransactionId().toString().equals(transactionId.toString()) && !(pd.request instanceof PersistentBukkitDeployRequest));
 
         if (request != null) {
-            Logging.IMP.info("[Deploy] Received transaction #{} - Name: {} - Node: {} - Elapsed: {}ms.",
+            Platform.logger.info("[Deploy] Received transaction #{} - Name: {} - Node: {} - Elapsed: {}ms.",
                     transactionId.toString(),
                     name,
                     request.getTargetNode() != null ? request.getTargetNode().getName() : "unknown",
@@ -673,7 +673,7 @@ public final class DeploymentManager {
         }
 
         if (ServerManager.INSTANCE.getPendingGameDeployments().containsKey(transactionId)) {
-            Logging.IMP.info("[Deploy] Pending game deployments contain transaction for {}! Preparing shit ...", name);
+            Platform.logger.info("[Deploy] Pending game deployments contain transaction for {}! Preparing shit ...", name);
             ServerManager.INSTANCE.updateGameQueueInfo(transactionId, name);
         }
 
@@ -774,7 +774,7 @@ public final class DeploymentManager {
                     continue;
                 }
                 if (System.currentTimeMillis() - shit.getSentDeploymentAt() > shit.getEstimatedTimeout()) {
-                    Logging.IMP.warn("[Deploy] Timeout raised for transaction #{} / Type: {}",
+                    Platform.logger.warn("[Deploy] Timeout raised for transaction #{} / Type: {}",
                             request.getTransactionId().toString(),
                             request.toString());
                     pendingRemoval.add(shit);

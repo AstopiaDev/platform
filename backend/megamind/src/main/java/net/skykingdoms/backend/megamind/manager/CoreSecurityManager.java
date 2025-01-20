@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 
 import java.security.SecureRandom;
 
@@ -58,9 +58,9 @@ public final class CoreSecurityManager {
         bungeeSecurityToken = generateToken(128);
         internalCommsToken = generateToken(128);
 
-        Logging.IMP.info("[Security] Initialized security manager!");
-        Logging.IMP.info("[Security] Bungee token: {}", bungeeSecurityToken);
-        Logging.IMP.info("[Security] Internal token: {}", internalCommsToken);
+        Platform.logger.info("[Security] Initialized security manager!");
+        Platform.logger.info("[Security] Bungee token: {}", bungeeSecurityToken);
+        Platform.logger.info("[Security] Internal token: {}", internalCommsToken);
     }
 
     /**

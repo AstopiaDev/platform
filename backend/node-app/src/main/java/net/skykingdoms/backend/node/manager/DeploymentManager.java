@@ -13,7 +13,7 @@ import com.github.dockerjava.transport.DockerHttpClient;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.type.DeploymentVersion;
 import net.skykingdoms.backend.node.NodeApp;
 import net.skykingdoms.backend.node.config.BaseNodeConfiguration;
@@ -88,9 +88,9 @@ public enum DeploymentManager {
      * Invoked once at bootstrap process to kill all
      */
     public void postBootstrap() {
-        Logging.IMP.info("[Deploy/PB] Updating external address ...");
-        Logging.IMP.info("[Deploy/PB] External address: {}", getExternalHost());
-        Logging.IMP.info("[Deploy/PB] Loading deployment types ...");
+        Platform.logger.info("[Deploy/PB] Updating external address ...");
+        Platform.logger.info("[Deploy/PB] External address: {}", getExternalHost());
+        Platform.logger.info("[Deploy/PB] Loading deployment types ...");
         this.loadDeployments();
 
         BaseNodeConfiguration config = NodeApp.INSTANCE.nodeConfiguration();
@@ -102,9 +102,9 @@ public enum DeploymentManager {
                 try {
                     client.killContainerCmd(container.getId()).exec();
                     client.removeContainerCmd(container.getId()).exec();
-                    Logging.IMP.info("[Deploy/PB] Removed existent container: {}", container.getId());
+                    Platform.logger.info("[Deploy/PB] Removed existent container: {}", container.getId());
                 } catch (Exception e) {
-                    Logging.IMP.error("[Deploy/PB] Failed to remove container: {}", container.getId(), e);
+                    Platform.logger.error("[Deploy/PB] Failed to remove container: {}", container.getId(), e);
                 }
             }
         });
@@ -114,7 +114,7 @@ public enum DeploymentManager {
             for (DockerImageRegistry registry : DockerImageRegistry.VALUES) {
                 client.removeImageCmd(registry.getRegistry()).withForce(true).exec();
                 client.pullImageCmd(registry.getRegistry()).start().awaitCompletion();
-                Logging.IMP.info("[Deploy/PB] Pulled image: {}", registry.name());
+                Platform.logger.info("[Deploy/PB] Pulled image: {}", registry.name());
             }
 
             for (DeploymentVersion version : DeploymentVersion.VALUES) {
@@ -125,12 +125,12 @@ public enum DeploymentManager {
                     // do nothing
                 }
                 client.pullImageCmd(image).start().awaitCompletion();
-                Logging.IMP.info("[Deploy/PB] Pulled image: {}", version.name());
+                Platform.logger.info("[Deploy/PB] Pulled image: {}", version.name());
             }
 
-            Logging.IMP.info("[Deploy/PB] Docker Image cleanup complete");
+            Platform.logger.info("[Deploy/PB] Docker Image cleanup complete");
         } catch (InterruptedException exception) {
-            Logging.IMP.error("[Deploy/PB] Couldn't fetch images from registry");
+            Platform.logger.error("[Deploy/PB] Couldn't fetch images from registry");
         }
     }
 
@@ -171,12 +171,12 @@ public enum DeploymentManager {
         String containerId = deployments.get(deploymentTarget).handle(request, hostConfig, port,
                 testFlow ? testFlowName : null, debugPort, testFlowId);
 
-        Logging.IMP.info("[Deploy] T: {}, T-NAME: {}, T-ID: {}", testFlow, testFlowName != null ? testFlowName : "none", testFlowId);
+        Platform.logger.info("[Deploy] T: {}, T-NAME: {}, T-ID: {}", testFlow, testFlowName != null ? testFlowName : "none", testFlowId);
 
         client.renameContainerCmd(containerId).withName(request.getTransactionId().toString()).exec();
         client.startContainerCmd(containerId).exec();
 
-        Logging.IMP.info("[Deploy] Target: {} @ TID: {} @ CID: {} @ PORT: {} @ TF: {} @ AR: {}",
+        Platform.logger.info("[Deploy] Target: {} @ TID: {} @ CID: {} @ PORT: {} @ TF: {} @ AR: {}",
                 deploymentTarget,
                 request.getTransactionId(),
                 containerId,
@@ -194,7 +194,7 @@ public enum DeploymentManager {
      */
     public void handleContainerNameUpdate(final @NonNull UUID transactionId,
                                           final @NonNull String newName) {
-        Logging.IMP.info("[Deploy] Received container data update packet: {} -> {}",
+        Platform.logger.info("[Deploy] Received container data update packet: {} -> {}",
                 transactionId.toString(),
                 newName);
 
@@ -233,11 +233,11 @@ public enum DeploymentManager {
         if (graceful) {
             client.stopContainerCmd(containerName).exec();
             client.removeContainerCmd(containerName).exec();
-            Logging.IMP.info("[Deploy] Stopped container {} gracefully", containerName);
+            Platform.logger.info("[Deploy] Stopped container {} gracefully", containerName);
         } else {
             client.killContainerCmd(containerName).exec();
             client.removeContainerCmd(containerName).exec();
-            Logging.IMP.info("[Deploy] Stopped container {} non-gracefully", containerName);
+            Platform.logger.info("[Deploy] Stopped container {} non-gracefully", containerName);
         }
 
         ctx.setResponse(new ServerDestroy.Response(true));

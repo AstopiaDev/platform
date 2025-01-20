@@ -4,7 +4,7 @@ import lombok.val;
 import net.skykingdoms.api.backend.util.config.Configuration;
 import net.skykingdoms.api.backend.util.config.ConfigurationProvider;
 import net.skykingdoms.api.backend.util.config.YamlConfiguration;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.data.gamer.Gamer;
 import net.skykingdoms.backend.megamind.manager.ServerManager;
 import net.skykingdoms.backend.megamind.plugin.Plugin;
@@ -92,7 +92,7 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
         if (!config.exists()) {
             try {
                 // First time run - do some initialization.
-                Logging.IMP.info("Configuring Votifier for the first time...");
+                Platform.logger.info("Configuring Votifier for the first time...");
 
                 // Initialize the configuration file.
 
@@ -125,18 +125,18 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
                  * Remind hosted server admins to be sure they have the right
                  * port number.
                  */
-                Logging.IMP.info("------------------------------------------------------------------------------");
-                Logging.IMP.info("Assigning NuVotifier to listen on port 8192. If you are hosting Craftbukkit on a");
-                Logging.IMP.info("shared server please check with your hosting provider to verify that this port");
-                Logging.IMP.info("is available for your use. Chances are that your hosting provider will assign");
-                Logging.IMP.info("a different port, which you need to specify in config.yml");
-                Logging.IMP.info("------------------------------------------------------------------------------");
-                Logging.IMP.info("Your default NuVotifier token is " + token + ".");
-                Logging.IMP.info("You will need to provide this token when you submit your server to a voting");
-                Logging.IMP.info("list.");
-                Logging.IMP.info("------------------------------------------------------------------------------");
+                Platform.logger.info("------------------------------------------------------------------------------");
+                Platform.logger.info("Assigning NuVotifier to listen on port 8192. If you are hosting Craftbukkit on a");
+                Platform.logger.info("shared server please check with your hosting provider to verify that this port");
+                Platform.logger.info("is available for your use. Chances are that your hosting provider will assign");
+                Platform.logger.info("a different port, which you need to specify in config.yml");
+                Platform.logger.info("------------------------------------------------------------------------------");
+                Platform.logger.info("Your default NuVotifier token is " + token + ".");
+                Platform.logger.info("You will need to provide this token when you submit your server to a voting");
+                Platform.logger.info("list.");
+                Platform.logger.info("------------------------------------------------------------------------------");
             } catch (Exception ex) {
-                Logging.IMP.error("Error creating configuration file", ex);
+                Platform.logger.error("Error creating configuration file", ex);
                 return false;
             }
         }
@@ -154,7 +154,7 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
         }
 
         if (cfg == null) {
-            Logging.IMP.info("Loading configuration...");
+            Platform.logger.info("Loading configuration...");
             return false;
         }
 
@@ -173,7 +173,7 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
                 keyPair = RSAIO.load(rsaDirectory);
             }
         } catch (Exception ex) {
-            Logging.IMP.error(
+            Platform.logger.error(
                     "Error reading configuration file or RSA tokens {}", ex);
             return false;
         }
@@ -188,7 +188,7 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
             Collection<String> websites = tokenSection.getKeys();
             for (String website : websites) {
                 tokens.put(website, KeyCreator.createKeyFrom(tokenSection.getString(website)));
-                Logging.IMP.info("Loaded token for website: " + website);
+                Platform.logger.info("Loaded token for website: " + website);
             }
         } else {
             String token = TokenUtil.newToken();
@@ -199,40 +199,40 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
             try {
                 provider.save(cfg, config);
             } catch (IOException e) {
-                Logging.IMP.error("Error generating Votifier token", e);
+                Platform.logger.error("Error generating Votifier token", e);
                 return false;
             }
-            Logging.IMP.info("------------------------------------------------------------------------------");
-            Logging.IMP.info("No tokens were found in your configuration, so we've generated one for you.");
-            Logging.IMP.info("Your default Votifier token is " + token + ".");
-            Logging.IMP.info("You will need to provide this token when you submit your server to a voting");
-            Logging.IMP.info("list.");
-            Logging.IMP.info("------------------------------------------------------------------------------");
+            Platform.logger.info("------------------------------------------------------------------------------");
+            Platform.logger.info("No tokens were found in your configuration, so we've generated one for you.");
+            Platform.logger.info("Your default Votifier token is " + token + ".");
+            Platform.logger.info("You will need to provide this token when you submit your server to a voting");
+            Platform.logger.info("list.");
+            Platform.logger.info("------------------------------------------------------------------------------");
         }
 
         // Initialize the receiver.
         final String host = cfg.getString("host", hostAddr);
         final int port = cfg.getInt("port", 8192);
         if (!debug)
-            Logging.IMP.info("QUIET mode enabled!");
+            Platform.logger.info("QUIET mode enabled!");
 
         if (port >= 0) {
             final boolean disablev1 = cfg.getBoolean("disable-v1-protocol");
             if (disablev1) {
-                Logging.IMP.info("------------------------------------------------------------------------------");
-                Logging.IMP.info("Votifier protocol v1 parsing has been disabled. Most voting websites do not");
-                Logging.IMP.info("currently support the modern Votifier protocol in NuVotifier.");
-                Logging.IMP.info("------------------------------------------------------------------------------");
+                Platform.logger.info("------------------------------------------------------------------------------");
+                Platform.logger.info("Votifier protocol v1 parsing has been disabled. Most voting websites do not");
+                Platform.logger.info("currently support the modern Votifier protocol in NuVotifier.");
+                Platform.logger.info("------------------------------------------------------------------------------");
             }
 
             this.bootstrap = new VotifierServerBootstrap(host, port, this, disablev1);
             this.bootstrap.start(error -> {});
         } else {
-            Logging.IMP.info("------------------------------------------------------------------------------");
-            Logging.IMP.info("Your Votifier port is less than 0, so we assume you do NOT want to start the");
-            Logging.IMP.info("votifier port server! Votifier will not listen for votes over any port, and");
-            Logging.IMP.info("will only listen for pluginMessaging forwarded votes!");
-            Logging.IMP.info("------------------------------------------------------------------------------");
+            Platform.logger.info("------------------------------------------------------------------------------");
+            Platform.logger.info("Your Votifier port is less than 0, so we assume you do NOT want to start the");
+            Platform.logger.info("votifier port server! Votifier will not listen for votes over any port, and");
+            Platform.logger.info("will only listen for pluginMessaging forwarded votes!");
+            Platform.logger.info("------------------------------------------------------------------------------");
         }
 
 /*        Configuration forwardingConfig = cfg.getSection("forwarding");
@@ -282,32 +282,32 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
     @Override
     public void onDisable() {
         halt();
-        Logging.IMP.info("Votifier disabled.");
+        Platform.logger.info("Votifier disabled.");
     }
 
     public boolean reload() {
         try {
             halt();
         } catch (Exception ex) {
-            Logging.IMP.error("On halt, an exception was thrown. This may be fine!", ex);
+            Platform.logger.error("On halt, an exception was thrown. This may be fine!", ex);
         }
 
         if (loadAndBind()) {
-            Logging.IMP.info("Reload was successful.");
+            Platform.logger.info("Reload was successful.");
             return true;
         } else {
             try {
                 halt();
-                Logging.IMP.error("On reload, there was a problem with the configuration. Votifier currently does nothing!");
+                Platform.logger.error("On reload, there was a problem with the configuration. Votifier currently does nothing!");
             } catch (Exception ex) {
-                Logging.IMP.error("On reload, there was a problem loading, and we could not re-halt the server. Votifier is in an unstable state!", ex);
+                Platform.logger.error("On reload, there was a problem loading, and we could not re-halt the server. Votifier is in an unstable state!", ex);
             }
             return false;
         }
     }
 
     private void gracefulExit() {
-        Logging.IMP.error("Votifier did not initialize properly!");
+        Platform.logger.error("Votifier did not initialize properly!");
     }
 
     @Override
@@ -337,7 +337,7 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
     @Override
     public void onVoteReceived(final Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) {
         if (debug) {
-            Logging.IMP.info("Got a " + protocolVersion.humanReadable + " vote record from " + remoteAddress + " -> " + vote);
+            Platform.logger.info("Got a " + protocolVersion.humanReadable + " vote record from " + remoteAddress + " -> " + vote);
         }
 /*        ServerManager.INSTANCE.sendToServers(
 
@@ -349,20 +349,20 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
     public void onError(Throwable throwable, boolean alreadyHandledVote, String remoteAddress) {
         if (debug) {
             if (alreadyHandledVote) {
-                Logging.IMP.warn("Vote processed, however an exception " +
+                Platform.logger.warn("Vote processed, however an exception " +
                         "occurred with a vote from " + remoteAddress, throwable);
             } else {
-                Logging.IMP.warn("Unable to process vote from " + remoteAddress, throwable);
+                Platform.logger.warn("Unable to process vote from " + remoteAddress, throwable);
             }
         } else if (!alreadyHandledVote) {
-            Logging.IMP.warn("Unable to process vote from " + remoteAddress);
+            Platform.logger.warn("Unable to process vote from " + remoteAddress);
         }
     }
 
     @Override
     public void onForward(final Vote v) {
         if (debug) {
-            Logging.IMP.info("Got a forwarded vote -> " + v);
+            Platform.logger.info("Got a forwarded vote -> " + v);
         }
         fireVotifierEvent(v);
     }
@@ -376,11 +376,11 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
         Gamer gamer = Gamer.getGamer(vote.getUsername());
 
         if (gamer == null) {
-            Logging.IMP.warn("Gamer not found for vote: " + vote);
+            Platform.logger.warn("Gamer not found for vote: " + vote);
             return;
         }
 
-        Logging.IMP.info("Processing vote for " + vote.getUsername());
+        Platform.logger.info("Processing vote for " + vote.getUsername());
 
         int points = random.nextInt(6);
         points = points == 0 ? 1 : points;
@@ -388,7 +388,7 @@ public class VotifierModule extends Plugin implements VoteHandler, VotifierPlugi
         gamer.addProperty("player_points", points);
         gamer.sendLocalizedMessage("vote_received_player_points", "%points%", points);
 
-        Logging.IMP.info("The vote has been processed for " + vote.getUsername() + " and they have been awarded " + points + " points.");
+        Platform.logger.info("The vote has been processed for " + vote.getUsername() + " and they have been awarded " + points + " points.");
 /*        if (VotifierEvent.getHandlerList().getRegisteredListeners().length == 0) {
             Logging.IMP.log(Level.SEVERE, "A vote was received, but you don't have any listeners available to listen for it.");
             Logging.IMP.log(Level.SEVERE, "See https://github.com/NuVotifier/NuVotifier/wiki/Setup-Guide#vote-listeners for");

@@ -9,7 +9,7 @@ import net.skykingdoms.api.backend.setting.SettingType;
 import net.skykingdoms.api.backend.type.property.PropertyType;
 import net.skykingdoms.api.megamind.event.impl.gamer.*;
 import net.skykingdoms.api.megamind.gamer.IMegamindGamer;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.auth.AuthSqlHandler;
 import net.skykingdoms.backend.base.data.network.NetworkSqlHandler;
 import net.skykingdoms.backend.base.data.property.PropertySqlHandler;
@@ -128,7 +128,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
 
         if (serverInstance != null && serverInstance == currentlyConnectingTo) {
             currentlyConnectingTo = null;
-            Logging.IMP.info(serverInstance.getName());
+            Platform.logger.info(serverInstance.getName());
         }
 
         if (oldServer != null) {
@@ -342,7 +342,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
             return;
         }
 
-        Logging.IMP.info("REPLACE CALLED {} -> {}", settingType, value);
+        Platform.logger.info("REPLACE CALLED {} -> {}", settingType, value);
         settings.replace(settingType, value);
 
         SettingsSqlHandler.INSTANCE.updateSettings(gamerId,
@@ -400,8 +400,8 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
         propertyType.setValue(value);
 
 
-        Logging.IMP.info("UPDATE PROPERTY {} -> {}", key, value);
-        Logging.IMP.info(propertyType.getInsertStatement(1, "test"));
+        Platform.logger.info("UPDATE PROPERTY {} -> {}", key, value);
+        Platform.logger.info(propertyType.getInsertStatement(1, "test"));
 
         properties.put(key, propertyType);
         PropertySqlHandler.INSTANCE.setPropertyValue(gamerId, key, propertyType).join();
@@ -696,7 +696,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
 
     // relay
     public static void addGamer(final @NonNull Gamer gamer) {
-        Logging.IMP.info("[DEBUG] Added {}/{}", gamer.getNameAsString(), gamer.getGamerId());
+        Platform.logger.info("[DEBUG] Added {}/{}", gamer.getNameAsString(), gamer.getGamerId());
         CommonGamer.addGamer(gamer);
         LookupManager.INSTANCE.handleGlobalOnlineChange(getTotalOnline());
     }
@@ -719,7 +719,7 @@ public final class Gamer extends CommonGamer implements CommandSender, IMegamind
         }
 
         LookupManager.INSTANCE.handleGlobalOnlineChange(getTotalOnline());
-        Logging.IMP.info("[DEBUG] Removed {}/{}", gamer.getNameAsString(), gamer.getGamerId());
+        Platform.logger.info("[DEBUG] Removed {}/{}", gamer.getNameAsString(), gamer.getGamerId());
     }
 
     // relay

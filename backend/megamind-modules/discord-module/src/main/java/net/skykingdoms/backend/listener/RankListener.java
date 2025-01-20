@@ -2,13 +2,12 @@ package net.skykingdoms.backend.listener;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
 import net.skykingdoms.api.backend.permission.Group;
 import net.skykingdoms.api.megamind.event.EventHandler;
 import net.skykingdoms.api.megamind.event.Listener;
 import net.skykingdoms.api.megamind.event.impl.gamer.GamerJoinEvent;
 import net.skykingdoms.api.megamind.event.impl.gamer.RankChangedEvent;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.permission.UserRank;
 import net.skykingdoms.backend.base.permission.UserRanks;
 import net.skykingdoms.backend.discord.DiscordBot;
@@ -51,7 +50,7 @@ public class RankListener implements Listener {
         MinecraftGroup finalMcGroup = mcGroup;
         guild.retrieveMemberById(discordId).queue(member -> {
             if (member == null) {
-                Logging.IMP.info("Invalid member");
+                Platform.logger.info("Invalid member");
                 return;
             }
 
@@ -99,7 +98,7 @@ public class RankListener implements Listener {
         AsyncExecution.INSTANCE.run(() -> {
             guild.retrieveMemberById(discordId).queue(member -> {
                 if (member == null) {
-                    Logging.IMP.info("Invalid member");
+                    Platform.logger.info("Invalid member");
                     return;
                 }
 

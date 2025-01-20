@@ -7,7 +7,7 @@ import net.skykingdoms.api.backend.punishment.PunishmentMeta;
 import net.skykingdoms.api.backend.punishment.PunishmentType;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
 import net.skykingdoms.api.megamind.event.impl.core.PunishmentLiftEvent;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.data.punishment.PunishmentSqlHandler;
 import net.skykingdoms.backend.base.dependency.Dependency;
 import net.skykingdoms.backend.base.gamer.CommonGamer;
@@ -60,7 +60,7 @@ public final class PunishmentManager {
             // adding only lifted punishments
             activePunishments.addAll(punishmentMetas.stream().filter(c -> !c.isLifted()).collect(Collectors.toSet()));
 
-            Logging.IMP.info("[PunishmentManager] Loaded {} active punishments ({} ms)",
+            Platform.logger.info("[PunishmentManager] Loaded {} active punishments ({} ms)",
                     activePunishments.size(), System.currentTimeMillis() - epoch);
         }).join();
 
@@ -277,7 +277,7 @@ public final class PunishmentManager {
                 continue;
             }
 
-            Logging.IMP.info("[PunishmentManager] {} #{} expired",
+            Platform.logger.info("[PunishmentManager] {} #{} expired",
                     punishment.getPunishmentType(), punishment.getMetaId());
 
             pendingRemoval.add(punishment);

@@ -2,10 +2,9 @@ package net.skykingdoms.backend.tcpshield;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 import net.skykingdoms.backend.megamind.plugin.Plugin;
 import net.skykingdoms.backend.tcpshield.command.TcpShieldBackendsCommand;
@@ -49,7 +48,7 @@ public final class TcpShieldModule extends Plugin {
         new ProxyDeploymentListener(this);
 
         val backends = TcpShieldManager.INSTANCE.getLoadedBackends();
-        Logging.IMP.info("In total {} backends loaded (local){}", backends.size(), !backends.isEmpty() ? ":" : "");
+        Platform.logger.info("In total {} backends loaded (local){}", backends.size(), !backends.isEmpty() ? ":" : "");
 /*        for (val backend : backends) {
             Logging.IMP.info("{} -> {}:{}", backend.getId(), backend.getIp(), backend.getPort());
         }*/

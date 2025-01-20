@@ -49,4 +49,8 @@ public interface PlayProcessor extends PacketProcessor {
     default void process(B104BroadcastChat packet, ChannelProcessorContext ctx) {
         // override me
     }
+
+    default void process(LogMessage packet, ChannelProcessorContext ctx) {
+        // override me
+    }
 }

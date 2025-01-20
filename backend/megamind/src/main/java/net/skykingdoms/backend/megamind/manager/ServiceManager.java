@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 import net.skykingdoms.backend.megamind.server.impl.ServiceServer;
 
@@ -25,7 +25,7 @@ public enum ServiceManager {
             throw new IllegalStateException("Service with this name is already registered!");
         }
 
-        Logging.IMP.info("[Service] Registered service {}", service.getName());
+        Platform.logger.info("[Service] Registered service {}", service.getName());
 
         serviceServers.put(service.getName(), service);
 
@@ -36,7 +36,7 @@ public enum ServiceManager {
      * Removes a service from set of registered services
      */
     public void removeService(final @NonNull ServiceServer server) {
-        Logging.IMP.info("[Service] Unregistered service {}", server.getName());
+        Platform.logger.info("[Service] Unregistered service {}", server.getName());
 
         MegamindApp.INSTANCE.pluginManager().unregisterListener(server.getName());
         serviceServers.remove(server.getName());

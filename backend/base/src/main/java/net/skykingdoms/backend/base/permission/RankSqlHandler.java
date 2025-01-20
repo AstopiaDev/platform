@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import net.skykingdoms.api.backend.permission.Group;
-import net.skykingdoms.api.protocol.logging.Logging;
 import net.skykingdoms.api.protocol.util.TextFormat;
 import net.skykingdoms.backend.base.mysql.BufferedRow;
 import net.skykingdoms.backend.base.mysql.Database;

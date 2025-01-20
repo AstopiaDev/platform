@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.type.GameMode;
 import net.skykingdoms.backend.protocol.packet.ChannelProcessorContext;
 import net.skykingdoms.backend.protocol.packet.Packet;
@@ -89,7 +89,7 @@ public final class DuelData {
         public void write0(@NotNull ByteBuf buf) throws Exception {
             buf.writeInt(senderId);
             buf.writeInt(targetId);
-            Logging.IMP.info("Writing mode: " + mode);
+            Platform.logger.info("Writing mode: " + mode);
             PacketUtils.writeEnum(buf, mode, true);
             data.serialize(buf);
         }

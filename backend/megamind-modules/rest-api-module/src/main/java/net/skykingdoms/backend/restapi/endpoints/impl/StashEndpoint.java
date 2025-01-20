@@ -2,7 +2,7 @@ package net.skykingdoms.backend.restapi.endpoints.impl;
 
 import lombok.NonNull;
 import lombok.val;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.backend.megamind.manager.StashManager;
 import net.skykingdoms.backend.restapi.endpoints.*;
@@ -37,7 +37,7 @@ public final class StashEndpoint implements IEndpoint{
         try {
             writeServletOutputStream(stashedZip, response);
         } catch (Exception e) {
-            Logging.IMP.stacktrace(e, "Fuiceld.");
+            Platform.logger.stacktrace(e, "Fuiceld.");
         }
 
         return null;

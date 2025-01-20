@@ -2,7 +2,7 @@ package net.skykingdoms.backend.restapi.endpoints;
 
 import lombok.val;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 import net.skykingdoms.backend.restapi.endpoints.impl.*;
 
@@ -28,12 +28,12 @@ public final class EndpointsManager {
 
         for (val processor : endpoints) {
             if (!processor.getClass().isAnnotationPresent(Endpoint.class)) {
-                Logging.IMP.info("[RestAPI] No Endpoint annotation present for processor {}", processor.getClass().getName());
+                Platform.logger.info("[RestAPI] No Endpoint annotation present for processor {}", processor.getClass().getName());
                 continue;
             }
 
             if (!processor.getClass().isAnnotationPresent(ApiMethod.class)) {
-                Logging.IMP.info("[RestAPI] No api method annotation present for processor {}", processor.getClass().getName());
+                Platform.logger.info("[RestAPI] No api method annotation present for processor {}", processor.getClass().getName());
                 continue;
             }
 
@@ -41,7 +41,7 @@ public final class EndpointsManager {
             val type = processor.getClass().getAnnotation(ApiMethod.class).value();
             val needAuth = processor.getClass().isAnnotationPresent(AuthorizedOnly.class);
 
-            Logging.IMP.info(endpointName);
+            Platform.logger.info(endpointName);
             if (needAuth) {
                 before((req, res) -> { // global lambda expression, so we verify for names
                     if (req.raw().getRequestURI().contains(endpointName)) {
@@ -55,7 +55,7 @@ public final class EndpointsManager {
                         String decodedCredentials = new String(decodedBytes, StandardCharsets.UTF_8);
 
                         if (!MegamindApp.INSTANCE.secret().equals(decodedCredentials)) {
-                            Logging.IMP.warn("[RestAPI] Unauthorized access from {} : {}", req.host(), req.userAgent());
+                            Platform.logger.warn("[RestAPI] Unauthorized access from {} : {}", req.host(), req.userAgent());
                             res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
                             res.body("Unauthorized");
                             halt(401);
@@ -64,7 +64,7 @@ public final class EndpointsManager {
                 });
             }
 
-            Logging.IMP.info("[RestAPI] Registered {} {} endpoint {} @ {}",
+            Platform.logger.info("[RestAPI] Registered {} {} endpoint {} @ {}",
                     needAuth ? "authorized" : "unauthorized",
                     type, "/api/" + endpointName, Integer.toHexString(processor.hashCode()));
             if (type == RequestType.GET) {
@@ -81,9 +81,9 @@ public final class EndpointsManager {
 
     private void registerEndpoints() {
         endpoints.add(new PingEndpoint());
-        Logging.IMP.info("Ping");
+        Platform.logger.info("Ping");
         endpoints.add(new TestflowEndpoint());
-        Logging.IMP.info("Testflow");
+        Platform.logger.info("Testflow");
         endpoints.add(new ReturnAddressEndpoint());
         endpoints.add(new StashEndpoint());
         endpoints.add(new PlayerDataEndpoint());

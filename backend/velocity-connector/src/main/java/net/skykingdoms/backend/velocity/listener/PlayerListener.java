@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import net.kyori.adventure.text.Component;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.server.ServerScaleType;
 import net.skykingdoms.api.protocol.server.impl.ScalableDataImpl;
@@ -78,7 +78,7 @@ public final class PlayerListener {
         return EventTask.async(() -> {
             handleAuthentication(event);
             timings.put(playerName, System.currentTimeMillis());
-            Logging.IMP.info("[{}] logged in by address {}", playerName, playerAddress);
+            Platform.logger.info("[{}] logged in by address {}", playerName, playerAddress);
         });
     }
 
@@ -127,7 +127,7 @@ public final class PlayerListener {
             List<GameProfile.Property> newProp = removeSkin(event.getGameProfile().getProperties());
             event.setGameProfile(event.getGameProfile().withProperties(newProp));
         } else {
-            Logging.IMP.info("Is offline mode");
+            Platform.logger.info("Is offline mode");
         }
     }
 
@@ -154,7 +154,7 @@ public final class PlayerListener {
         val name = connection.getUsername();
         val address = connection.getRemoteAddress().getAddress();
 
-        Logging.IMP.info("Player {} is connecting from {} with uuid {}", name, address, uuid);
+        Platform.logger.info("Player {} is connecting from {} with uuid {}", name, address, uuid);
 
 
         VelocityConnector.INSTANCE.server().getScheduler().buildTask(VelocityConnector.INSTANCE.boot(), () -> {
@@ -237,7 +237,7 @@ public final class PlayerListener {
                     ProxyPlayerLogin.FINISH
             );
 
-            Logging.IMP.info("Premium: {}, Logged in: {}", gamer.isPremium(), gamer.isLoggedIn());
+            Platform.logger.info("Premium: {}, Logged in: {}", gamer.isPremium(), gamer.isLoggedIn());
 
             // we can invalidate the gamer mute, because it may already expire
             // the gamer is not connected to VelocityConnector.INSTANCE.boot() yet
@@ -266,13 +266,13 @@ public final class PlayerListener {
                     time = timings.remove(name);
                 }
 
-                Logging.IMP.info("[{}] log in time -> {} ms", gamer.getNameAsString(), System.currentTimeMillis() - time);
+                Platform.logger.info("[{}] log in time -> {} ms", gamer.getNameAsString(), System.currentTimeMillis() - time);
 
                 gamer.setConnectedToCore(true);
                 continuation.resume();
             }).exceptionally(throwable -> {
                 connection.disconnect(Component.text("§cInternal server error.\n" + "§c[PL-EX]"));
-                Logging.IMP.stacktrace(throwable, "Error while handling PostLoginEvent");
+                Platform.logger.stacktrace(throwable, "Error while handling PostLoginEvent");
                 return null;
             });
         }

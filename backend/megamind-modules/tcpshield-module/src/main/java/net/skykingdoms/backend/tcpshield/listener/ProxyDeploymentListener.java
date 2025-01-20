@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.val;
 import net.skykingdoms.api.megamind.event.EventHandler;
 import net.skykingdoms.api.megamind.event.Listener;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 import net.skykingdoms.backend.megamind.event.network.ProxyDeployEvent;
 import net.skykingdoms.backend.megamind.event.network.ProxyRemoveEvent;
@@ -26,7 +26,7 @@ public final class ProxyDeploymentListener implements Listener {
         TcpShieldManager.INSTANCE.createBackend(
                 proxy.getHost().getHostString(),
                 proxy.getHost().getPort());
-        Logging.IMP.info("[TcpShield] Deployed proxy at {}{} {}", proxy.getHost().getHostString() + ":" + proxy.getHost().getPort(),
+        Platform.logger.info("[TcpShield] Deployed proxy at {}{} {}", proxy.getHost().getHostString() + ":" + proxy.getHost().getPort(),
                 event.isReconnect() ? " (reconnect)" : "");
     }
 
@@ -35,7 +35,7 @@ public final class ProxyDeploymentListener implements Listener {
         val proxy = event.getProxyServer();
         val host = proxy.getHost();
         TcpShieldManager.INSTANCE.removeBackend(host.getHostString(), host.getPort());
-        Logging.IMP.info("[TcpShield] Removed proxy at {}", proxy.getHost().getHostString() + ":" + proxy.getHost().getPort());
+        Platform.logger.info("[TcpShield] Removed proxy at {}", proxy.getHost().getHostString() + ":" + proxy.getHost().getPort());
     }
 
 }

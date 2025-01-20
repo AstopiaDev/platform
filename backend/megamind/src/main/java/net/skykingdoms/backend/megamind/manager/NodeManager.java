@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import net.skykingdoms.api.backend.util.collection.CollectionUtil;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.base.dependency.Dependency;
 import net.skykingdoms.backend.megamind.server.impl.NodeServer;
 import net.skykingdoms.backend.protocol.packet.play.NodeSnapshot;
@@ -65,7 +65,7 @@ public final class NodeManager {
             throw new IllegalStateException("Node with this name is already registered!");
         }
 
-        Logging.IMP.info("[Node] Registered node agent {}", server.getName());
+        Platform.logger.info("[Node] Registered node agent {}", server.getName());
 
         registeredNodes.add(server);
 
@@ -76,7 +76,7 @@ public final class NodeManager {
      * Removes a node from set of registered nodes
      */
     public void removeNode(final @NonNull NodeServer server) {
-        Logging.IMP.info("[Node] Unregistered node agent {}", server.getName());
+        Platform.logger.info("[Node] Unregistered node agent {}", server.getName());
 
         registeredNodes.remove(server);
     }

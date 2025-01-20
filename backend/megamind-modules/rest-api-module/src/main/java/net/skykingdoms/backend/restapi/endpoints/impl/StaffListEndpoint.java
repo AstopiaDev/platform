@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.val;
 import net.skykingdoms.api.backend.permission.Group;
-import net.skykingdoms.api.protocol.logging.Logging;
 import net.skykingdoms.backend.base.permission.RankSqlHandler;
 import net.skykingdoms.backend.restapi.endpoints.ApiMethod;
 import net.skykingdoms.backend.restapi.endpoints.Endpoint;

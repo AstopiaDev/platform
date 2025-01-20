@@ -4,7 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 import lombok.NonNull;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.protocol.packet.Packet;
 
 public final class PacketOutboundLogger extends ChannelOutboundHandlerAdapter {
@@ -14,7 +14,7 @@ public final class PacketOutboundLogger extends ChannelOutboundHandlerAdapter {
                       final @NonNull Object msg,
                       final @NonNull ChannelPromise promise) throws Exception {
         if (msg instanceof Packet<?>) {
-            Logging.IMP.debug("[{}] Outbound packet: {}", ctx.channel().remoteAddress(), msg);
+            Platform.logger.debug("[{}] Outbound packet: {}", ctx.channel().remoteAddress(), msg);
         }
 
         super.write(ctx, msg, promise);

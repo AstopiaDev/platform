@@ -2,7 +2,7 @@ package net.skykingdoms.backend.base.data.stat;
 
 import lombok.Getter;
 import lombok.NonNull;
-import net.skykingdoms.api.protocol.logging.Logging;
+import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.api.protocol.server.GameType;
 import net.skykingdoms.api.protocol.type.GameMode;
 import net.skykingdoms.backend.base.util.time.Duration;
@@ -39,7 +39,7 @@ public final class StatsManager {
 
             modes.put(table.toUpperCase(), mode);
 
-            Logging.IMP.info("[Statistic] Table {} loaded for {}", table, mode.getDisplayName());
+            Platform.logger.info("[Statistic] Table {} loaded for {}", table, mode.getDisplayName());
             // Logging.IMP.info("[Statistic] Entries: ({})", table);
         }
     }
