@@ -1,5 +1,6 @@
 package net.skykingdoms.backend.megamind.boot;
 
+import net.skykingdoms.api.protocol.platform.ConsoleLogger;
 import net.skykingdoms.api.protocol.platform.Platform;
 import net.skykingdoms.backend.megamind.MegamindApp;
 
@@ -9,6 +10,7 @@ public class MegamindBoot {
         System.setProperty("io.netty.selectorAutoRebuildThreshold", "0");
 
         try {
+            Platform.init(new ConsoleLogger());
             MegamindApp.INSTANCE.init();
         } catch (Throwable t) {
             Platform.logger.stacktrace(t, "Internal error occurred");

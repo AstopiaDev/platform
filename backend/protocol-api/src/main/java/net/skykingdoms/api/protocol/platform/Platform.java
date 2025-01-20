@@ -1,6 +1,5 @@
 package net.skykingdoms.api.protocol.platform;
 
-import net.skykingdoms.impl.Impls;
 import java.util.logging.Logger;
 
 public abstract class Platform {
@@ -19,6 +18,10 @@ public abstract class Platform {
     }
 
     public static void init(AbstractLogger logger, IClientChannel channel) {
-        init(logger, channel, Impls.get(Logger.class));
+        init(logger, channel, null);
+    }
+
+    public static void init(AbstractLogger logger) {
+        Platform.logger = logger;
     }
 }
