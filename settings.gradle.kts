@@ -1,4 +1,4 @@
-rootProject.name = "skykingdoms-platform"
+rootProject.name = "astopia-platform"
 
 // Backend
 include("backend")

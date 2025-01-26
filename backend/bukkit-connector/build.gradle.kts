@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 dependencies {
-    compileOnly("net.skykingdoms:spigot:1.8.8-R0.1")
+    compileOnly("net.astopia:spigot:1.8.8-R0.1")
 
     annotationProcessor(project(":backend:impl-loader"))
 
@@ -24,8 +24,8 @@ dependencies {
 
 tasks {
     withType<ShadowJar> {
-        relocate("org.yaml", "net.skykingdoms.yaml")
-        relocate("com.google.gson", "net.skykingdoms.gson")
+        relocate("org.yaml", "net.astopia.yaml")
+        relocate("com.google.gson", "net.astopia.gson")
         val output = project(":backend").extensions.extraProperties["output"] as String
         destinationDirectory.set(file("$rootDir/$output"))
         archiveFileName.set("BukkitConnector.jar")

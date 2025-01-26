@@ -1,8 +1,8 @@
 dependencies {
-    compileOnly("net.skykingdoms:velocity-native:3.3.2")
-    //compileOnly("net.skykingdoms:authmevelocity:4.1.1")
+    compileOnly("net.astopia:velocity-native:3.3.2")
+    //compileOnly("net.astopia:authmevelocity:4.1.1")
 
-    annotationProcessor("net.skykingdoms:velocity-native:3.3.2")
+    annotationProcessor("net.astopia:velocity-native:3.3.2")
     annotationProcessor(project(":backend:impl-loader"))
 
     api(project(":backend:base")) {

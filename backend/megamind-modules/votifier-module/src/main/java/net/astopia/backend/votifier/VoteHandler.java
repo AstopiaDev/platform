@@ -1,0 +1,14 @@
+package net.astopia.backend.votifier;
+
+import net.astopia.backend.votifier.model.Vote;
+import net.astopia.backend.votifier.net.VotifierSession;
+
+public interface VoteHandler {
+
+    void onVoteReceived(Vote vote, VotifierSession.ProtocolVersion protocolVersion, String remoteAddress) throws Exception;
+
+    default void onError(Throwable throwable, boolean voteAlreadyCompleted, String remoteAddress) {
+        throw new RuntimeException("Unimplemented onError handler");
+    }
+
+}

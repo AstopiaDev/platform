@@ -1,0 +1,16 @@
+package net.astopia.api.shared.chat
+
+import net.kyori.adventure.text.Component
+import net.astopia.api.backend.permission.Group
+import net.astopia.api.shared.user.ServerUser
+
+interface Chat {
+    fun groups() : HashSet<Group>?
+    fun participants() : HashSet<ServerUser>
+    fun prefix(): String?
+    fun prefixComponent(): Component?
+    fun sendMessage(message: String)
+    fun sendMessage(message: Component)
+    fun sendMessage(user: ServerUser, message: String)
+    fun sendMessage(user: ServerUser, message: Component)
+}

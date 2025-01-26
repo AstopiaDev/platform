@@ -1,4 +1,4 @@
 name: BukkitConnector
-main: net.skykingdoms.backend.bukkit.boot.BukkitConnectorBoot
+main: net.astopia.backend.bukkit.boot.BukkitConnectorBoot
 version: 1.0
 author: SkyKingdoms

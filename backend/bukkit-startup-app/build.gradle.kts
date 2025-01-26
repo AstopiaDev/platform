@@ -25,7 +25,7 @@ tasks {
         manifest {
             attributes(
                     mapOf(
-                            "Main-Class" to "net.skykingdoms.backend.bukkit.startup.BukkitAgentBootstrapper"
+                            "Main-Class" to "net.astopia.backend.bukkit.startup.BukkitAgentBootstrapper"
                     )
             )
         }

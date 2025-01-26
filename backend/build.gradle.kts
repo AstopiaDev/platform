@@ -1,5 +1,5 @@
 subprojects {
-    group = "net.skykingdoms.backend"
+    group = "net.astopia.backend"
     version = "0.0.1-SNAPSHOT"
 
     apply(plugin = "java")

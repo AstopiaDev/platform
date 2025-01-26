@@ -28,8 +28,8 @@ dependencies {
 
 tasks {
     withType<ShadowJar> {
-        relocate("org.yaml", "net.skykingdoms.yaml")
-        relocate("com.google.gson", "net.skykingdoms.gson")
+        relocate("org.yaml", "net.astopia.yaml")
+        relocate("com.google.gson", "net.astopia.gson")
         val output = project(":backend").extensions.extraProperties["output"] as String
         destinationDirectory.set(file("$rootDir/$output"))
         archiveFileName.set("MinestomConnector.jar")

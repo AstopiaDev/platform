@@ -25,7 +25,7 @@ tasks {
 
         manifest {
             attributes(
-                "Main-Class" to "net.skykingdoms.backend.node.boot.NodeBoot"
+                "Main-Class" to "net.astopia.backend.node.boot.NodeBoot"
             )
         }
     }

@@ -40,7 +40,7 @@ tasks {
 
         manifest {
             attributes(
-                    "Main-Class" to "net.skykingdoms.backend.megamind.boot.MegamindBoot"
+                    "Main-Class" to "net.astopia.backend.megamind.boot.MegamindBoot"
             )
         }
     }

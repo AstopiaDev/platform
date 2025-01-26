@@ -15,7 +15,7 @@ val buildDirectory = file("./build/")
 subprojects {
     extra["output"] = findProperty("gradle.output") ?: "./output/"
 
-    group = "net.skykingdoms"
+    group = "net.astopia"
     version = "0.0.1-SNAPSHOT"
 
     val customBuildDir: DirectoryProperty = project.layout.buildDirectory

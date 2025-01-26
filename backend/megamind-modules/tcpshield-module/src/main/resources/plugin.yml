@@ -1,4 +1,4 @@
 name: TcpShield
 author: Vihara
 version: 1.0
-main: net.skykingdoms.backend.tcpshield.TcpShieldModule
+main: net.astopia.backend.tcpshield.TcpShieldModule
