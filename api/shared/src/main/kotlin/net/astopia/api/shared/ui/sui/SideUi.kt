@@ -1,5 +1,7 @@
 package net.astopia.api.shared.ui.sui
 
+import net.astopia.api.backend.adventure.Adventure.MM
+import net.astopia.api.protocol.platform.Platform
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventFilter
@@ -36,6 +38,7 @@ abstract class SideUi(val loader: ServerUser, title: Component) : Sidebar(title)
     init {
         sideUis.put(loader, this)
         this.addViewer(loader)
+        Platform.logger.info("Added ${loader.name}")
         draw()
     }
 
@@ -44,6 +47,7 @@ abstract class SideUi(val loader: ServerUser, title: Component) : Sidebar(title)
         val line: ScoreboardLine = ScoreboardLine(id, content, line)
 
         if (this.getLine(id) == null) {
+            Platform.logger.info("Setting $line as ${MM.serialize(content)}")
             createLine(line)
             return;
         }

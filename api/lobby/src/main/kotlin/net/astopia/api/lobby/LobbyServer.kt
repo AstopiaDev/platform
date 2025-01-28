@@ -40,7 +40,7 @@ abstract class LobbyServer : SharedServer() {
 
             val player = event.player
             player.respawnPoint = spawnPoint
-            Player.setGameMode = GameMode.ADVENTURE
+            player.gameMode = GameMode.ADVENTURE
         }
 
         LobbyHandler.init(this)

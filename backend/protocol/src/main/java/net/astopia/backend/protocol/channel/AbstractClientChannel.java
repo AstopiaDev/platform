@@ -72,7 +72,7 @@ public abstract class AbstractClientChannel extends AbstractChannel implements I
     }
 
     protected void scheduleReconnect() {
-        System.out.println("Reconnecting in 6 seconds...");
+        Platform.logger.info("Reconnecting in 6 seconds...");
         worker.schedule(this::doReconnect, 6, TimeUnit.SECONDS);
     }
 

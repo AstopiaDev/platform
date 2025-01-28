@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+import net.astopia.api.protocol.platform.Platform;
 import net.astopia.backend.protocol.packet.PacketDirection;
 import net.astopia.backend.protocol.packet.PacketProtocol;
 import net.astopia.backend.protocol.packet.PacketUtils;
@@ -27,7 +28,12 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, @NotNull ByteBuf buf, List<Object> out) {
+        final String remoteAddress = ctx.channel().remoteAddress() != null
+                ? ctx.channel().remoteAddress().toString()
+                : "unknown-ip";
+
         if (buf.readableBytes() == 0) {
+            Platform.logger.warn("Empty buffer from: " + remoteAddress);
             return;
         }
 
@@ -37,14 +43,21 @@ public class PacketDecoder extends ByteToMessageDecoder {
             val packet = direction.getMapper(state).newPacket(id);
 
             if (packet == null) {
-                System.out.println("Couldn't find packet with id: " + id);
+                Platform.logger.error("Unknown packet ID {} from {}", id, remoteAddress);
                 return;
             }
 
             packet.read(buf);
             out.add(packet);
+
+            Platform.logger.debug("Decoded packet {} from {}", id, remoteAddress);
         } catch (Exception ex) {
-            System.out.println("Exception caught while decoding packet: " + id + ": " + ex.getMessage());
+            Platform.logger.error(
+                    "Error decoding packet {} from {}: {}",
+                    id,
+                    remoteAddress,
+                    ex.getMessage()
+            );
         }
     }
 }

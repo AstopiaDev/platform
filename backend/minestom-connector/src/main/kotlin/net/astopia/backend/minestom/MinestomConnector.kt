@@ -152,20 +152,20 @@ object MinestomConnector {
     }
 
     private fun logInitialization() {
-        Platform.logger.info("[boot] Dumped ENV: {}", System.getenv().entries.joinToString(", ") { "${it.key}=${it.value}" })
-        Platform.logger.info("[boot] Agent args: {} @ {} @ {}",
+        Platform.logger.debug("[boot] Dumped ENV: {}", System.getenv().entries.joinToString(", ") { "${it.key}=${it.value}" })
+        Platform.logger.debug("[boot] Agent args: {} @ {} @ {}",
             instanceData.serverScaleType, instanceData.gameType, gameMode)
     }
 
     private fun downloadAssets() {
         Platform.logger.info("[boot] Downloading global assets [...]")
         downloadAndExtractAssets(gameType = instanceData.gameType, outputPrefix = "stash")
-        Platform.logger.info("[boot] Assets downloaded [ok]")
+        Platform.logger.debug("[boot] Assets downloaded [ok]")
 
         if (isLobby()) {
             Platform.logger.info("[boot] Detected lobby configuration, downloading assets [...]")
             downloadAndExtractAssets(gameType = instanceData.gameType, outputPrefix = "lobby", isLobby = true)
-            Platform.logger.info("[boot] Lobby assets downloaded [ok]")
+            Platform.logger.debug("[boot] Lobby assets downloaded [ok]")
         }
     }
 
@@ -175,7 +175,7 @@ object MinestomConnector {
             getTestFlowName()?.let { testFlowName ->
                 downloadAndExtractAssets(outputPrefix = "testflow", name = testFlowName)
                 testFlowId = config?.getInt("testFlowId") ?: -1
-                Platform.logger.info("[boot] TestFlow ID: {}", testFlowId)
+                Platform.logger.debug("[boot] TestFlow ID: {}", testFlowId)
             }
         }
     }

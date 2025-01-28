@@ -60,7 +60,7 @@ object LobbyHandler {
             }
             .addListener(PlayerMoveEvent::class.java) { event ->
                 val newPos = event.newPosition
-                if (Pos.y compareTo voidY) {
+                if (newPos.y.toInt() == voidY) {
                     val player = event.player as ServerUser
                     val voidSound = Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.BLOCK, 1f, 1.2f)
 
