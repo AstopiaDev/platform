@@ -10,6 +10,8 @@ public final class ConsoleLogger extends AbstractLogger {
     public ConsoleLogger() {
         super("net.astopia.api");
 
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "off");
+
         SimpleFormatter fmt = new SimpleFormatter();
         StreamHandler sh = new StreamHandler(System.out, fmt);
         sh.setLevel(Level.ALL);
