@@ -23,11 +23,11 @@ public final class GithubLanguageLoader implements LanguageLoader {
         // clear "lang:" parser cache
         I18nParserController.getInstance().clearCache();
 
-        val url = new URL("https://api.github.com/repos/Sky-Kingdoms/localization/zipball");
+        val url = new URL("https://api.github.com/repos/AstopiaDev/localization/zipball");
 
         val connection = url.openConnection();
         connection.setUseCaches(false);
-        connection.setRequestProperty("User-Agent", "Sky-Kingdoms");
+        connection.setRequestProperty("User-Agent", "AstopiaDev");
         connection.setRequestProperty("Accept", "application/vnd.github+json");
         connection.setRequestProperty("Authorization", "token " + "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");
 
