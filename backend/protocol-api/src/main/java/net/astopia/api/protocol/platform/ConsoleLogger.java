@@ -12,7 +12,7 @@ public final class ConsoleLogger extends AbstractLogger {
 
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "off");
 
-        SimpleFormatter fmt = new SimpleFormatter();
+        ConsoleFormatter fmt = new ConsoleFormatter();
         StreamHandler sh = new StreamHandler(System.out, fmt);
         sh.setLevel(Level.ALL);
 
