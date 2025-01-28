@@ -14,6 +14,7 @@ import net.astopia.backend.protocol.packet.PacketProtocol;
 import net.astopia.backend.protocol.pipeline.PacketDecoder;
 import net.astopia.backend.protocol.pipeline.PacketEncoder;
 
+import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;

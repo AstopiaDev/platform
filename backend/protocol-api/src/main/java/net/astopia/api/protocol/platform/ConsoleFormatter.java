@@ -4,6 +4,8 @@ import net.astopia.api.protocol.util.TextFormat;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -31,8 +33,9 @@ public class ConsoleFormatter extends Formatter {
     private static final String ANSI_BOLD_WHITE = "\u001B[1;37m";
     private static final String ANSI_BOLD_GRAY = "\u001B[1;90m";
 
-    private static final SimpleDateFormat dateFormat =
-            new SimpleDateFormat("dd.MM HH:mm:ss");
+    private static final DateTimeFormatter dateFormat =
+            DateTimeFormatter.ofPattern("dd.MM HH:mm:ss")
+                    .withZone(ZoneId.systemDefault());
 
     @Override
     public String format(LogRecord record) {
