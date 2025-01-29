@@ -39,11 +39,17 @@ public class ConsoleFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        return String.format("%s%s %s: %s%n",
+        return String.format("%s%s [%s] %s: %s%n",
                 ANSI_GRAY,
                 dateFormat.format(Instant.ofEpochMilli(record.getMillis())),
+                getSimpleClassName(record.getSourceClassName()),
                 getColoredLevel(record.getLevel()),
                 TextFormat.formatMcToAnsi(record.getMessage()));
+    }
+
+    private String getSimpleClassName(String fullClassName) {
+        int lastDotIndex = fullClassName.lastIndexOf('.');
+        return lastDotIndex == -1 ? fullClassName : fullClassName.substring(lastDotIndex + 1);
     }
 
     private String getColoredLevel(Level level) {
