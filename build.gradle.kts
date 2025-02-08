@@ -8,8 +8,8 @@ plugins {
     id("java")
 }
 
-val user by extra(findProperty("repo.skykingdoms.user")?.toString() ?: error("Missing repository user"))
-val pass by extra(findProperty("repo.skykingdoms.pass")?.toString() ?: error("Missing repository password"))
+val user by extra(findProperty("nexus.astopia.user")?.toString() ?: error("Missing repository user"))
+val pass by extra(findProperty("nexus.astopia.pass")?.toString() ?: error("Missing repository password"))
 val buildDirectory = file("./build/")
 
 subprojects {
@@ -21,15 +21,12 @@ subprojects {
     val customBuildDir: DirectoryProperty = project.layout.buildDirectory
     customBuildDir.set(file("$buildDirectory/${project.name}"))
 
-    apply(plugin = "com.gradleup.shadow")
-    apply(plugin = "java")
-
     repositories {
         mavenCentral()
 
         listOf(
-            "https://repo.skykingdoms.net/repository/maven-snapshots/",
-            "https://repo.skykingdoms.net/repository/maven-releases/"
+            "https://nexus.astopia.net/repository/maven-snapshots/",
+            "https://nexus.astopia.net/repository/maven-releases/"
         ).forEach { repoUrl ->
             maven {
                 url = uri(repoUrl)
@@ -41,28 +38,33 @@ subprojects {
         }
     }
 
-    tasks {
-        withType<ShadowJar> {
-            exclude("META-INF/DEPENDENCIES")
-            exclude("META-INF/LICENSE")
-            exclude("META-INF/LICENSE.txt")
-            exclude("META-INF/NOTICE")
-            exclude("META-INF/NOTICE.txt")
-            exclude("META-INF/maven/**")
+    if (project.name !in setOf("api", "core", "lobby")) {
+        apply(plugin = "com.gradleup.shadow")
+        apply(plugin = "java")
 
-            mergeServiceFiles {
-                include("META-INF/impl/**")
+        tasks {
+            withType<ShadowJar> {
+                exclude("META-INF/DEPENDENCIES")
+                exclude("META-INF/LICENSE")
+                exclude("META-INF/LICENSE.txt")
+                exclude("META-INF/NOTICE")
+                exclude("META-INF/NOTICE.txt")
+                exclude("META-INF/maven/**")
+
+                mergeServiceFiles {
+                    include("META-INF/impl/**")
+                }
             }
-        }
 
-        withType<JavaCompile> {
-            targetCompatibility = JavaVersion.VERSION_23.toString()
-            sourceCompatibility = JavaVersion.VERSION_23.toString()
-            options.encoding = "UTF-8"
-        }
+            withType<JavaCompile> {
+                targetCompatibility = JavaVersion.VERSION_23.toString()
+                sourceCompatibility = JavaVersion.VERSION_23.toString()
+                options.encoding = "UTF-8"
+            }
 
-        named("build") {
-            dependsOn("shadowJar")
+            named("build") {
+                dependsOn("shadowJar")
+            }
         }
     }
 }

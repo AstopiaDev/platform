@@ -6,8 +6,6 @@ include("backend:backend-api")
 findProject(":backend:backend-api")?.name = "backend-api"
 include("backend:base")
 findProject(":backend:base")?.name = "base"
-include("backend:bukkit-connector")
-findProject(":backend:bukkit-connector")?.name = "bukkit-connector"
 include("backend:bukkit-startup-app")
 findProject(":backend:bukkit-startup-app")?.name = "bukkit-startup-app"
 include("backend:impl-loader")
@@ -39,8 +37,6 @@ include("backend:protocol")
 findProject(":backend:protocol")?.name = "protocol"
 include("backend:protocol-api")
 findProject(":backend:protocol-api")?.name = "protocol-api"
-include("backend:velocity-connector")
-findProject(":backend:velocity-connector")?.name = "velocity-connector"
 
 // Api
 include("api")
@@ -53,3 +49,14 @@ findProject(":api:game-engine")?.name = "game-engine"
 include("lobby")
 include("lobby:main-lobby")
 findProject(":lobby:main-lobby")?.name = "main-lobby"
+include("core")
+include("core:megamind")
+findProject(":core:megamind")?.name = "megamind"
+include("core:protocol")
+findProject(":core:protocol")?.name = "protocol"
+include("core:minimind")
+findProject(":core:minimind")?.name = "minimind"
+include("core:minimind:player")
+findProject(":core:minimind:player")?.name = "player"
+include("core:minimind:player:protocol")
+findProject(":core:minimind:player:protocol")?.name = "protocol"

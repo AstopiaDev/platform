@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package net.astopia.core.proto;
+
+message HandshakeRequest {
+  string token = 1;
+  float protocol_version = 2;
+  map<string, string> metadata = 3;
+}
+
+message HandshakeResponse {
+  bool success = 1;
+  string message = 2;
+}

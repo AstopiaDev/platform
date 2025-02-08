@@ -1,4 +1,0 @@
-name: BukkitConnector
-main: net.astopia.backend.bukkit.boot.BukkitConnectorBoot
-version: 1.0
-author: SkyKingdoms
