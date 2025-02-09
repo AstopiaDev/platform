@@ -1,6 +1,7 @@
-group = "me.vihara.core.megamind"
+group = "net.astopia.core.megamind"
 
 dependencies {
+    implementation(project(":core:protocol"))
     implementation(project(":core:minimind"))
 }
 

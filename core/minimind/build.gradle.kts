@@ -1,7 +1,11 @@
-group = "me.vihara.core.minimind"
+group = "net.astopia.core.minimind"
 
 kotlin {
     jvmToolchain(23)
+}
+
+dependencies {
+    implementation(project(":core:protocol"))
 }
 
 subprojects {

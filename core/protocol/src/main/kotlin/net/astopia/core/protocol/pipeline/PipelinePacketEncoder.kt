@@ -2,27 +2,22 @@ package net.astopia.core.protocol.pipeline
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
-import com.google.protobuf.MessageLiteOrBuilder
+import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.protobuf.ProtobufEncoder
-import net.astopia.core.proto.Common
+import io.netty.handler.codec.MessageToByteEncoder
+import net.astopia.core.proto.Protocol.Packet
 
-class PipelinePacketEncoder : ProtobufEncoder() {
-    override fun encode(ctx: ChannelHandlerContext?, msg: MessageLiteOrBuilder?, out: MutableList<Any?>?) {
-        if (msg !is MessageLite) {
-            throw IllegalArgumentException("Message must be a MessageLite")
-            return
-        }
-
+class PipelinePacketEncoder : MessageToByteEncoder<MessageLite>() {
+    override fun encode(ctx: ChannelHandlerContext?, msg: MessageLite, out: ByteBuf) {
         val liteMsg: MessageLite = msg
         val simpleName = liteMsg.javaClass.simpleName
         val bytes = liteMsg.toByteArray()
 
-        val packet = Common.Packet.newBuilder()
+        val packet = Packet.newBuilder()
             .setType(simpleName)
             .setData(ByteString.copyFrom(bytes))
             .build()
 
-        out?.add(packet)
+        out.writeBytes(packet.toByteArray())
     }
 }

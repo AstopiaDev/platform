@@ -3,14 +3,18 @@ plugins {
     id("java")
 }
 
-group = "me.vihara.core.protocol"
+kotlin {
+    jvmToolchain(23)
+}
+
+group = "net.astopia.core.protocol"
 
 dependencies {
     api("io.netty:netty-handler:4.1.117.Final")
     api("io.netty:netty-transport-native-epoll:4.1.117.Final:linux-x86_64")
     api("io.netty:netty-codec:4.1.117.Final")
 
-    implementation("com.google.protobuf:protobuf-javalite:4.28.2")
+    api("com.google.protobuf:protobuf-javalite:4.28.2")
     implementation("com.google.protobuf:protobuf-java-util:4.28.2")
 
     implementation("com.google.protobuf:protoc:4.28.2")

@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package net.astopia.core.proto;
-
-message Packet {
-  string type = 1;
-  bytes data = 2;
-}

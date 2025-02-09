@@ -3,20 +3,22 @@ package net.astopia.core.protocol.channel.initializer
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelPipelineException
 import io.netty.channel.socket.SocketChannel
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder
+import net.astopia.core.protocol.channel.LocalChannel
 import net.astopia.core.protocol.pipeline.PipelinePacketDecoder
 import net.astopia.core.protocol.pipeline.PipelinePacketEncoder
+import net.astopia.core.protocol.pipeline.PipelinePacketHandler
 
-class CustomProtocolInitializer : ChannelInitializer<SocketChannel>() {
-    override fun initChannel(channel: SocketChannel?) {
-        val pipeline = channel?.pipeline()
+class CustomProtocolInitializer(val localChannel: LocalChannel) : ChannelInitializer<SocketChannel>() {
+    override fun initChannel(socketChannel: SocketChannel?) {
+        val pipeline = socketChannel?.pipeline()
 
         if (pipeline == null) {
             throw ChannelPipelineException("Channel pipeline is null")
         }
 
-        pipeline.addLast("frameDecoder", ProtobufVarint32FrameDecoder())
-        pipeline.addLast("protobufEncoder", PipelinePacketEncoder())
+        //pipeline.addLast("frameDecoder", ProtobufVarint32FrameDecoder())
         pipeline.addLast("protobufDecoder", PipelinePacketDecoder())
+        pipeline.addLast("protobufEncoder", PipelinePacketEncoder())
+        pipeline.addLast("packetHandler", PipelinePacketHandler(localChannel, socketChannel))
     }
 }

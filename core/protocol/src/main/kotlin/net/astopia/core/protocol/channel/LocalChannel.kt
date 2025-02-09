@@ -20,11 +20,11 @@ interface LocalChannel {
         }
     }
 
-    var channelInitializer: ChannelInitializer<SocketChannel>?
+    val channelInitializer: ChannelInitializer<SocketChannel>
+        get() = CustomProtocolInitializer(this)
     val socketAddress: SocketAddress
     val threads: Int
 
-    fun initialize(channel: SocketChannel) {
-        channelInitializer = CustomProtocolInitializer()
-    }
+    fun initialize() {}
+    fun newRemoteChannel(channel: SocketChannel)
 }

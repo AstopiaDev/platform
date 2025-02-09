@@ -2,10 +2,30 @@ syntax = "proto3";
 
 package net.astopia.core.proto;
 
+message Packet {
+  string type = 1;
+  bytes data = 2;
+}
+
+message RequestEnvelope {
+  uint64 request_id = 1;
+  oneof payload {
+    bytes request = 2;
+  }
+}
+
+message ResponseEnvelope {
+  uint64 request_id = 1;
+  oneof payload {
+    bytes response = 2;
+  }
+}
+
 message HandshakeRequest {
   string token = 1;
-  float protocol_version = 2;
-  map<string, string> metadata = 3;
+  string type = 2;
+  float protocol_version = 3;
+  map<string, string> metadata = 4;
 }
 
 message HandshakeResponse {

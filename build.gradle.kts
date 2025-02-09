@@ -18,8 +18,9 @@ subprojects {
     group = "net.astopia"
     version = "0.0.1-SNAPSHOT"
 
+/*
     val customBuildDir: DirectoryProperty = project.layout.buildDirectory
-    customBuildDir.set(file("$buildDirectory/${project.name}"))
+    customBuildDir.set(file("$buildDirectory/${project.name}"))*/
 
     repositories {
         mavenCentral()
