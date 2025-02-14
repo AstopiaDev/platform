@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package net.astopia.core.proto;
+
+message UpdateData {
+  int64 id = 1;
+}

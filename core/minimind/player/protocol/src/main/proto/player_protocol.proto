@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package net.astopia.core.proto;
+
+message PlayerData {
+  string uuid = 1;
+  int64 currentInstance = 2;
+}

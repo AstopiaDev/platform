@@ -1,6 +1,7 @@
 package net.astopia.core.megamind.protocol.handler.handshake.processor
 
 import io.netty.channel.ChannelHandlerContext
+import net.astopia.core.megamind.protocol.handler.handshake.processor.impl.InstanceHandshakeProcessor
 import net.astopia.core.megamind.protocol.handler.handshake.processor.impl.MinimindHandshakeProcessor
 import net.astopia.core.proto.Protocol.HandshakeRequest
 import net.astopia.core.protocol.packet.HandlerRegistry.PropagationContext
@@ -13,8 +14,9 @@ interface HandshakeProcessor {
     )
 
     object Registry {
-        val processors: Map<String, HandshakeProcessor> = mapOf(
+        private val processors: Map<String, HandshakeProcessor> = mapOf(
             "minimind" to MinimindHandshakeProcessor(),
+            "instance" to InstanceHandshakeProcessor()
         )
 
         fun handle(ctx: ChannelHandlerContext, request: HandshakeRequest, propagation: PropagationContext) {
