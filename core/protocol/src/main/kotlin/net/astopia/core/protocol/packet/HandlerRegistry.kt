@@ -1,12 +1,10 @@
 package net.astopia.core.protocol.packet
 
-import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelId
 import io.netty.channel.socket.SocketChannel
-import net.astopia.core.proto.Protocol
-import net.astopia.core.proto.Protocol.Packet
+import net.astopia.core.proto.Protocol.*
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -18,12 +16,12 @@ import kotlin.reflect.KClass
 object HandlerRegistry {
     private data class PacketHandlerEntry<T : MessageLite>(
         val handler: PacketHandler<T>,
-        val priority: Int,
+        val weight: Int,
         val id: Long = idCounter.getAndIncrement()
     ) : Comparable<PacketHandlerEntry<*>> {
         override fun compareTo(other: PacketHandlerEntry<*>): Int {
             return when {
-                other.priority != priority -> other.priority - priority
+                other.weight != weight -> other.weight - weight
                 else -> other.id.compareTo(id)
             }
         }
@@ -31,12 +29,12 @@ object HandlerRegistry {
 
     private data class LifecycleHandlerEntry(
         val handler: (ChannelHandlerContext) -> Unit,
-        val priority: Int,
+        val weight: Int,
         val id: Long = idCounter.getAndIncrement()
     ) : Comparable<LifecycleHandlerEntry> {
         override fun compareTo(other: LifecycleHandlerEntry): Int {
             return when {
-                other.priority != priority -> other.priority - priority
+                other.weight != weight -> other.weight - weight
                 else -> other.id.compareTo(id)
             }
         }
@@ -59,22 +57,22 @@ object HandlerRegistry {
 
     fun <T : MessageLite> registerHandler(
         packetClass: KClass<T>,
-        priority: Int = 0,
+        weight: Int = 0,
         handler: PacketHandler<T>
     ) {
         packetHandlers.compute(packetClass.java) { _, set ->
             (set ?: ConcurrentHashMap.newKeySet()).apply {
-                add(PacketHandlerEntry(handler, priority))
+                add(PacketHandlerEntry(handler, weight))
             }
         }
     }
 
-    fun onConnect(priority: Int = 0, handler: (ChannelHandlerContext) -> Unit) {
-        connectHandlers.add(LifecycleHandlerEntry(handler, priority))
+    fun onConnect(weight: Int = 0, handler: (ChannelHandlerContext) -> Unit) {
+        connectHandlers.add(LifecycleHandlerEntry(handler, weight))
     }
 
-    fun onDisconnect(priority: Int = 0, handler: (ChannelHandlerContext) -> Unit) {
-        disconnectHandlers.add(LifecycleHandlerEntry(handler, priority))
+    fun onDisconnect(weight: Int = 0, handler: (ChannelHandlerContext) -> Unit) {
+        disconnectHandlers.add(LifecycleHandlerEntry(handler, weight))
     }
 
     fun getAttributes(ctx: ChannelHandlerContext): MutableMap<String, Any> {
@@ -95,19 +93,33 @@ object HandlerRegistry {
         }
     }
 
-    internal fun handleResponse(ctx: ChannelHandlerContext, responseEnvelope: Protocol.ResponseEnvelope) {
+    internal fun handleResponse(ctx: ChannelHandlerContext, responseEnvelope: ResponseEnvelope) {
         val channelId = ctx.channel().id()
         val requestId = responseEnvelope.requestId
+        println("Response with request id: " + requestId)
         val pendingRequestMap = pendingRequests[channelId]
 
         if (pendingRequestMap != null) {
             val future = pendingRequestMap[requestId]
             if (future != null) {
+                println("Future aint null g!")
                 try {
-                    val commonResponsePacket = Packet.parseFrom(responseEnvelope.response)
-                    val responsePacket = PacketRegistry.parsePacket(commonResponsePacket.type, commonResponsePacket.data.toByteArray())
+                    if (!responseEnvelope.hasDirect() || responseEnvelope.direct) {
+                        val commonResponsePacket = Packet.parseFrom(responseEnvelope.response)
+                        println("with type" + commonResponsePacket.type)
+                        val responsePacket = PacketRegistry.parsePacket(
+                            commonResponsePacket.type,
+                            commonResponsePacket.data.toByteArray()
+                        )
+                        // TODO: tle se zalomi
 
-                    future.complete(responsePacket)
+                        println("response packet isss " + responsePacket.javaClass.simpleName)
+                        future.complete(responsePacket)
+                    } else {
+                        val commonResponsePacket = Packet.parseFrom(responseEnvelope.response)
+                        println("RESPONDINGGGGG")
+                        future.complete(commonResponsePacket)
+                    }
                 } catch (e: Exception) {
                     future.completeExceptionally(e)
                 } finally {
@@ -189,10 +201,65 @@ object HandlerRegistry {
             .setData(request.toByteString())
             .build()
 
-        val envelope = Protocol.RequestEnvelope.newBuilder()
+        val envelope = RequestEnvelope.newBuilder()
             .setRequestId(requestId)
             .setRequest(wrappedRequest.toByteString())
             .build()
+
+        channel.writeAndFlush(envelope).addListener {
+            if (!it.isSuccess) {
+                future.completeExceptionally(it.cause())
+                cleanupRequest(channel.id(), requestId)
+            }
+        }
+
+
+        return future
+    }
+
+    fun sendRequest(channel: SocketChannel, request: RequestEnvelope): CompletableFuture<MessageLite> {
+        val requestId = requestIdGenerator.getAndIncrement()
+        val future = CompletableFuture<MessageLite>()
+
+        pendingRequests
+            .computeIfAbsent(channel.id()) { ConcurrentHashMap() }
+            .put(requestId, future)
+
+        val envelope = request.toBuilder().setRequestId(requestId).build()
+
+        println("Sendinggggggg envelope with request id " + requestId)
+
+        channel.writeAndFlush(envelope).addListener {
+            if (!it.isSuccess) {
+                future.completeExceptionally(it.cause())
+                cleanupRequest(channel.id(), requestId)
+            }
+        }
+
+        return future
+    }
+
+    fun sendRequest(channel: SocketChannel, request: MessageLite, minimindId: String, direct: Boolean = true): CompletableFuture<MessageLite> {
+        val requestId = requestIdGenerator.getAndIncrement()
+        val future = CompletableFuture<MessageLite>()
+
+        pendingRequests
+            .computeIfAbsent(channel.id()) { ConcurrentHashMap() }
+            .put(requestId, future)
+
+        val wrappedRequest: Packet = Packet.newBuilder()
+            .setType(request.javaClass.simpleName)
+            .setData(request.toByteString())
+            .build()
+
+        val envelope = RequestEnvelope.newBuilder()
+            .setRequestId(requestId)
+            .setRequest(wrappedRequest.toByteString())
+            .setMinimind(minimindId)
+            .setDirect(direct)
+            .build()
+
+        println("Sending packet to megamind with requeqst id " + requestId)
 
         channel.writeAndFlush(envelope).addListener {
             if (!it.isSuccess) {

@@ -21,8 +21,11 @@ sealed class EnvelopeHandler {
             responder: (MessageLite) -> Unit
         ) {
             val payload = packet.request
+            println("Meow part 1")
             if (payload != null) {
                 val wrappedResponder = { response: MessageLite ->
+                    println("Responding as " + response.javaClass.simpleName)
+
                     val commonPacket: Packet = Packet.newBuilder()
                         .setType(response.javaClass.simpleName)
                         .setData(response.toByteString())
@@ -31,7 +34,10 @@ sealed class EnvelopeHandler {
                     val responseEnvelope = ResponseEnvelope.newBuilder()
                         .setRequestId(packet.requestId)
                         .setResponse(commonPacket.toByteString())
+                        .setDirect(if (packet.hasDirect()) packet.direct else true)
                         .build()
+
+                    println("Response is " + responseEnvelope.direct)
 
                     responder(responseEnvelope)
                     HandlerRegistry.sendPacket(ctx.channel() as SocketChannel, responseEnvelope)
@@ -57,6 +63,7 @@ sealed class EnvelopeHandler {
             propagation: PropagationContext,
             responder: (MessageLite) -> Unit
         ) {
+            println("A response came in!")
             HandlerRegistry.handleResponse(ctx, packet)
         }
     }

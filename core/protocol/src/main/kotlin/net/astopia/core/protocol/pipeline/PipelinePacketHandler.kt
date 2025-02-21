@@ -13,9 +13,6 @@ import net.astopia.core.protocol.packet.handler.EnvelopeHandler
 class PipelinePacketHandler(localChannel: LocalChannel, socketChannel: SocketChannel) : SimpleChannelInboundHandler<MessageLite>() {
     init {
         localChannel.newRemoteChannel(socketChannel)
-
-        HandlerRegistry.registerHandler(RequestEnvelope::class, 1, EnvelopeHandler.Request())
-        HandlerRegistry.registerHandler(ResponseEnvelope::class, 1, EnvelopeHandler.Response())
     }
 
     override fun channelActive(ctx: ChannelHandlerContext) {
@@ -30,5 +27,18 @@ class PipelinePacketHandler(localChannel: LocalChannel, socketChannel: SocketCha
 
     override fun channelRead0(ctx: ChannelHandlerContext, packet: MessageLite) {
         HandlerRegistry.handlePacket(ctx, packet)
+    }
+
+    /*
+    fixes the
+    WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+    shit
+     */
+    @Deprecated("Deprecated in Java")
+    override fun exceptionCaught(ctx: ChannelHandlerContext?, cause: Throwable?) {
+        if (ctx != null) {
+            HandlerRegistry.handleDisconnect(ctx)
+        }
+        ctx?.close()
     }
 }

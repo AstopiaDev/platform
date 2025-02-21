@@ -9,15 +9,18 @@ message Packet {
 
 message RequestEnvelope {
   uint64 request_id = 1;
+  optional string minimind = 2;
+  optional bool direct = 3;
   oneof payload {
-    bytes request = 2;
+    bytes request = 4;
   }
 }
 
 message ResponseEnvelope {
   uint64 request_id = 1;
+  optional bool direct = 2;
   oneof payload {
-    bytes response = 2;
+    bytes response = 3;
   }
 }
 

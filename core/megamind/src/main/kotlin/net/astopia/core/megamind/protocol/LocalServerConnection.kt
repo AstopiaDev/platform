@@ -5,6 +5,7 @@ import io.netty.channel.socket.SocketChannel
 import io.netty.util.internal.SystemPropertyUtil
 import net.astopia.core.protocol.channel.LocalServerChannel
 import net.astopia.core.protocol.channel.RemoteClientChannel
+import net.astopia.core.protocol.packet.HandlerRegistry
 import java.net.SocketAddress
 
 class LocalServerConnection(socketAddress: SocketAddress, threads: Int) : LocalServerChannel(socketAddress, threads) {
@@ -16,5 +17,11 @@ class LocalServerConnection(socketAddress: SocketAddress, threads: Int) : LocalS
 
     override fun newClientChannel(channel: SocketChannel?): RemoteClientChannel? {
         return RemoteClientConnection(channel!!)
+    }
+
+    init {
+        HandlerRegistry.onConnect(1) { ctx ->
+            println("Connected!!")
+        }
     }
 }

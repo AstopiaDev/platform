@@ -60,3 +60,7 @@ include("core:minimind:player")
 findProject(":core:minimind:player")?.name = "player"
 include("core:minimind:player:protocol")
 findProject(":core:minimind:player:protocol")?.name = "protocol"
+include("core:minimind:punishments")
+findProject(":core:minimind:punishments")?.name = "punishments"
+include("core:minimind:punishments:protocol")
+findProject(":core:minimind:punishments:protocol")?.name = "protocol"

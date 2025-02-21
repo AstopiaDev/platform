@@ -2,7 +2,25 @@ syntax = "proto3";
 
 package net.astopia.core.proto;
 
-message PlayerData {
+message PlayerDataRequest {
   string uuid = 1;
-  int64 currentInstance = 2;
 }
+
+message PlayerDataResponse {
+  string uuid = 1;
+  string username = 2;
+  string group = 3;
+  int64 currentInstance = 4;
+  int64 firstJoin = 5;
+  int64 lastJoin = 6;
+}
+
+message PlayerSocialMediaResponse {
+  string uuid = 1;
+  string discord = 2;
+  string youtube = 3;
+  string xcom = 4;
+  string instagram = 5;
+}
+
+// todo: write what kind of data this is going to have in that astopia planning word document
