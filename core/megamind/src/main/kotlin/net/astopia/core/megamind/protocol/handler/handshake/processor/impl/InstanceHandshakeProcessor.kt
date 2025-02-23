@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.protocol.handler.handshake.processor.impl
 
 import io.netty.channel.ChannelHandlerContext
@@ -33,4 +34,4 @@ class InstanceHandshakeProcessor : HandshakeProcessor {
             Instance.UpdateData.newBuilder().setId(id).build()
         )
     }
-}
+}*/

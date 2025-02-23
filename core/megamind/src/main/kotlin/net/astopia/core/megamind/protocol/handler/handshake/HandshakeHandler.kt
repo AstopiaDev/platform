@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.protocol.handler.handshake
 
 import com.google.protobuf.MessageLite
@@ -27,4 +28,4 @@ class HandshakeHandler : PacketHandler<Protocol.HandshakeRequest> {
         HandshakeProcessor.Registry.handle(ctx, packet, propagation)
         responder(Protocol.HandshakeResponse.newBuilder().setSuccess(true).build())
     }
-}
+}*/

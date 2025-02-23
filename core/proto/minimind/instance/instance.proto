@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "protocol.proto";
+
+package net.astopia.core.instance.proto;
+
+option go_package = "go.astopia.net/protocol/instance;instance";
+
+message InstanceRegistrationRequest {
+  string token = 1;
+  string type = 2;
+  net.astopia.core.proto.GeoRegion region = 3;
+  map<string, string> metadata = 4;
+}
+
+message InstanceRegistrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message OptimalProxyRequest {
+  string ip = 1;
+}
+
+message OptimalProxyResponse {
+  string ip = 1;
+  uint32 port = 2;
+}

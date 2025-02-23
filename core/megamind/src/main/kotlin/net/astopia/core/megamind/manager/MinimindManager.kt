@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.manager
 
 import net.astopia.core.minimind.protocol.RemoteMinimind
@@ -16,4 +17,4 @@ object MinimindManager {
     fun getMinimind(id: String): RemoteMinimind? {
         return miniminds[id]
     }
-}
+}*/

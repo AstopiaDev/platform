@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.protocol.handler.handshake.processor.impl
 
 import io.netty.channel.ChannelHandlerContext
@@ -27,4 +28,4 @@ class MinimindHandshakeProcessor : HandshakeProcessor {
         MinimindManager.addMinimind(minimind)
         println("Registered new Minimind: " + minimind.getId())
     }
-}
+}*/

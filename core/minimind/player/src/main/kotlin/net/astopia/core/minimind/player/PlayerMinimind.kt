@@ -1,20 +1,17 @@
 package net.astopia.core.minimind.player
 
-import net.astopia.core.minimind.player.connection.LocalClientConnection
-import net.astopia.core.minimind.player.protocol.ProtocolPlayerMinimind
-import net.astopia.core.proto.PlayerProtocol
-import net.astopia.core.protocol.packet.PacketRegistry
-import java.net.InetSocketAddress
+import io.nats.service.ServiceEndpoint
+import net.astopia.core.protocol.nats.service.NatsService
 
-object PlayerMinimind : ProtocolPlayerMinimind() {
-    var connection: LocalClientConnection? = null
-
+object PlayerMinimind : NatsService("player_minimind", "Returns player data in a request") {
     fun init() {
-        PacketRegistry.register("PlayerDataRequest", PlayerProtocol.PlayerDataRequest.parser())
-        PacketRegistry.register("PlayerDataResponse", PlayerProtocol.PlayerDataResponse.parser())
 
-        connection = LocalClientConnection(InetSocketAddress("127.0.0.1", 3455), 2)
-        connection?.connectSynchronized()
+    }
+
+    override fun getEndpoints(): Array<ServiceEndpoint> {
+        return arrayOf(
+
+        )
     }
 }
 

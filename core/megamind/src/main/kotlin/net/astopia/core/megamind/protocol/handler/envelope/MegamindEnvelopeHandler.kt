@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.protocol.handler.envelope
 
 import com.google.protobuf.MessageLite
@@ -20,8 +21,6 @@ sealed class MegamindEnvelopeHandler {
             val payload = packet.request
             val requestId = packet.requestId
 
-            println("JUST MEOW")
-
             if (!packet.hasMinimind()) {
                 return
             }
@@ -33,11 +32,7 @@ sealed class MegamindEnvelopeHandler {
             if (payload != null) {
                 val minimind = MinimindManager.getMinimind(minimindId) ?: return
 
-                println("MEOW PART 2")
-
                 val wrappedResponder = { response: MessageLite ->
-                    println("RESPONSE XDXDXD " + response.javaClass.simpleName)
-
                     val responseEnvelope = ResponseEnvelope.newBuilder()
                         .setRequestId(requestId)
                         .setResponse(response.toByteString())
@@ -45,18 +40,14 @@ sealed class MegamindEnvelopeHandler {
                         .build()
 
                     responder(responseEnvelope)
-                    println("Sending packet witih request id " + requestId )
                     HandlerRegistry.sendPacket(ctx.channel() as SocketChannel, responseEnvelope)
                 }
 
                 HandlerRegistry.sendRequest(minimind.socketChannel, packet).thenAccept { response ->
-                    println("MEOWIEEE " + response.javaClass.simpleName)
-
-                    println("GOT A RESPONSE " )
-
                     wrappedResponder(response)
                 }
             }
         }
     }
 }
+*/

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package net.astopia.core.proto;
+
+option go_package = "go.astopia.net/protocol;protocol";
+
+message Packet {
+  string type = 1;
+  bytes data = 2;
+}
+
+enum GeoRegion {
+  EU = 0;
+  NA = 1;
+  AU = 2;
+  ASIA = 3;
+  SA = 4;
+  AFRICA = 5;
+  ME = 6;
+}

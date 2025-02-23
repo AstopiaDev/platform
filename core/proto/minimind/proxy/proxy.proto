@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "protocol.proto";
+
+package net.astopia.core.proxy.proto;
+
+option go_package = "go.astopia.net/protocol/proxy;proxy";
+
+message ProxyRegistrationRequest {
+  string token = 1;
+  net.astopia.core.proto.GeoRegion region = 2;
+}
+
+message ProxyRegistrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message OptimalProxyRequest {
+  string ip = 1;
+}
+
+message OptimalProxyResponse {
+  string ip = 1;
+  uint32 port = 2;
+}
+
+message ProxyJoin {
+  uint32 playerId = 1;
+  uint32 proxyId = 2;
+}
+
+message ProxyQuit {
+  uint32 playerId = 1;
+  uint32 proxyId = 2;
+}

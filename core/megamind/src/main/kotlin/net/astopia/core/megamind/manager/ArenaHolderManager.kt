@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.manager
 
 import net.astopia.core.megamind.protocol.instance.ArenaHolderInstance
@@ -23,3 +24,4 @@ object ArenaHolderManager {
         instancesById.remove(id)
     }
 }
+*/

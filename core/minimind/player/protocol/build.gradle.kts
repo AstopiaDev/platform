@@ -30,3 +30,10 @@ protobuf {
     }
 }
 
+sourceSets {
+    main {
+        proto {
+            srcDir("../../../proto/minimind/player")
+        }
+    }
+}

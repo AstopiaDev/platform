@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.minimind.protocol
 
 import io.netty.channel.socket.SocketChannel
@@ -9,4 +10,4 @@ class RemoteMinimind(private val id: String, override val socketChannel: SocketC
         return id
     }
 
-}
+}*/

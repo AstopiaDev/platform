@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package net.astopia.core.player.proto;
+
+option go_package = "go.astopia.net/protocol/player;player";
+
+message PlayerLoginRequest {
+  string uuid = 1;
+  string username = 2;
+  bool premium = 3;
+  string address = 4;
+  uint32 mcProtocolVersion = 5;
+}
+
+message PlayerLoginResponse {
+  bool success = 1;
+  optional string msg = 2;
+  optional uint32 id = 3;
+}

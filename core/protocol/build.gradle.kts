@@ -10,9 +10,7 @@ kotlin {
 group = "net.astopia.core.protocol"
 
 dependencies {
-    api("io.netty:netty-handler:4.1.117.Final")
-    api("io.netty:netty-transport-native-epoll:4.1.117.Final:linux-x86_64")
-    api("io.netty:netty-codec:4.1.117.Final")
+    api("io.nats:jnats:2.20.5")
 
     api("com.google.protobuf:protobuf-javalite:4.28.2")
     implementation("com.google.protobuf:protobuf-java-util:4.28.2")
@@ -31,6 +29,14 @@ protobuf {
                     option("lite")
                 }
             }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir("../proto")
         }
     }
 }

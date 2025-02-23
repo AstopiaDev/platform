@@ -1,3 +1,4 @@
+/*
 package net.astopia.core.megamind.protocol.handler.handshake.processor
 
 import io.netty.channel.ChannelHandlerContext
@@ -23,4 +24,4 @@ interface HandshakeProcessor {
             processors[request.type]?.process(ctx, request, propagation)
         }
     }
-}
+}*/

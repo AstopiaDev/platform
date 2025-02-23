@@ -1,3 +1,6 @@
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 rootProject.name = "astopia-platform"
 
 // Backend
@@ -60,7 +63,17 @@ include("core:minimind:player")
 findProject(":core:minimind:player")?.name = "player"
 include("core:minimind:player:protocol")
 findProject(":core:minimind:player:protocol")?.name = "protocol"
-include("core:minimind:punishments")
-findProject(":core:minimind:punishments")?.name = "punishments"
-include("core:minimind:punishments:protocol")
-findProject(":core:minimind:punishments:protocol")?.name = "protocol"
+include("core:minimind:punishment")
+findProject(":core:minimind:punishment")?.name = "punishments"
+include("core:minimind:punishment:protocol")
+findProject(":core:minimind:punishment:protocol")?.name = "protocol"
+include("core:minimind:proxy")
+findProject(":core:minimind:proxy")?.name = "proxy"
+include("core:minimind:instance")
+findProject(":core:minimind:instance")?.name = "instance"
+include("core:minimind:proxy:protocol")
+findProject(":core:minimind:proxy:protocol")?.name = "protocol"
+include("core:minimind:command")
+findProject(":core:minimind:command")?.name = "command"
+include("core:common")
+findProject(":core:common")?.name = "common"
